@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[CIs not updated in 90&#43; days are likely to have outdated attributes. Now Assist uses sys_updated_on as a freshness signal -- highly stale CIs are deprioritized but still introduce noise into impact analysis.]]></ai_justification>
+<check_name>Stale CI Rate (90 days)</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaStale = new GlideAggregate('cmdb_ci');
+    gaStale.addQuery('install_status', 1);
+    gaStale.addQuery('sys_updated_on', '<', cutoff.getValue());
+    gaStale.addAggregate('COUNT');
+    gaStale.query();
+    var stale = gaStale.next() ? parseInt(gaStale.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. Stale CI rate cannot be assessed.' };
+    }
+
+    var pct = Math.round((stale / total) * 100);
+    var actualValue = pct + '% of active CIs not updated in 90+ days (' + stale + ' of ' + total + ')';
+
+    if (pct <= 20) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs are stale at 90 days. CMDB data is current — Now Assist AI recommendations reflect recent infrastructure state.' };
+    } else if (pct <= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: pct + '% of active CIs have not been updated in 90+ days (target: ≤20%). Stale CI data reduces Now Assist AI accuracy — expand discovery coverage and frequency.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: pct + '% of active CIs are stale at 90 days. Majority of CMDB data is outdated — Now Assist AI recommendations based on this data will be unreliable.' };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>CMDB</module>
+<number>CHK0006004</number>
+<order>70</order>
+<remediation_guidance>Expand and schedule discovery runs to cover all infrastructure segments more frequently. Configure daily or weekly discovery for critical infrastructure via discovery_schedule_list.do. Target: ≤20% of CIs stale at 90 days.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>0203a33acfd903108935fb251d851c61</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0203a33acfd903108935fb251d851c61</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[CIs not updated in 90&amp;#43; days are likely to have outdated attributes. Now Assist uses sys_updated_on as a freshness signal -- highly stale CIs are deprioritized but still introduce noise into impact analysis.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Stale CI Rate (90 days)&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaStale = new GlideAggregate('cmdb_ci');
+    gaStale.addQuery('install_status', 1);
+    gaStale.addQuery('sys_updated_on', '&lt;', cutoff.getValue());
+    gaStale.addAggregate('COUNT');
+    gaStale.query();
+    var stale = gaStale.next() ? parseInt(gaStale.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. Stale CI rate cannot be assessed.' };
+    }
+
+    var pct = Math.round((stale / total) * 100);
+    var actualValue = pct + '% of active CIs not updated in 90+ days (' + stale + ' of ' + total + ')';
+
+    if (pct &lt;= 20) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs are stale at 90 days. CMDB data is current — Now Assist AI recommendations reflect recent infrastructure state.' };
+    } else if (pct &lt;= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: pct + '% of active CIs have not been updated in 90+ days (target: ≤20%). Stale CI data reduces Now Assist AI accuracy — expand discovery coverage and frequency.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: pct + '% of active CIs are stale at 90 days. Majority of CMDB data is outdated — Now Assist AI recommendations based on this data will be unreliable.' };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;CMDB&lt;/module&gt;
+&lt;number&gt;CHK0006004&lt;/number&gt;
+&lt;order&gt;70&lt;/order&gt;
+&lt;remediation_guidance&gt;Expand and schedule discovery runs to cover all infrastructure segments more frequently. Configure daily or weekly discovery for critical infrastructure via discovery_schedule_list.do. Target: ≤20% of CIs stale at 90 days.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;0203a33acfd903108935fb251d851c61&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-567453126</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:27</sys_created_on>
+        <sys_id>f4b6c147cf9947108935fb251d851ca5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa74650000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:27</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>30b6c1474a994710acee2a86939a03a4</update_guid>
+        <update_guid_history>30b6c1474a994710acee2a86939a03a4:-567453126</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">b21f0d8fcfdd47108935fb251d851c77</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:10</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>25bd581d26a84e8dae91269534ca99b9</sys_id>
+        <sys_metadata>0203a33acfd903108935fb251d851c61</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0203a33acfd903108935fb251d851c61</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0203a33acfd903108935fb251d851c61">f4b6c147cf9947108935fb251d851ca5</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:10</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[CIs not updated in 180&#43; days are unlikely to reflect real infrastructure. These ghost records create AI noise -- Now Assist may suggest remediations for CIs that no longer exist.]]></ai_justification>
+        <check_name>Stale CI Rate (180 days)</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-180);
+
+    var gaStale = new GlideAggregate('cmdb_ci');
+    gaStale.addQuery('install_status', 1);
+    gaStale.addQuery('sys_updated_on', '<', cutoff.getValue());
+    gaStale.addAggregate('COUNT');
+    gaStale.query();
+    var stale = gaStale.next() ? parseInt(gaStale.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. 180-day stale CI rate cannot be assessed.' };
+    }
+
+    var pct = Math.round((stale / total) * 100);
+    var actualValue = pct + '% of active CIs not updated in 180+ days (' + stale + ' of ' + total + ')';
+
+    if (pct <= 10) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs are stale at 180 days. CMDB has minimal ghost records — Now Assist impact analysis will not be polluted by decommissioned assets.' };
+    } else if (pct <= 30) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: pct + '% of active CIs have not been updated in 180+ days (target: ≤10%). These are likely ghost records — Now Assist may recommend remediations for non-existent assets.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: pct + '% of active CIs are stale at 180 days. High ghost record rate — Now Assist impact analysis is likely to include significant numbers of decommissioned or non-existent assets.' };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>CMDB</module>
+        <number>CHK0000380</number>
+        <order>80</order>
+        <remediation_guidance>Flag 180-day stale CIs for decommission review. Work with asset owners to verify each CI. CIs not updated in 180+ days are likely ghost records that cause Now Assist to recommend remediations for non-existent assets. Target: ≤10% of CIs stale at 180 days.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>faf81dc7cfd587108935fb251d851c1b</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Stale CI Rate (180 days)</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_faf81dc7cfd587108935fb251d851c1b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

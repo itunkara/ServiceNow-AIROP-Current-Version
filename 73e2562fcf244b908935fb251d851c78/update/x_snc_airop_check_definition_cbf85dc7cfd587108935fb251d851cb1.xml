@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist SIR uses historical security incident data for AI summarization and similar incident matching. Without sufficient incident history, AI pattern recognition has no training signal and will produce generic rather than context-specific recommendations.]]></ai_justification>
+        <check_name>Security Incident Volume</check_name>
+        <check_script><![CDATA[(function() { var cutoff = new GlideDateTime(); cutoff.addYearsUTC(-1); var ga = new GlideAggregate("sn_si_incident"); ga.addQuery("sys_created_on", ">=", cutoff.getValue()); ga.addAggregate("COUNT"); ga.query(); var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (count >= 200) { return { status: "ready", actualValue: count + " security incidents in last 12 months", finding: count + " security incidents in the last 12 months. Sufficient history for Now Assist SIR AI summarization and similar incident pattern learning." }; } else if (count >= 50) { return { status: "needs_attention", actualValue: count + " security incidents in last 12 months", finding: "Only " + count + " security incidents in the last 12 months (target: 200+). Now Assist SIR AI learning will have limited pattern coverage." }; } else { return { status: "not_ready", actualValue: count + " security incidents in last 12 months", finding: "Only " + count + " security incidents in the last 12 months. Insufficient history for Now Assist SIR AI summarization and similar incident matching." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SECOPS</module>
+        <number>CHK0000528</number>
+        <order>200</order>
+        <remediation_guidance>Ensure all security incidents are being captured in ServiceNow SIR. If volume is low due to recent implementation, allow data to accumulate before expecting optimal AI performance.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>cbf85dc7cfd587108935fb251d851cb1</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Security Incident Volume</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_cbf85dc7cfd587108935fb251d851cb1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sn_related_record_definition">
+    <sn_related_record_definition action="DELETE">
+        <active>true</active>
+        <display_label>ITSM CHeck Results</display_label>
+        <internal_name>x_snc_airop.ITSM CHeck Results</internal_name>
+        <primary_table>x_snc_airop_check_result</primary_table>
+        <queries_from>x_snc_airop_check_result</queries_from>
+        <script><![CDATA[(function refineQuery(current, primary, secondary) {
+     //Add your code here to addQuery on top of the 'Queries from'
+     //Example:
+         //Primary reference table is 'incident'; Secondary reference table is 'sys_user'; Queries from is 'incident'
+         //Related record context Applies to table 'incident', Primary reference field  as 'sys_id', Secondary reference field as 'caller'
+         //we want to show all other incidents from this caller
+         current.addQuery('module', 'ITSM');
+         //current.addQuery('sys_id', '!=', primary.sys_id)
+})(current, primary, secondary);]]></script>
+        <secondary_table>x_snc_airop_assessment_run</secondary_table>
+        <sys_class_name>sn_related_record_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 07:25:43</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>6fddeb4fcf454bd88935fb251d851c51</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>ITSM CHeck Results</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sn_related_record_definition_6fddeb4fcf454bd88935fb251d851c51</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-29 07:26:52</sys_updated_on>
+    </sn_related_record_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sn_related_record_definition_6fddeb4fcf454bd88935fb251d851c51</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update sys_domain="global" table="sn_related_record_definition"&gt;&lt;sn_related_record_definition action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;display_label&gt;ITSM CHeck Results&lt;/display_label&gt;&lt;internal_name&gt;x_snc_airop.ITSM CHeck Results&lt;/internal_name&gt;&lt;primary_table&gt;x_snc_airop_check_result&lt;/primary_table&gt;&lt;queries_from&gt;x_snc_airop_check_result&lt;/queries_from&gt;&lt;script&gt;&lt;![CDATA[(function refineQuery(current, primary, secondary) {
+     //Add your code here to addQuery on top of the 'Queries from'
+     //Example:
+         //Primary reference table is 'incident'; Secondary reference table is 'sys_user'; Queries from is 'incident'
+         //Related record context Applies to table 'incident', Primary reference field  as 'sys_id', Secondary reference field as 'caller'
+         //we want to show all other incidents from this caller
+         current.addQuery('module', 'ITSM');
+         //current.addQuery('sys_id', '!=', primary.sys_id)
+})(current, primary, secondary);]]&gt;&lt;/script&gt;&lt;secondary_table&gt;x_snc_airop_assessment_run&lt;/secondary_table&gt;&lt;sys_class_name&gt;sn_related_record_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-05-29 07:25:43&lt;/sys_created_on&gt;&lt;sys_domain&gt;global&lt;/sys_domain&gt;&lt;sys_id&gt;6fddeb4fcf454bd88935fb251d851c51&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;ITSM CHeck Results&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;sn_related_record_definition_6fddeb4fcf454bd88935fb251d851c51&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-05-29 07:26:52&lt;/sys_updated_on&gt;&lt;/sn_related_record_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>850401282</payload_hash>
+        <record_name>ITSM CHeck Results</record_name>
+        <reverted_from/>
+        <source>37e29a6bcf644b908935fb251d851c7a</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 07:26:53</sys_created_on>
+        <sys_id>c9507fc7cfc54bd88935fb251d851c13</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19e72a0fab30000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-29 07:26:53</sys_updated_on>
+        <type>Related Record Definition</type>
+        <update_guid>05507fc744c54bd87e2c8a6eb3028012</update_guid>
+        <update_guid_history>05507fc744c54bd87e2c8a6eb3028012:850401282,d410fb436fc54bd8fc88863f02c06b63:449520078</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="ITSM CHeck Results">6a80b70bcfc54bd88935fb251d851c10</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 07:27:48</sys_created_on>
+        <sys_db_object display_value="" name="sn_related_record_definition">sn_related_record_definition</sys_db_object>
+        <sys_id>00829a118af14b748000447ff5048710</sys_id>
+        <sys_metadata>6fddeb4fcf454bd88935fb251d851c51</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>ITSM CHeck Results</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sn_related_record_definition_6fddeb4fcf454bd88935fb251d851c51</sys_update_name>
+        <sys_update_version display_value="sn_related_record_definition_6fddeb4fcf454bd88935fb251d851c51">c9507fc7cfc54bd88935fb251d851c13</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-29 07:27:48</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

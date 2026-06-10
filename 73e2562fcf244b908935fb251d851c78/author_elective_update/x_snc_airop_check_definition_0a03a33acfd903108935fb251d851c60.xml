@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[CMDB correctness measures whether CI data reflects actual infrastructure state. Low correctness means Now Assist is reasoning over data that does not represent the real environment.]]></ai_justification>
+<check_name>Overall CMDB Correctness Score</check_name>
+<check_script><![CDATA[(function() {
+    var t = new GlideRecord("cmdb_health_scorecard");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table cmdb_health_scorecard not found", finding: "CMDB Health Scorecard table is not available. Verify the CMDB Health plugin is active." };
+    }
+    var gr = new GlideRecord("cmdb_health_scorecard");
+    gr.orderByDesc("sys_created_on");
+    gr.setLimit(1);
+    gr.query();
+    if (gr.next()) {
+        var score = parseFloat(gr.getValue("correctness_score") || 0);
+        var actualValue = "CMDB Correctness Score: " + score + "%";
+        if (score >= 75) return { status: "ready", actualValue: actualValue, finding: "CMDB Correctness Score is " + score + "%. CI data is current and accurate — Now Assist AI recommendations will reflect the actual state of infrastructure." };
+        if (score >= 50) return { status: "needs_attention", actualValue: actualValue, finding: "CMDB Correctness Score is " + score + "% (target: 75%+). Incorrect CI data will cause Now Assist to recommend remediations based on outdated infrastructure state." };
+        return { status: "value_blocker", actualValue: actualValue, finding: "CMDB Correctness Score is only " + score + "%. Critical correctness gap — Now Assist AI recommendations are unreliable when the majority of CI data is incorrect or stale." };
+    }
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+    var gaFresh = new GlideAggregate("cmdb_ci");
+    gaFresh.addQuery("install_status", 1);
+    gaFresh.addQuery("sys_updated_on", ">=", cutoff.getValue());
+    gaFresh.addAggregate("COUNT");
+    gaFresh.query();
+    var fresh = gaFresh.next() ? parseInt(gaFresh.getAggregate("COUNT")) : 0;
+    var gaTotal = new GlideAggregate("cmdb_ci");
+    gaTotal.addQuery("install_status", 1);
+    gaTotal.addAggregate("COUNT");
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0;
+    var pct = total > 0 ? Math.round((fresh / total) * 100) : 0;
+    var actualValue = "Proxy correctness: " + pct + "% of CIs updated in last 90 days (" + fresh + " of " + total + "). Enable CMDB Health jobs for official score.";
+    if (pct >= 75) return { status: "ready", actualValue: actualValue, finding: "Proxy correctness: " + pct + "% of CIs updated in last 90 days." };
+    if (pct >= 50) return { status: "needs_attention", actualValue: actualValue, finding: "Proxy correctness: only " + pct + "% of CIs updated in last 90 days (target: 75%+)." };
+    return { status: "value_blocker", actualValue: actualValue, finding: "Proxy correctness: only " + pct + "% of CIs updated in last 90 days. Most CI data is likely stale." };
+})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>CMDB</module>
+<number>CHK0006003</number>
+<order>60</order>
+<remediation_guidance>Enable CMDB Health Correctness job via: All &gt; Configuration &gt; CMDB Dashboard &gt; CMDB Health Dashboard Jobs. Target: 75%+ correctness. Address top correctness detractors (orphaned, stale, duplicate CIs) identified by the health dashboard.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>0a03a33acfd903108935fb251d851c60</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c60</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[CMDB correctness measures whether CI data reflects actual infrastructure state. Low correctness means Now Assist is reasoning over data that does not represent the real environment.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Overall CMDB Correctness Score&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function() {
+    var t = new GlideRecord("cmdb_health_scorecard");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table cmdb_health_scorecard not found", finding: "CMDB Health Scorecard table is not available. Verify the CMDB Health plugin is active." };
+    }
+    var gr = new GlideRecord("cmdb_health_scorecard");
+    gr.orderByDesc("sys_created_on");
+    gr.setLimit(1);
+    gr.query();
+    if (gr.next()) {
+        var score = parseFloat(gr.getValue("correctness_score") || 0);
+        var actualValue = "CMDB Correctness Score: " + score + "%";
+        if (score &gt;= 75) return { status: "ready", actualValue: actualValue, finding: "CMDB Correctness Score is " + score + "%. CI data is current and accurate — Now Assist AI recommendations will reflect the actual state of infrastructure." };
+        if (score &gt;= 50) return { status: "needs_attention", actualValue: actualValue, finding: "CMDB Correctness Score is " + score + "% (target: 75%+). Incorrect CI data will cause Now Assist to recommend remediations based on outdated infrastructure state." };
+        return { status: "value_blocker", actualValue: actualValue, finding: "CMDB Correctness Score is only " + score + "%. Critical correctness gap — Now Assist AI recommendations are unreliable when the majority of CI data is incorrect or stale." };
+    }
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+    var gaFresh = new GlideAggregate("cmdb_ci");
+    gaFresh.addQuery("install_status", 1);
+    gaFresh.addQuery("sys_updated_on", "&gt;=", cutoff.getValue());
+    gaFresh.addAggregate("COUNT");
+    gaFresh.query();
+    var fresh = gaFresh.next() ? parseInt(gaFresh.getAggregate("COUNT")) : 0;
+    var gaTotal = new GlideAggregate("cmdb_ci");
+    gaTotal.addQuery("install_status", 1);
+    gaTotal.addAggregate("COUNT");
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0;
+    var pct = total &gt; 0 ? Math.round((fresh / total) * 100) : 0;
+    var actualValue = "Proxy correctness: " + pct + "% of CIs updated in last 90 days (" + fresh + " of " + total + "). Enable CMDB Health jobs for official score.";
+    if (pct &gt;= 75) return { status: "ready", actualValue: actualValue, finding: "Proxy correctness: " + pct + "% of CIs updated in last 90 days." };
+    if (pct &gt;= 50) return { status: "needs_attention", actualValue: actualValue, finding: "Proxy correctness: only " + pct + "% of CIs updated in last 90 days (target: 75%+)." };
+    return { status: "value_blocker", actualValue: actualValue, finding: "Proxy correctness: only " + pct + "% of CIs updated in last 90 days. Most CI data is likely stale." };
+})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;CMDB&lt;/module&gt;
+&lt;number&gt;CHK0006003&lt;/number&gt;
+&lt;order&gt;60&lt;/order&gt;
+&lt;remediation_guidance&gt;Enable CMDB Health Correctness job via: All &amp;gt; Configuration &amp;gt; CMDB Dashboard &amp;gt; CMDB Health Dashboard Jobs. Target: 75%+ correctness. Address top correctness detractors (orphaned, stale, duplicate CIs) identified by the health dashboard.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;0a03a33acfd903108935fb251d851c60&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>301403565</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:25</sys_created_on>
+        <sys_id>e4b64147cf9947108935fb251d851ccf</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa6dc00000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:25</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>20b64147e4994710a84350b23937a5ce</update_guid>
+        <update_guid_history>20b64147e4994710a84350b23937a5ce:301403565</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">071f81cfcfdd47108935fb251d851c21</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:11</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>79c7f930060d4ffe8d96c89c21b33571</sys_id>
+        <sys_metadata>0a03a33acfd903108935fb251d851c60</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c60</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c60">e4b64147cf9947108935fb251d851ccf</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:11</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

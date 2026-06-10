@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_documentation element="spm_score" label="SPM Readiness %" language="en" table="x_snc_airop_assessment_run">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>spm_score</element>
+            <help/>
+            <hint/>
+            <label>SPM Readiness %</label>
+            <language>en</language>
+            <name>x_snc_airop_assessment_run</name>
+            <plural>SPM Readiness %s</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:22</sys_created_on>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_name>SPM Readiness %</sys_name>
+            <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+            <sys_update_name>sys_documentation_x_snc_airop_assessment_run_spm_score_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-07 13:22:09</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

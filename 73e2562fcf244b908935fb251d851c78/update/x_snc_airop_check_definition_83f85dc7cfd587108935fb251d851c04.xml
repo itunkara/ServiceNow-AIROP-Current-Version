@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Resource management data enables Now Assist SPM to provide AI-driven capacity planning and resource allocation recommendations.]]></ai_justification>
+        <check_name>Resource Management Configuration</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('resource_plan');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active resource plans';
+
+    if (count >= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active resource plans — Now Assist SPM has sufficient resource data for AI-driven capacity planning recommendations.'
+        };
+    } else if (count >= 3) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active resource plans (target: 10+). Now Assist SPM capacity planning recommendations will have limited coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active resource plans. Now Assist SPM needs resource data for AI-driven capacity planning recommendations.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SPM</module>
+        <number>CHK0000470</number>
+        <order>40</order>
+        <remediation_guidance>Configure resource plans for active projects. Define resource pools and capacity. Target: 10+ active resource plans. Now Assist SPM uses resource data for AI allocation optimization.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>83f85dc7cfd587108935fb251d851c04</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Resource Management Configuration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_83f85dc7cfd587108935fb251d851c04</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

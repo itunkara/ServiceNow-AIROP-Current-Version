@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Customer account and contact records are the entity anchors Now Assist CSM uses for AI-personalized responses.]]></ai_justification>
+        <check_name>Customer Account and Contact Population</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    // sn_customerservice_case.state is INTEGER: 3=Closed, 6=Resolved
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_customerservice_case');
+    gaTotal.addQuery('state', 'IN', '3,6');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed CSM cases in last 12 months',
+            finding: 'No closed CSM cases found in the last 12 months. Account linkage cannot be assessed.'
+        };
+    }
+
+    var gaWithAcct = new GlideAggregate('sn_customerservice_case');
+    gaWithAcct.addQuery('state', 'IN', '3,6');
+    gaWithAcct.addQuery('closed_at', '>=', cutoff.getValue());
+    gaWithAcct.addQuery('account', '!=', '');
+    gaWithAcct.addAggregate('COUNT');
+    gaWithAcct.query();
+    var withAcct = gaWithAcct.next() ? parseInt(gaWithAcct.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withAcct / total) * 100);
+    var actualValue = pct + '% of closed CSM cases have account linked (last 12 months, ' + withAcct + '/' + total + ')';
+
+    if (pct >= 90) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed CSM cases are linked to an account. Now Assist CSM has strong customer context for personalized AI responses.'
+        };
+    } else if (pct >= 70) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have an account linked (target: 90%). Now Assist CSM personalization will be limited for unlinked cases.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have an account linked. Now Assist CSM cannot provide meaningful personalized AI responses without customer account context.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>CSM</module>
+        <number>CHK0000414</number>
+        <order>20</order>
+        <remediation_guidance>Ensure all CSM cases are linked to Account records at case creation. Enforce via mandatory field policy or case creation workflow. Import customer data from CRM systems if needed. Target: 90%+ of closed cases linked to an account.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>4bf81dc7cfd587108935fb251d851c71</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Customer Account and Contact Population</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_4bf81dc7cfd587108935fb251d851c71</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

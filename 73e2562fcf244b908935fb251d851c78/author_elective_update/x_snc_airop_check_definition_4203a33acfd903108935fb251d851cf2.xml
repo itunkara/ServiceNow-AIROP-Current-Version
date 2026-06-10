@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Missing cross-scope access policies on custom tables prevent Now Assist and AI Agents from reading data they need to provide accurate AI context. Overly permissive policies expose data to unintended AI processing.]]></ai_justification>
+<check_name>Custom Table Cross-Scope Access Policies</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_scope_privilege');
+    ga.addQuery('target_scope.name', 'sn_now_assist');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' cross-scope access grants to sn_now_assist';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' cross-scope access grants configured for Now Assist. Now Assist can read custom table data needed for accurate AI context and recommendations.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' cross-scope access grant(s) to Now Assist (target: 5+). Missing grants may prevent Now Assist from reading custom table data needed for accurate AI context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No cross-scope access grants to Now Assist scope. Now Assist cannot read custom table data without cross-scope access — AI context will be limited to OOB tables only.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>PLATFORM</module>
+<number>CHK0006120</number>
+<order>160</order>
+<remediation_guidance>Review cross-scope access policies for custom tables via sys_scope_privilege_list.do. Grant read access to the sn_now_assist scope for tables Now Assist needs to reference. Test AI data access in sub-production after granting.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4203a33acfd903108935fb251d851cf2</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851cf2</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Missing cross-scope access policies on custom tables prevent Now Assist and AI Agents from reading data they need to provide accurate AI context. Overly permissive policies expose data to unintended AI processing.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Custom Table Cross-Scope Access Policies&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_scope_privilege');
+    ga.addQuery('target_scope.name', 'sn_now_assist');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' cross-scope access grants to sn_now_assist';
+
+    if (count &gt;= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' cross-scope access grants configured for Now Assist. Now Assist can read custom table data needed for accurate AI context and recommendations.'
+        };
+    } else if (count &gt;= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' cross-scope access grant(s) to Now Assist (target: 5+). Missing grants may prevent Now Assist from reading custom table data needed for accurate AI context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No cross-scope access grants to Now Assist scope. Now Assist cannot read custom table data without cross-scope access — AI context will be limited to OOB tables only.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;PLATFORM&lt;/module&gt;
+&lt;number&gt;CHK0006120&lt;/number&gt;
+&lt;order&gt;160&lt;/order&gt;
+&lt;remediation_guidance&gt;Review cross-scope access policies for custom tables via sys_scope_privilege_list.do. Grant read access to the sn_now_assist scope for tables Now Assist needs to reference. Test AI data access in sub-production after granting.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4203a33acfd903108935fb251d851cf2&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1178292070</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:20</sys_created_on>
+        <sys_id>97a6c907cf9947108935fb251d851cab</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa59ce0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:20</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>dfa6c9078c994710b4a82501110765a9</update_guid>
+        <update_guid_history>dfa6c9078c994710b4a82501110765a9:-1178292070</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">bf1fc5cfcfdd47108935fb251d851c4e</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:14</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>088173eae60648d89face090a452a440</sys_id>
+        <sys_metadata>4203a33acfd903108935fb251d851cf2</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851cf2</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4203a33acfd903108935fb251d851cf2">97a6c907cf9947108935fb251d851cab</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:14</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

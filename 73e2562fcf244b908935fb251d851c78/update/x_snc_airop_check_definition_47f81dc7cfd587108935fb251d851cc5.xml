@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Runbook automation enables Now Assist TSOM AI Agents to execute automated remediation. Without runbooks, AI Agent TSOM actions are limited to alerts and routing.]]></ai_justification>
+        <check_name>Runbook Automation Configuration</check_name>
+        <check_script><![CDATA[(function(){try{if(!gs.tableExists("sn_si_trigger")){return{status:"needs_validation",actualValue:"Table not found",finding:"sn_si_trigger table not present -- manual verification required. Confirm Runbook Automation is installed and active."};}var gr=new GlideRecord("sn_si_trigger");gr.addQuery("active",true);gr.query();var n=gr.getRowCount();return{status:n>=10?"ready":"needs_attention",actualValue:n+" active runbook triggers",finding:n<10?"Only "+n+" active runbook triggers. Now Assist TSOM AI Agents use runbook routing rules for automated remediation -- low count limits AI action scope.":n+" active runbook triggers -- Now Assist TSOM AI Agents can execute automated remediation.";};}catch(e){return{status:"needs_validation",actualValue:"Check failed",finding:"Script execution error: "+e.message};};})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>AIOPS</module>
+        <number>CHK0000446</number>
+        <order>40</order>
+        <remediation_guidance>Configure runbooks for key alert types via sa_runbook_list.do. Automate top repetitive remediation tasks. Now Assist TSOM AI Agents leverage runbooks for automated remediation.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>47f81dc7cfd587108935fb251d851cc5</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Runbook Automation Configuration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_47f81dc7cfd587108935fb251d851cc5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

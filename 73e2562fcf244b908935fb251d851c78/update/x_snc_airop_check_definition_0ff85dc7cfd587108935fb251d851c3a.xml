@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[High customization density on core tables creates risk of Now Assist conflicts during enablement. This composite score aggregates business rule, client script, and UI action counts to estimate deployment risk.]]></ai_justification>
+        <check_name>Instance Customization Risk Score</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaBR = new GlideAggregate('sys_script');
+    gaBR.addQuery('collection', 'IN', 'incident,task,change_request');
+    gaBR.addQuery('active', true);
+    gaBR.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaBR.addAggregate('COUNT');
+    gaBR.query();
+    var brCount = gaBR.next() ? parseInt(gaBR.getAggregate('COUNT')) : 0;
+
+    var gaCS = new GlideAggregate('sys_script_client');
+    gaCS.addQuery('table', 'IN', 'incident,task,change_request');
+    gaCS.addQuery('active', true);
+    gaCS.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaCS.addAggregate('COUNT');
+    gaCS.query();
+    var csCount = gaCS.next() ? parseInt(gaCS.getAggregate('COUNT')) : 0;
+
+    var risk = brCount + csCount;
+    var actualValue = 'Risk score: ' + risk + ' (' + brCount + ' BRs + ' + csCount + ' client scripts on core AI tables)';
+
+    if (risk <= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Customization risk score is ' + risk + ' — within acceptable range for Now Assist and AI Agent enablement.'
+        };
+    } else if (risk <= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Customization risk score is ' + risk + ' (target: ≤50). High customization density on core AI tables creates conflict risk with Now Assist and AI Agent operations — review before enablement.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Customization risk score is ' + risk + '. Very high customization density on incident, task, and change_request creates significant risk of Now Assist and AI Agent conflicts — remediate before enablement.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>PLATFORM</module>
+        <number>CHK0000498</number>
+        <order>190</order>
+        <remediation_guidance>Review the customization risk score and address high-risk items before Now Assist enablement. Focus on Business Rules that fire on insert/update of task, incident, and change_request. Document all customizations for the Now Assist configuration team.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>0ff85dc7cfd587108935fb251d851c3a</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Instance Customization Risk Score</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_0ff85dc7cfd587108935fb251d851c3a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

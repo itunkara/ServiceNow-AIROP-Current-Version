@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPAjax</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP GlideAjax handler - extends AbstractAjaxProcessor</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPAjax</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPAjax = Class.create();
+AROPAjax.prototype = Object.extendsObject(AbstractAjaxProcessor, {
+
+    triggerAssessment: function() {
+        try {
+            // Block if already running
+            var running = new GlideRecord('x_snc_airop_assessment_run');
+            running.addQuery('status', 'running');
+            running.setLimit(1);
+            running.query();
+            if (running.next()) {
+                return 'RUNNING|' + running.getUniqueValue() + '|' + running.getDisplayValue('name');
+            }
+
+            // Fire scheduled job immediately
+            var job = new GlideRecord('sysauto_script');
+            job.addQuery('name', 'AIROP Scheduled Assessment');
+            job.setLimit(1);
+            job.query();
+            if (!job.next()) {
+                return 'ERROR|Scheduled job not found. Contact your administrator.';
+            }
+            job.setValue('next_action', new GlideDateTime());
+            job.setValue('active', true);
+            job.update();
+
+            // Create run record to redirect user to
+            var run = new GlideRecord('x_snc_airop_assessment_run');
+            run.setValue('name', 'AIROP Run - ' + new GlideDateTime());
+            run.setValue('status', 'running');
+            run.setValue('run_date', new GlideDateTime());
+            var runId = run.insert();
+
+            return 'OK|' + runId;
+
+        } catch(e) {
+            return 'ERROR|' + e.toString();
+        }
+    },
+
+
+    generateExport: function() {
+        try {
+            var runId = this.getParameter("sysparm_run_id");
+            if (!runId) return JSON.stringify({ success: false, message: "No run ID provided" });
+            var exporter = new x_snc_airop.AROPExporter();
+            var result = exporter.generateExportCSV(runId);
+            return JSON.stringify(result);
+        } catch(e) {
+            return JSON.stringify({ success: false, message: e.message });
+        }
+    },
+    type: 'AROPAjax'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 07:19:44</sys_created_on>
+        <sys_id>dc2291f3cfe803d08935fb251d851cab</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>AROPAjax</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_dc2291f3cfe803d08935fb251d851cab</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-03 19:41:23</sys_updated_on>
+    </sys_script_include>
+</record_update>

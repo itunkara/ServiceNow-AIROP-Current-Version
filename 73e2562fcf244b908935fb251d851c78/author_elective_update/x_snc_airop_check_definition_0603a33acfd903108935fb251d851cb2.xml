@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Custom business rules on work order tables can conflict with Now Assist FSM AI Agent scheduling actions.]]></ai_justification>
+<check_name>FSM Customization Risk</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script');
+    ga.addQuery('collection', 'IN', 'wm_order,wm_task');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom Business Rules on FSM tables (wm_order, wm_task)';
+
+    if (count <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low FSM customization risk (' + count + ' custom BRs). Now Assist FSM AI dispatch and scheduling actions are unlikely to encounter conflicts.'
+        };
+    } else if (count <= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom BRs on FSM tables. Moderate customization risk — test Now Assist FSM in sub-production before enabling in production.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High FSM customization risk: ' + count + ' custom BRs on core FSM tables. Extensive customization increases the risk of conflicts with Now Assist FSM AI dispatch and scheduling actions.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>FIELD_SERVICE</module>
+<number>CHK0006067</number>
+<order>150</order>
+<remediation_guidance>Review custom Business Rules on wm_order and wm_task. Test Now Assist FSM with all customizations enabled in sub-production. Consider deactivating or consolidating redundant BRs before Now Assist go-live.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>0603a33acfd903108935fb251d851cb2</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0603a33acfd903108935fb251d851cb2</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Custom business rules on work order tables can conflict with Now Assist FSM AI Agent scheduling actions.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;FSM Customization Risk&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script');
+    ga.addQuery('collection', 'IN', 'wm_order,wm_task');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom Business Rules on FSM tables (wm_order, wm_task)';
+
+    if (count &lt;= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low FSM customization risk (' + count + ' custom BRs). Now Assist FSM AI dispatch and scheduling actions are unlikely to encounter conflicts.'
+        };
+    } else if (count &lt;= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom BRs on FSM tables. Moderate customization risk — test Now Assist FSM in sub-production before enabling in production.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High FSM customization risk: ' + count + ' custom BRs on core FSM tables. Extensive customization increases the risk of conflicts with Now Assist FSM AI dispatch and scheduling actions.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;FIELD_SERVICE&lt;/module&gt;
+&lt;number&gt;CHK0006067&lt;/number&gt;
+&lt;order&gt;150&lt;/order&gt;
+&lt;remediation_guidance&gt;Review custom Business Rules on wm_order and wm_task. Test Now Assist FSM with all customizations enabled in sub-production. Consider deactivating or consolidating redundant BRs before Now Assist go-live.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;0603a33acfd903108935fb251d851cb2&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>2138478284</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:21</sys_created_on>
+        <sys_id>67a60d07cf9947108935fb251d851cb2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa5d420000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:21</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>9fa60d07d8994710c404e10cc79320b0</update_guid>
+        <update_guid_history>9fa60d07d8994710c404e10cc79320b0:2138478284</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">cf1f41cfcfdd47108935fb251d851cd8</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:11</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>143a88dc5df84f8a8fc0e002b718dd24</sys_id>
+        <sys_metadata>0603a33acfd903108935fb251d851cb2</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0603a33acfd903108935fb251d851cb2</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0603a33acfd903108935fb251d851cb2">67a60d07cf9947108935fb251d851cb2</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:11</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

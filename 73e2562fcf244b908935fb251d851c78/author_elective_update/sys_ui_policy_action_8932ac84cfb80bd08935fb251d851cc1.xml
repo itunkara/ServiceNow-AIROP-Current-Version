@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_policy_action">
+    <sys_ui_policy_action action="DELETE">
+        <cleared>false</cleared>
+        <disabled>true</disabled>
+        <field>check_id</field>
+        <field_message/>
+        <field_message_type>none</field_message_type>
+        <mandatory>false</mandatory>
+        <sys_class_name>sys_ui_policy_action</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 22:29:14</sys_created_on>
+        <sys_id>8932ac84cfb80bd08935fb251d851cc1</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>check_id</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_ui_policy_action_8932ac84cfb80bd08935fb251d851cc1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 22:29:27</sys_updated_on>
+        <table>x_snc_airop_check_definition</table>
+        <ui_policy display_value="Read Only Fields">4612e444cfb80bd08935fb251d851c08</ui_policy>
+        <value/>
+        <value_action>ignore</value_action>
+        <visible>ignore</visible>
+    </sys_ui_policy_action>
+    <sys_translated_text action="DELETE" query="documentkey=8932ac84cfb80bd08935fb251d851cc1"/>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_ui_policy_action_8932ac84cfb80bd08935fb251d851cc1</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_policy_action"><sys_ui_policy_action action="INSERT_OR_UPDATE"><cleared>false</cleared><disabled>true</disabled><field>check_id</field><field_message/><field_message_type>none</field_message_type><mandatory>false</mandatory><sys_class_name>sys_ui_policy_action</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-05-06 22:29:14</sys_created_on><sys_id>8932ac84cfb80bd08935fb251d851cc1</sys_id><sys_mod_count>1</sys_mod_count><sys_name>check_id</sys_name><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_ui_policy_action_8932ac84cfb80bd08935fb251d851cc1</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-05-06 22:29:27</sys_updated_on><table>x_snc_airop_check_definition</table><ui_policy display_value="Read Only Fields">4612e444cfb80bd08935fb251d851c08</ui_policy><value/><value_action>ignore</value_action><visible>ignore</visible></sys_ui_policy_action><sys_translated_text action="delete_multiple" query="documentkey=8932ac84cfb80bd08935fb251d851cc1"/></record_update>]]></payload>
+        <payload_hash>1861561732</payload_hash>
+        <record_name>check_id</record_name>
+        <reverted_from/>
+        <source>37e29a6bcf644b908935fb251d851c7a</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 22:29:27</sys_created_on>
+        <sys_id>1e526408cfb80bd08935fb251d851c6c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19dff690a060000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 22:29:27</sys_updated_on>
+        <type>UI Policy Action</type>
+        <update_guid>d65264088cb80bd0591cf17c652d2c6b</update_guid>
+        <update_guid_history>d65264088cb80bd0591cf17c652d2c6b:1861561732,df42a40422b80bd06290f6de19ae90ae:984880867</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 23:30:57</sys_created_on>
+        <sys_db_object display_value="" name="sys_ui_policy_action">sys_ui_policy_action</sys_db_object>
+        <sys_id>a3a1e238ab614acc91ac9eec83b36e84</sys_id>
+        <sys_metadata>8932ac84cfb80bd08935fb251d851cc1</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>check_id</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent display_value="Read Only Fields">4612e444cfb80bd08935fb251d851c08</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_ui_policy_action_8932ac84cfb80bd08935fb251d851cc1</sys_update_name>
+        <sys_update_version display_value="sys_ui_policy_action_8932ac84cfb80bd08935fb251d851cc1">1e526408cfb80bd08935fb251d851c6c</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 23:30:57</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

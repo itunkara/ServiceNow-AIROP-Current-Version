@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="DELETE">
+        <active>true</active>
+        <application display_value="ServiceNow AI Readiness Optimization Pla">24ef5263cf208b908935fb251d851c56</application>
+        <assessment/>
+        <device_type/>
+        <filter/>
+        <hint>Trigger a new AI readiness assessment run using current system property configuration</hint>
+        <homepage/>
+        <image/>
+        <link_type>DIRECT</link_type>
+        <map_page/>
+        <mobile_title>Run Assessment Now</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name>sysauto_script.do?sys_id=f934b7afcfa04f908935fb251d851c02</name>
+        <order>50</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query>sysauto_script.do?sys_id=f934b7afcfa04f908935fb251d851c02</query>
+        <report/>
+        <require_confirmation>true</require_confirmation>
+        <roles>43d49623cfe44b908935fb251d851cd1,dfd4d623cfe44b908935fb251d851c05</roles>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-05 23:37:50</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>1668a3e3cfe80f908935fb251d851c78</sys_id>
+        <sys_mod_count>5</sys_mod_count>
+        <sys_name>Run Assessment Now</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_app_module_1668a3e3cfe80f908935fb251d851c78</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 00:31:53</sys_updated_on>
+        <timeline_page/>
+        <title>Run Assessment Now</title>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+        <window_name/>
+    </sys_app_module>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_app_module_1668a3e3cfe80f908935fb251d851c78</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="ServiceNow AI Readiness Optimization Pla">24ef5263cf208b908935fb251d851c56</application><assessment/><device_type/><filter/><hint>Trigger a new AI readiness assessment run using current system property configuration</hint><homepage/><image/><link_type>DIRECT</link_type><map_page/><mobile_title>Run Assessment Now</mobile_title><mobile_view_name>Mobile</mobile_view_name><name>sysauto_script.do?sys_id=f934b7afcfa04f908935fb251d851c02</name><order>50</order><override_menu_roles>false</override_menu_roles><query>sysauto_script.do?sys_id=f934b7afcfa04f908935fb251d851c02</query><report/><require_confirmation>true</require_confirmation><roles>43d49623cfe44b908935fb251d851cd1,dfd4d623cfe44b908935fb251d851c05</roles><sys_class_name>sys_app_module</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-05-05 23:37:50</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>1668a3e3cfe80f908935fb251d851c78</sys_id><sys_mod_count>5</sys_mod_count><sys_name>Run Assessment Now</sys_name><sys_overrides/><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_app_module_1668a3e3cfe80f908935fb251d851c78</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-05-06 00:31:53</sys_updated_on><timeline_page/><title>Run Assessment Now</title><uncancelable>false</uncancelable><view_name/><window_name/></sys_app_module></record_update>]]></payload>
+        <payload_hash>-28959115</payload_hash>
+        <record_name>Run Assessment Now</record_name>
+        <reverted_from/>
+        <source>37e29a6bcf644b908935fb251d851c7a</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 00:31:53</sys_created_on>
+        <sys_id>c2c47b23cfe04f908935fb251d851c4b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19dfab2c8020000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 00:31:53</sys_updated_on>
+        <type>Module</type>
+        <update_guid>42c47b23ebe04f905c092de00b57934a</update_guid>
+        <update_guid_history>42c47b23ebe04f905c092de00b57934a:-28959115,7934b7afeda04f903f8586dad57aa025:1256730118,1bb1bb6714604f903b0e894096df6b09:-754718289,27bf67a339204f905ead2a4311da93af:2101602515,d39d23ef78ac0f90cb6930fb9d73db59:-2055817962,5e68a7e7ebe80f90a1bfd921d7736a76:619247600</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">9b3654bbcfa48f908935fb251d851ca5</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 02:58:04</sys_created_on>
+        <sys_db_object display_value="" name="sys_app_module">sys_app_module</sys_db_object>
+        <sys_id>6ddd398f9ad346daa73cae1d11f5ece1</sys_id>
+        <sys_metadata>1668a3e3cfe80f908935fb251d851c78</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Run Assessment Now</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_app_module_1668a3e3cfe80f908935fb251d851c78</sys_update_name>
+        <sys_update_version display_value="sys_app_module_1668a3e3cfe80f908935fb251d851c78">c2c47b23cfe04f908935fb251d851c4b</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 02:58:04</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

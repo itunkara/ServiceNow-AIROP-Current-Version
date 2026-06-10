@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Now Assist AI-driven assignment and routing uses CI ownership to recommend the correct team. Zero ownership population means every AI assignment recommendation defaults to generic logic.]]></ai_justification>
+<check_name>CI Owned By / Managed By Population</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaOwned = new GlideAggregate('cmdb_ci');
+    gaOwned.addQuery('install_status', 1);
+    gaOwned.addQuery('owned_by', '!=', '');
+    gaOwned.addAggregate('COUNT');
+    gaOwned.query();
+    var withOwner = gaOwned.next() ? parseInt(gaOwned.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. Ownership population cannot be assessed.' };
+    }
+
+    var pct = Math.round((withOwner / total) * 100);
+    var actualValue = pct + '% of active CIs have owned_by populated (' + withOwner + ' of ' + total + ')';
+
+    if (pct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of active CIs have an owner assigned. Now Assist can route AI recommendations and escalations to the correct owners.' };
+    } else if (pct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs have an owner (target: 80%+). Now Assist AI escalation routing will fail for CIs without ownership data.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs have an owner. Critical ownership gap — Now Assist cannot route AI-generated recommendations or escalations without CI ownership data.' };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>CMDB</module>
+<number>CHK0006001</number>
+<order>40</order>
+<remediation_guidance>Populate owned_by and managed_by fields via import set from HR or asset management data. Use discovery enrichment rules to auto-assign ownership by IP range or organizational unit. Target: 80%+ of active CIs with ownership populated.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4203a33acfd903108935fb251d851c53</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851c53</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Now Assist AI-driven assignment and routing uses CI ownership to recommend the correct team. Zero ownership population means every AI assignment recommendation defaults to generic logic.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;CI Owned By / Managed By Population&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var gaOwned = new GlideAggregate('cmdb_ci');
+    gaOwned.addQuery('install_status', 1);
+    gaOwned.addQuery('owned_by', '!=', '');
+    gaOwned.addAggregate('COUNT');
+    gaOwned.query();
+    var withOwner = gaOwned.next() ? parseInt(gaOwned.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. Ownership population cannot be assessed.' };
+    }
+
+    var pct = Math.round((withOwner / total) * 100);
+    var actualValue = pct + '% of active CIs have owned_by populated (' + withOwner + ' of ' + total + ')';
+
+    if (pct &gt;= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of active CIs have an owner assigned. Now Assist can route AI recommendations and escalations to the correct owners.' };
+    } else if (pct &gt;= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs have an owner (target: 80%+). Now Assist AI escalation routing will fail for CIs without ownership data.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs have an owner. Critical ownership gap — Now Assist cannot route AI-generated recommendations or escalations without CI ownership data.' };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;CMDB&lt;/module&gt;
+&lt;number&gt;CHK0006001&lt;/number&gt;
+&lt;order&gt;40&lt;/order&gt;
+&lt;remediation_guidance&gt;Populate owned_by and managed_by fields via import set from HR or asset management data. Use discovery enrichment rules to auto-assign ownership by IP range or organizational unit. Target: 80%+ of active CIs with ownership populated.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4203a33acfd903108935fb251d851c53&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1871372076</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:19</sys_created_on>
+        <sys_id>0ba68907cf9947108935fb251d851ce5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa56d20000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:19</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>43a6890780994710148781affe24f1e4</update_guid>
+        <update_guid_history>43a6890780994710148781affe24f1e4:1871372076</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">b71f85cfcfdd47108935fb251d851ca5</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:14</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>378cad9ceceb42488e155e10144f4704</sys_id>
+        <sys_metadata>4203a33acfd903108935fb251d851c53</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851c53</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4203a33acfd903108935fb251d851c53">0ba68907cf9947108935fb251d851ce5</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:14</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Manually entered CIs are not kept current by automated discovery, making them likely to become stale. High manual CI rates reduce the reliability of CMDB data that Now Assist uses for AI context.]]></ai_justification>
+        <check_name>CI Discovery Source Distribution</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active CIs found',
+            finding: 'No active CIs found in CMDB. Discovery source distribution cannot be assessed.'
+        };
+    }
+
+    // OOB manual entry values — "Manual Entry" is the standard display value
+    var gaManual = new GlideAggregate('cmdb_ci');
+    gaManual.addQuery('install_status', 1);
+    gaManual.addQuery('discovery_source', 'IN', 'Manual Entry,manual');
+    gaManual.addAggregate('COUNT');
+    gaManual.query();
+    var manual = gaManual.next() ? parseInt(gaManual.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((manual / total) * 100);
+    var actualValue = pct + '% of active CIs are manually entered (' + manual + ' of ' + total + ')';
+
+    if (pct <= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of CIs are manually entered. Discovery-sourced CI data provides reliable, current context for Now Assist ITOM AI analysis.'
+        };
+    } else if (pct <= 30) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: pct + '% of active CIs are manually entered (target: ≤10%). Manual CIs become stale quickly and reduce Now Assist ITOM context reliability.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: pct + '% of active CIs are manually entered. High manual CI rate means Now Assist ITOM is reasoning over data that is likely stale — AI impact analysis and alert correlation accuracy will be significantly degraded.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITOM</module>
+        <number>CHK0000357</number>
+        <order>30</order>
+        <remediation_guidance>Replace manually entered CIs with discovery-sourced records by expanding discovery coverage. For CIs that cannot be auto-discovered, implement ServiceGraph Connectors or import sets from authoritative sources. Target: ≤10% manually entered CIs.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>f2f8d9c7cfd587108935fb251d851cac</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>CI Discovery Source Distribution</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_f2f8d9c7cfd587108935fb251d851cac</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

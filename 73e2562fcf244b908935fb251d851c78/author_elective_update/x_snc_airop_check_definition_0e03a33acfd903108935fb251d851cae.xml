@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Dispatcher Workspace is where Now Assist FSM AI scheduling suggestions surface to dispatchers.]]></ai_justification>
+<check_name>FSM Dispatcher Workspace Configuration</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gr = new GlideRecord('sys_scope');
+    gr.addQuery('scope', 'sn_fsm_disp_wrkspc');
+    gr.addQuery('active', true);
+    gr.setLimit(1);
+    gr.query();
+    var active = gr.next();
+
+    if (active) {
+        return {
+            status: 'ready',
+            actualValue: 'FSM Configurable Dispatcher Workspace (sn_fsm_disp_wrkspc) is active',
+            finding: 'FSM Dispatcher Workspace is active. Now Assist FSM AI scheduling recommendations and dispatch suggestions are visible to dispatchers.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: 'FSM Dispatcher Workspace (sn_fsm_disp_wrkspc) not found or inactive',
+            finding: 'FSM Dispatcher Workspace is not active. Now Assist FSM AI scheduling recommendations are not visible to dispatchers without the Dispatcher Workspace.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>FIELD_SERVICE</module>
+<number>CHK0006060</number>
+<order>80</order>
+<remediation_guidance>Activate FSM Configurable Dispatcher Workspace (sn_fsm_disp_wrkspc) via the ServiceNow Store. Configure workspace views for your dispatch team. Now Assist FSM AI scheduling recommendations surface in the Dispatcher Workspace.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>0e03a33acfd903108935fb251d851cae</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0e03a33acfd903108935fb251d851cae</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Dispatcher Workspace is where Now Assist FSM AI scheduling suggestions surface to dispatchers.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;FSM Dispatcher Workspace Configuration&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var gr = new GlideRecord('sys_scope');
+    gr.addQuery('scope', 'sn_fsm_disp_wrkspc');
+    gr.addQuery('active', true);
+    gr.setLimit(1);
+    gr.query();
+    var active = gr.next();
+
+    if (active) {
+        return {
+            status: 'ready',
+            actualValue: 'FSM Configurable Dispatcher Workspace (sn_fsm_disp_wrkspc) is active',
+            finding: 'FSM Dispatcher Workspace is active. Now Assist FSM AI scheduling recommendations and dispatch suggestions are visible to dispatchers.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: 'FSM Dispatcher Workspace (sn_fsm_disp_wrkspc) not found or inactive',
+            finding: 'FSM Dispatcher Workspace is not active. Now Assist FSM AI scheduling recommendations are not visible to dispatchers without the Dispatcher Workspace.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;FIELD_SERVICE&lt;/module&gt;
+&lt;number&gt;CHK0006060&lt;/number&gt;
+&lt;order&gt;80&lt;/order&gt;
+&lt;remediation_guidance&gt;Activate FSM Configurable Dispatcher Workspace (sn_fsm_disp_wrkspc) via the ServiceNow Store. Configure workspace views for your dispatch team. Now Assist FSM AI scheduling recommendations surface in the Dispatcher Workspace.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;0e03a33acfd903108935fb251d851cae&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1478109640</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:21</sys_created_on>
+        <sys_id>27a60d07cf9947108935fb251d851cce</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa5d5d0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:21</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>6fa60d07a3994710f6bba24de3fdafcc</update_guid>
+        <update_guid_history>6fa60d07a3994710f6bba24de3fdafcc:-1478109640</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">971fc1cfcfdd47108935fb251d851c0e</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:12</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>0620d79e5f5443848ae376c818e69b04</sys_id>
+        <sys_metadata>0e03a33acfd903108935fb251d851cae</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0e03a33acfd903108935fb251d851cae</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0e03a33acfd903108935fb251d851cae">27a60d07cf9947108935fb251d851cce</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:12</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

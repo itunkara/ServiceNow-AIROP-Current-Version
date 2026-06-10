@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_scope_privilege">
+    <sys_scope_privilege action="DELETE">
+        <operation>read</operation>
+        <source_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</source_scope>
+        <status>requested</status>
+        <sys_class_name>sys_scope_privilege</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-05 06:26:04</sys_created_on>
+        <sys_id>72852f59cf5d4b508935fb251d851ccd</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>sn_lg_matter_matter</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_scope_privilege_72852f59cf5d4b508935fb251d851ccd</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-05 06:26:04</sys_updated_on>
+        <target_name>sn_lg_matter_matter</target_name>
+        <target_scope display_value="Legal Matter Management">8570d70bb32313007a6de81816a8dcf3</target_scope>
+        <target_type>sys_db_object</target_type>
+    </sys_scope_privilege>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_scope_privilege_72852f59cf5d4b508935fb251d851ccd</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_scope_privilege"><sys_scope_privilege action="INSERT_OR_UPDATE"><operation>read</operation><source_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</source_scope><status>requested</status><sys_class_name>sys_scope_privilege</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-06-05 06:26:04</sys_created_on><sys_id>72852f59cf5d4b508935fb251d851ccd</sys_id><sys_mod_count>0</sys_mod_count><sys_name>sn_lg_matter_matter</sys_name><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_scope_privilege_72852f59cf5d4b508935fb251d851ccd</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-06-05 06:26:04</sys_updated_on><target_name>sn_lg_matter_matter</target_name><target_scope display_value="Legal Matter Management">8570d70bb32313007a6de81816a8dcf3</target_scope><target_type>sys_db_object</target_type></sys_scope_privilege></record_update>]]></payload>
+        <payload_hash>-447215467</payload_hash>
+        <record_name>sn_lg_matter_matter</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-05 06:26:05</sys_created_on>
+        <sys_id>fa852f59cf5d4b508935fb251d851cd1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19e9675d49e0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-05 06:26:05</sys_updated_on>
+        <type>Cross scope privilege</type>
+        <update_guid>b2852f594e5d4b509b99f12a74277dd0</update_guid>
+        <update_guid_history>b2852f594e5d4b509b99f12a74277dd0:-447215467</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-09 22:30:28</sys_created_on>
+        <sys_db_object display_value="" name="sys_scope_privilege">sys_scope_privilege</sys_db_object>
+        <sys_id>421c9f8df2d4464aa9f993a302485fe4</sys_id>
+        <sys_metadata>72852f59cf5d4b508935fb251d851ccd</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>sn_lg_matter_matter</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_scope_privilege_72852f59cf5d4b508935fb251d851ccd</sys_update_name>
+        <sys_update_version display_value="sys_scope_privilege_72852f59cf5d4b508935fb251d851ccd">fa852f59cf5d4b508935fb251d851cd1</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-09 22:30:28</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

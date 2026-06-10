@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_action">
+    <sys_ui_action action="DELETE">
+        <action_name>run_assessment_now</action_name>
+        <active>true</active>
+        <client>false</client>
+        <client_script_v2/>
+        <comments/>
+        <condition/>
+        <form_action>false</form_action>
+        <form_button>false</form_button>
+        <form_button_v2>false</form_button_v2>
+        <form_context_menu>false</form_context_menu>
+        <form_link>false</form_link>
+        <form_menu_button_v2>false</form_menu_button_v2>
+        <form_style/>
+        <format_for_configurable_workspace>false</format_for_configurable_workspace>
+        <hint>Start a new AI Readiness assessment run</hint>
+        <isolate_script>false</isolate_script>
+        <list_action>true</list_action>
+        <list_banner_button>true</list_banner_button>
+        <list_button>true</list_button>
+        <list_choice>false</list_choice>
+        <list_context_menu>false</list_context_menu>
+        <list_link>false</list_link>
+        <list_save_with_form_button>false</list_save_with_form_button>
+        <list_style/>
+        <messages/>
+        <name>Run Assessment Now</name>
+        <onclick/>
+        <order>100</order>
+        <script><![CDATA[// AIROP - Run Assessment Now UI Action
+// 1. Checks for running jobs
+// 2. Creates run record
+// 3. Fires scheduled job
+// 4. Redirects to run record
+
+// Step 1: Check if another assessment is already running
+var running = new GlideRecord('x_snc_airop_assessment_run');
+running.addQuery('status', 'running');
+running.setLimit(1);
+running.query();
+if (running.next()) {
+    gs.addErrorMessage('An assessment is already running: ' +
+        running.getValue('name') +
+        '. Only one assessment can run at a time. Please wait for it to complete.');
+    action.setRedirectURL('x_snc_airop_assessment_run_list.do');
+    return;
+}
+
+// Step 2: Check at least one module is enabled
+var propMap = {
+    'ITSM':'x_snc_airop.run_itsm',
+    'ITOM':'x_snc_airop.run_itom',
+    'CMDB':'x_snc_airop.run_cmdb',
+    'HRSD':'x_snc_airop.run_hrsd',
+    'EMPLOYEE_CENTER':'x_snc_airop.run_employee_center',
+    'CSM':'x_snc_airop.run_csm',
+    'FIELD_SERVICE':'x_snc_airop.run_field_service',
+    'TSOM':'x_snc_airop.run_tsom',
+    'GRC':'x_snc_airop.run_grc',
+    'SPM':'x_snc_airop.run_spm',
+    'ITSM_PRO':'x_snc_airop.run_itsm_pro',
+    'PLATFORM':'x_snc_airop.run_platform',
+    'INTEGRATION':'x_snc_airop.run_integration',
+    'VIRTUAL_AGENT':'x_snc_airop.run_virtual_agent'
+};
+var enabledModules = [];
+for (var mod in propMap) {
+    if (gs.getProperty(propMap[mod], 'false') === 'true') {
+        enabledModules.push(mod);
+    }
+}
+if (enabledModules.length === 0) {
+    gs.addErrorMessage('No modules are enabled. Please enable at least one module in Configuration before running an assessment.');
+    action.setRedirectURL('x_snc_airop_assessment_run_list.do');
+    return;
+}
+
+// Step 3: Create the run record with status = running
+var runName = 'AI Readiness Checks for: ' + enabledModules.join(', ');
+var runGr = new GlideRecord('x_snc_airop_assessment_run');
+runGr.setWorkflow(false);
+runGr.setValue('name',            runName);
+runGr.setValue('run_date',         new GlideDateTime());
+runGr.setValue('triggered_by',     gs.getUserID());
+runGr.setValue('status',           'running');
+runGr.setValue('environment_type', 'unknown');
+runGr.setValue('modules_scanned',  enabledModules.join(', '));
+var runId = runGr.insert();
+if (!runId) {
+    gs.addErrorMessage('Failed to create assessment run record. Check Script Execution Log for details.');
+    action.setRedirectURL('x_snc_airop_assessment_run_list.do');
+    return;
+}
+gs.info('[AIROP] Run record created: ' + runId);
+
+// Step 4: Fire the scheduled job immediately
+var schedJob = new GlideRecord('sysauto_script');
+schedJob.addQuery('name', 'AIROP Scheduled Assessment');
+schedJob.setLimit(1);
+schedJob.query();
+if (schedJob.next()) {
+    var now = new GlideDateTime();
+    schedJob.setValue('next_action', now);
+    schedJob.setValue('active',      true);
+    schedJob.update();
+    gs.info('[AIROP] Scheduled job fired for run: ' + runId);
+} else {
+    gs.error('[AIROP] Could not find scheduled job to fire');
+}
+
+// Step 5: Redirect to the new run record
+gs.addInfoMessage('Assessment started: ' + runName + '. Refresh this record in a few seconds to see results.');
+action.setRedirectURL('x_snc_airop_assessment_run.do?sys_id=' + runId);]]></script>
+        <show_insert>true</show_insert>
+        <show_multiple_update>false</show_multiple_update>
+        <show_query>false</show_query>
+        <show_update>true</show_update>
+        <sys_class_name>sys_ui_action</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 02:58:04</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>533654bbcfa48f908935fb251d851c50</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Run Assessment Now</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_ui_action_533654bbcfa48f908935fb251d851c50</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 03:33:01</sys_updated_on>
+        <table>x_snc_airop_assessment_run</table>
+        <ui11_compatible>true</ui11_compatible>
+        <ui16_compatible>false</ui16_compatible>
+    </sys_ui_action>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_ui_action_533654bbcfa48f908935fb251d851c50</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update sys_domain="global" table="sys_ui_action"&gt;&lt;sys_ui_action action="INSERT_OR_UPDATE"&gt;&lt;action_name&gt;run_assessment_now&lt;/action_name&gt;&lt;active&gt;true&lt;/active&gt;&lt;client&gt;false&lt;/client&gt;&lt;client_script_v2/&gt;&lt;comments/&gt;&lt;condition/&gt;&lt;form_action&gt;false&lt;/form_action&gt;&lt;form_button&gt;false&lt;/form_button&gt;&lt;form_button_v2&gt;false&lt;/form_button_v2&gt;&lt;form_context_menu&gt;false&lt;/form_context_menu&gt;&lt;form_link&gt;false&lt;/form_link&gt;&lt;form_menu_button_v2&gt;false&lt;/form_menu_button_v2&gt;&lt;form_style/&gt;&lt;format_for_configurable_workspace&gt;false&lt;/format_for_configurable_workspace&gt;&lt;hint&gt;Start a new AI Readiness assessment run&lt;/hint&gt;&lt;isolate_script&gt;false&lt;/isolate_script&gt;&lt;list_action&gt;true&lt;/list_action&gt;&lt;list_banner_button&gt;true&lt;/list_banner_button&gt;&lt;list_button&gt;true&lt;/list_button&gt;&lt;list_choice&gt;false&lt;/list_choice&gt;&lt;list_context_menu&gt;false&lt;/list_context_menu&gt;&lt;list_link&gt;false&lt;/list_link&gt;&lt;list_save_with_form_button&gt;false&lt;/list_save_with_form_button&gt;&lt;list_style/&gt;&lt;messages/&gt;&lt;name&gt;Run Assessment Now&lt;/name&gt;&lt;onclick/&gt;&lt;order&gt;100&lt;/order&gt;&lt;script&gt;&lt;![CDATA[// AIROP - Run Assessment Now UI Action
+// 1. Checks for running jobs
+// 2. Creates run record
+// 3. Fires scheduled job
+// 4. Redirects to run record
+
+// Step 1: Check if another assessment is already running
+var running = new GlideRecord('x_snc_airop_assessment_run');
+running.addQuery('status', 'running');
+running.setLimit(1);
+running.query();
+if (running.next()) {
+    gs.addErrorMessage('An assessment is already running: ' +
+        running.getValue('name') +
+        '. Only one assessment can run at a time. Please wait for it to complete.');
+    action.setRedirectURL('x_snc_airop_assessment_run_list.do');
+    return;
+}
+
+// Step 2: Check at least one module is enabled
+var propMap = {
+    'ITSM':'x_snc_airop.run_itsm',
+    'ITOM':'x_snc_airop.run_itom',
+    'CMDB':'x_snc_airop.run_cmdb',
+    'HRSD':'x_snc_airop.run_hrsd',
+    'EMPLOYEE_CENTER':'x_snc_airop.run_employee_center',
+    'CSM':'x_snc_airop.run_csm',
+    'FIELD_SERVICE':'x_snc_airop.run_field_service',
+    'TSOM':'x_snc_airop.run_tsom',
+    'GRC':'x_snc_airop.run_grc',
+    'SPM':'x_snc_airop.run_spm',
+    'ITSM_PRO':'x_snc_airop.run_itsm_pro',
+    'PLATFORM':'x_snc_airop.run_platform',
+    'INTEGRATION':'x_snc_airop.run_integration',
+    'VIRTUAL_AGENT':'x_snc_airop.run_virtual_agent'
+};
+var enabledModules = [];
+for (var mod in propMap) {
+    if (gs.getProperty(propMap[mod], 'false') === 'true') {
+        enabledModules.push(mod);
+    }
+}
+if (enabledModules.length === 0) {
+    gs.addErrorMessage('No modules are enabled. Please enable at least one module in Configuration before running an assessment.');
+    action.setRedirectURL('x_snc_airop_assessment_run_list.do');
+    return;
+}
+
+// Step 3: Create the run record with status = running
+var runName = 'AI Readiness Checks for: ' + enabledModules.join(', ');
+var runGr = new GlideRecord('x_snc_airop_assessment_run');
+runGr.setWorkflow(false);
+runGr.setValue('name',            runName);
+runGr.setValue('run_date',         new GlideDateTime());
+runGr.setValue('triggered_by',     gs.getUserID());
+runGr.setValue('status',           'running');
+runGr.setValue('environment_type', 'unknown');
+runGr.setValue('modules_scanned',  enabledModules.join(', '));
+var runId = runGr.insert();
+if (!runId) {
+    gs.addErrorMessage('Failed to create assessment run record. Check Script Execution Log for details.');
+    action.setRedirectURL('x_snc_airop_assessment_run_list.do');
+    return;
+}
+gs.info('[AIROP] Run record created: ' + runId);
+
+// Step 4: Fire the scheduled job immediately
+var schedJob = new GlideRecord('sysauto_script');
+schedJob.addQuery('name', 'AIROP Scheduled Assessment');
+schedJob.setLimit(1);
+schedJob.query();
+if (schedJob.next()) {
+    var now = new GlideDateTime();
+    schedJob.setValue('next_action', now);
+    schedJob.setValue('active',      true);
+    schedJob.update();
+    gs.info('[AIROP] Scheduled job fired for run: ' + runId);
+} else {
+    gs.error('[AIROP] Could not find scheduled job to fire');
+}
+
+// Step 5: Redirect to the new run record
+gs.addInfoMessage('Assessment started: ' + runName + '. Refresh this record in a few seconds to see results.');
+action.setRedirectURL('x_snc_airop_assessment_run.do?sys_id=' + runId);]]&gt;&lt;/script&gt;&lt;show_insert&gt;true&lt;/show_insert&gt;&lt;show_multiple_update&gt;false&lt;/show_multiple_update&gt;&lt;show_query&gt;false&lt;/show_query&gt;&lt;show_update&gt;true&lt;/show_update&gt;&lt;sys_class_name&gt;sys_ui_action&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-05-06 02:58:04&lt;/sys_created_on&gt;&lt;sys_domain&gt;global&lt;/sys_domain&gt;&lt;sys_domain_path&gt;/&lt;/sys_domain_path&gt;&lt;sys_id&gt;533654bbcfa48f908935fb251d851c50&lt;/sys_id&gt;&lt;sys_mod_count&gt;4&lt;/sys_mod_count&gt;&lt;sys_name&gt;Run Assessment Now&lt;/sys_name&gt;&lt;sys_overrides/&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_action_533654bbcfa48f908935fb251d851c50&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-05-06 03:33:01&lt;/sys_updated_on&gt;&lt;table&gt;x_snc_airop_assessment_run&lt;/table&gt;&lt;ui11_compatible&gt;true&lt;/ui11_compatible&gt;&lt;ui16_compatible&gt;false&lt;/ui16_compatible&gt;&lt;/sys_ui_action&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>2092893560</payload_hash>
+        <record_name>Run Assessment Now</record_name>
+        <reverted_from/>
+        <source>0ba6d0decf923210544cb7c51d851cc9</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 03:33:02</sys_created_on>
+        <sys_id>6f3e9c77cfe88f908935fb251d851c99</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19dfb589e130000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 03:33:02</sys_updated_on>
+        <type>UI Action</type>
+        <update_guid>273e9877abe88f90b1fe340c76d9a177</update_guid>
+        <update_guid_history>273e9877abe88f90b1fe340c76d9a177:2092893560,e46c90f32ca88f90f664a712a7f30c08:-1625825924,6e685cfb3ae48f90be200954c0e74252:-294943009,133654bb59a48f907dd2141f68ebf854:1117258608</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 03:42:48</sys_created_on>
+        <sys_db_object display_value="" name="sys_ui_action">sys_ui_action</sys_db_object>
+        <sys_id>c8ab9563b2444f80a6f0d824918c9100</sys_id>
+        <sys_metadata>533654bbcfa48f908935fb251d851c50</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Run Assessment Now</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent display_value="Assessment Run">2bbadf2fcfa00f908935fb251d851c27</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_ui_action_533654bbcfa48f908935fb251d851c50</sys_update_name>
+        <sys_update_version display_value="sys_ui_action_533654bbcfa48f908935fb251d851c50">6f3e9c77cfe88f908935fb251d851c99</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 03:42:48</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

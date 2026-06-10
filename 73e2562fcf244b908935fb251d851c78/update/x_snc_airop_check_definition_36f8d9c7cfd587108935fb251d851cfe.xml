@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Dynamic CI Groups define the scope boundaries for Now Assist AI agent targeting. Without them, Now Assist cannot scope event analysis or incident impact to specific business services.]]></ai_justification>
+        <check_name>Dynamic CI Groups Usage</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('cmdb_ci_query_based_service');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' Dynamic CI Groups configured';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' Dynamic CI Groups configured. Now Assist ITOM AI Agent targeting has well-defined scope boundaries for automated actions.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' Dynamic CI Group(s) configured (target: 5+). Limited groups narrow the scope of Now Assist ITOM AI Agent targeting.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No Dynamic CI Groups configured. Now Assist ITOM AI Agents require Dynamic CI Groups to define scope boundaries for automated discovery probes and remediation actions.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITOM</module>
+        <number>CHK0000364</number>
+        <order>100</order>
+        <remediation_guidance>Create Dynamic CI Groups via cmdb_ci_query_based_service_list.do for key business services and infrastructure segments. Define groups by CI class, location, and business function. Dynamic CI Groups define scope boundaries for Now Assist ITOM AI Agent targeting.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>36f8d9c7cfd587108935fb251d851cfe</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Dynamic CI Groups Usage</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_36f8d9c7cfd587108935fb251d851cfe</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

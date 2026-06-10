@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Device registration in DEX establishes the endpoint population that AI diagnostic capabilities analyze. Without sufficient registered devices, DEX AI has no data to pattern-match against for proactive issue detection and root cause analysis.]]></ai_justification>
+        <check_name>DEX Device Registration</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {    var ga = new GlideAggregate("dex_device");    ga.addAggregate("COUNT");    ga.query();    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;    var actualValue = count + " devices registered in DEX";    if (count >= 100) {        return { status: "ready", actualValue: actualValue,            finding: count + " devices registered in DEX. AI diagnostic capabilities have a broad device population to analyze for patterns and anomalies." };    } else if (count >= 10) {        return { status: "needs_attention", actualValue: actualValue,            finding: "Only " + count + " devices registered in DEX (target: 100+). Expand Desktop Assistant deployment to more endpoints." };    } else {        return { status: "not_ready", actualValue: actualValue,            finding: "Only " + count + " devices registered in DEX. Deploy the DEX Desktop Assistant to managed endpoints first." };    }})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>DEX</module>
+        <number>CHK0000516</number>
+        <order/>
+        <remediation_guidance>Deploy the DEX Desktop Assistant (sn_dex_desktop) to endpoint devices. Devices must register with the DEX platform before telemetry collection can begin. Target: all managed endpoints registered.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>c3f85dc7cfd587108935fb251d851c73</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>DEX Device Registration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_c3f85dc7cfd587108935fb251d851c73</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

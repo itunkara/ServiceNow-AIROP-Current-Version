@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>true</action_delete>
+        <action_insert>false</action_insert>
+        <action_query>false</action_query>
+        <action_update>false</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_snc_airop_check_definition</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition/>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>AIROP Safe Delete Check Definition</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[// Before delete BR on x_snc_airop_check_definition
+// Blocks delete if check results exist, otherwise cleans up AROPCheckLibrary
+
+var defSysId  = current.getUniqueValue();
+var num       = current.getValue('number');
+var handler   = current.getValue('check_handler');
+var checkName = current.getValue('check_name');
+
+// Step 1: Check for existing results referencing this definition
+var results = new GlideRecord('x_snc_airop_check_result');
+results.addQuery('check_definition', defSysId);
+results.setLimit(1);
+results.query();
+
+if (results.next()) {
+    // Block the delete
+    current.setAbortAction(true);
+    gs.addErrorMessage(
+        'Cannot delete "' + checkName + '" -- historical check results exist for this definition. ' +
+        'Deactivate it instead to prevent it from running in future assessments.'
+    );
+    gs.info('[AIROP] Delete blocked on ' + num + ' -- check results exist.');
+} else {
+    // Safe to delete -- remove method from AROPCheckLibrary first
+    if (handler) {
+        var si = new GlideRecord('sys_script_include');
+        si.addQuery('name', 'AROPCheckLibrary');
+        si.setLimit(1);
+        si.query();
+
+        if (si.next()) {
+            var libScript = si.getValue('script');
+            var searchStr = '    ' + handler + ': function()';
+
+            if (libScript.indexOf(searchStr) > -1) {
+                var removed = 0;
+                while (libScript.indexOf(searchStr) > -1) {
+                    var mStart = libScript.indexOf(searchStr);
+                    var depth=0; var mEnd=mStart; var inM=false;
+                    for (var c=mStart; c<libScript.length; c++) {
+                        if (libScript[c]==='{') { depth++; inM=true; }
+                        if (libScript[c]==='}') depth--;
+                        if (inM&&depth===0) { mEnd=c+1; if(libScript[mEnd]===',') mEnd++; if(libScript[mEnd]==='\n') mEnd++; break; }
+                    }
+                    libScript = libScript.substring(0,mStart) + libScript.substring(mEnd);
+                    removed++;
+                }
+                si.setValue('script', libScript);
+                si.setWorkflow(false);
+                si.update();
+                gs.info('[AIROP] Removed ' + removed + ' method copies from AROPCheckLibrary: ' + handler);
+            } else {
+                gs.info('[AIROP] Method not in library -- nothing to clean up.');
+            }
+        }
+    }
+    gs.info('[AIROP] Safe delete proceeding for: ' + num + ' - ' + checkName);
+}]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-07 16:26:19</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>f8d85c90cff483148935fb251d851c2a</sys_id>
+        <sys_mod_count>10</sys_mod_count>
+        <sys_name>AIROP Safe Delete Check Definition</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_f8d85c90cff483148935fb251d851c2a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-23 19:19:20</sys_updated_on>
+        <template/>
+        <when>before</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=f8d85c90cff483148935fb251d851c2a"/>
+</record_update>

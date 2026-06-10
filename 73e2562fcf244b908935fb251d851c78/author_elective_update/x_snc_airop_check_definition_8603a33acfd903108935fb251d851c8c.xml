@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[CSM resolution notes are the primary signal for Now Assist CSM case summarization.]]></ai_justification>
+<check_name>CSM Case Resolution Notes</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_customerservice_case');
+    gaTotal.addQuery('state', 'IN', '3,6');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed CSM cases in last 12 months',
+            finding: 'No closed CSM cases found in the last 12 months. Resolution note coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('sn_customerservice_case');
+    gaMissing.addQuery('state', 'IN', '3,6');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('resolution_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed CSM cases have resolution notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct >= 85) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed CSM cases have resolution notes. Now Assist CSM summarization has strong resolution context for AI-generated case summaries.'
+        };
+    } else if (pct >= 60) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have resolution notes (target: 85%). Now Assist CSM summarization quality will be reduced for cases missing this data.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: missing + ' closed CSM cases missing resolution notes (' + pct + '% populated). Critical gap — Now Assist CSM cannot generate meaningful case summaries without resolution context.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>CSM</module>
+<number>CHK0006041</number>
+<order>40</order>
+<remediation_guidance>Make resolution notes mandatory at CSM case closure via UI policy. Train agents to document resolution steps clearly. Target: 85%+ of closed cases with resolution notes in the trailing 12 months.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>8603a33acfd903108935fb251d851c8c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_8603a33acfd903108935fb251d851c8c</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[CSM resolution notes are the primary signal for Now Assist CSM case summarization.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;CSM Case Resolution Notes&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_customerservice_case');
+    gaTotal.addQuery('state', 'IN', '3,6');
+    gaTotal.addQuery('closed_at', '&gt;=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed CSM cases in last 12 months',
+            finding: 'No closed CSM cases found in the last 12 months. Resolution note coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('sn_customerservice_case');
+    gaMissing.addQuery('state', 'IN', '3,6');
+    gaMissing.addQuery('closed_at', '&gt;=', cutoff.getValue());
+    gaMissing.addQuery('resolution_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed CSM cases have resolution notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct &gt;= 85) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed CSM cases have resolution notes. Now Assist CSM summarization has strong resolution context for AI-generated case summaries.'
+        };
+    } else if (pct &gt;= 60) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have resolution notes (target: 85%). Now Assist CSM summarization quality will be reduced for cases missing this data.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: missing + ' closed CSM cases missing resolution notes (' + pct + '% populated). Critical gap — Now Assist CSM cannot generate meaningful case summaries without resolution context.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;CSM&lt;/module&gt;
+&lt;number&gt;CHK0006041&lt;/number&gt;
+&lt;order&gt;40&lt;/order&gt;
+&lt;remediation_guidance&gt;Make resolution notes mandatory at CSM case closure via UI policy. Train agents to document resolution steps clearly. Target: 85%+ of closed cases with resolution notes in the trailing 12 months.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;8603a33acfd903108935fb251d851c8c&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1573130074</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:19</sys_created_on>
+        <sys_id>c7a6c907cf9947108935fb251d851c48</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa58580000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:19</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>03a6c90793994710c356b15a08403947</update_guid>
+        <update_guid_history>03a6c90793994710c356b15a08403947:-1573130074</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">f82f4dcfcfdd47108935fb251d851ca1</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:18</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>0e4746f29c19498f822ba7144fb6bba1</sys_id>
+        <sys_metadata>8603a33acfd903108935fb251d851c8c</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_8603a33acfd903108935fb251d851c8c</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_8603a33acfd903108935fb251d851c8c">c7a6c907cf9947108935fb251d851c48</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:18</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

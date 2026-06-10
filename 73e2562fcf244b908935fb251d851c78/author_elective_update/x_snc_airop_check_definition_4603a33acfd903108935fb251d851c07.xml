@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Remedial actions give DEX AI Agents the ability to execute automated fixes, not just diagnose. Without configured remedial actions, AI can identify problems but cannot resolve them, reducing the automation value of DEX AI.]]></ai_justification>
+<check_name>Resolution Notes Population Rate</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('incident');
+    gaTotal.addQuery('state', 'IN', '6,7');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed incidents in last 12 months',
+            finding: 'No closed incidents found in the last 12 months. Resolution note coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('incident');
+    gaMissing.addQuery('state', 'IN', '6,7');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('close_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed incidents have close_notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct >= 95) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed incidents have resolution notes. Now Assist ITSM has strong resolution context for AI case summarization and similar incident matching.'
+        };
+    } else if (pct >= 80) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have resolution notes (target: 95%). Now Assist ITSM summarization quality will be reduced for incidents missing resolution context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have resolution notes. Critical gap — Now Assist ITSM cannot generate meaningful case summaries without resolution context.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>ITSM</module>
+<number>CHK0005949</number>
+<order>100</order>
+<remediation_guidance>Make close_notes mandatory at incident closure via UI policy. Target: 95%+ of closed incidents with resolution notes in the trailing 12 months.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4603a33acfd903108935fb251d851c07</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4603a33acfd903108935fb251d851c07</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Remedial actions give DEX AI Agents the ability to execute automated fixes, not just diagnose. Without configured remedial actions, AI can identify problems but cannot resolve them, reducing the automation value of DEX AI.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Resolution Notes Population Rate&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('incident');
+    gaTotal.addQuery('state', 'IN', '6,7');
+    gaTotal.addQuery('closed_at', '&gt;=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed incidents in last 12 months',
+            finding: 'No closed incidents found in the last 12 months. Resolution note coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('incident');
+    gaMissing.addQuery('state', 'IN', '6,7');
+    gaMissing.addQuery('closed_at', '&gt;=', cutoff.getValue());
+    gaMissing.addQuery('close_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed incidents have close_notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct &gt;= 95) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed incidents have resolution notes. Now Assist ITSM has strong resolution context for AI case summarization and similar incident matching.'
+        };
+    } else if (pct &gt;= 80) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have resolution notes (target: 95%). Now Assist ITSM summarization quality will be reduced for incidents missing resolution context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have resolution notes. Critical gap — Now Assist ITSM cannot generate meaningful case summaries without resolution context.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;ITSM&lt;/module&gt;
+&lt;number&gt;CHK0005949&lt;/number&gt;
+&lt;order&gt;100&lt;/order&gt;
+&lt;remediation_guidance&gt;Make close_notes mandatory at incident closure via UI policy. Target: 95%+ of closed incidents with resolution notes in the trailing 12 months.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4603a33acfd903108935fb251d851c07&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1316399691</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:25</sys_created_on>
+        <sys_id>a0b68147cf9947108935fb251d851c6d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa6fde0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:25</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>e8b6814794994710e5600adf8ad90e6b</update_guid>
+        <update_guid_history>e8b6814794994710e5600adf8ad90e6b:-1316399691</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">c02fc5cfcfdd47108935fb251d851cac</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:15</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>880d84ff4a5f40f49dc223c23bfd31e9</sys_id>
+        <sys_metadata>4603a33acfd903108935fb251d851c07</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4603a33acfd903108935fb251d851c07</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4603a33acfd903108935fb251d851c07">a0b68147cf9947108935fb251d851c6d</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:15</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

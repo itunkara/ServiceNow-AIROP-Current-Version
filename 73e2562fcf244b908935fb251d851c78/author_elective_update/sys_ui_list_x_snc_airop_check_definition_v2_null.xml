@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_list action="DELETE" parent="" relationship="" sys_domain="global" table="x_snc_airop_check_definition_v2" version="2" view="">
+        <sys_ui_list_element action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element>sys_created_on</element>
+            <list_id display_value="x_snc_airop_check_definition_v2" element="NULL" name="x_snc_airop_check_definition_v2" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">922ebc4bcfd147108935fb251d851ce0</list_id>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <position>0</position>
+            <sum>false</sum>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-06-10 04:44:08</sys_created_on>
+            <sys_id>262ebc4bcfd147108935fb251d851ce1</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-06-10 04:44:08</sys_updated_on>
+        </sys_ui_list_element>
+        <sys_ui_list action="INSERT_OR_UPDATE">
+            <average_value>false</average_value>
+            <element/>
+            <max_value>false</max_value>
+            <min_value>false</min_value>
+            <name>x_snc_airop_check_definition_v2</name>
+            <parent/>
+            <position/>
+            <relationship/>
+            <sum>false</sum>
+            <sys_class_name>sys_ui_list</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-06-10 04:44:08</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>922ebc4bcfd147108935fb251d851ce0</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_airop_check_definition_v2</sys_name>
+            <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+            <sys_update_name>sys_ui_list_x_snc_airop_check_definition_v2_null</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-06-10 04:44:08</sys_updated_on>
+            <sys_user/>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_list>
+    </sys_ui_list>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_ui_list_x_snc_airop_check_definition_v2_null</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_ui_list parent="" relationship="" sys_domain="global" table="x_snc_airop_check_definition_v2" version="2" view=""><sys_ui_list_element action="INSERT_OR_UPDATE"><average_value>false</average_value><element>sys_created_on</element><list_id display_value="x_snc_airop_check_definition_v2" element="NULL" name="x_snc_airop_check_definition_v2" parent="NULL" relationship="NULL" sys_domain="global" view="Default view">922ebc4bcfd147108935fb251d851ce0</list_id><max_value>false</max_value><min_value>false</min_value><position>0</position><sum>false</sum><sys_created_by>admin</sys_created_by><sys_created_on>2026-06-10 04:44:08</sys_created_on><sys_id>262ebc4bcfd147108935fb251d851ce1</sys_id><sys_mod_count>0</sys_mod_count><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-06-10 04:44:08</sys_updated_on></sys_ui_list_element><sys_ui_list action="INSERT_OR_UPDATE"><average_value>false</average_value><element/><max_value>false</max_value><min_value>false</min_value><name>x_snc_airop_check_definition_v2</name><parent/><position/><relationship/><sum>false</sum><sys_class_name>sys_ui_list</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-06-10 04:44:08</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>922ebc4bcfd147108935fb251d851ce0</sys_id><sys_mod_count>0</sys_mod_count><sys_name>x_snc_airop_check_definition_v2</sys_name><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_ui_list_x_snc_airop_check_definition_v2_null</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-06-10 04:44:08</sys_updated_on><sys_user/><view display_value="Default view" name="NULL">Default view</view><view_name/></sys_ui_list></sys_ui_list></record_update>]]></payload>
+        <payload_hash>1100231799</payload_hash>
+        <record_name>Check Definition V2</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 04:44:08</sys_created_on>
+        <sys_id>262e784bcf1547108935fb251d851c1a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eafd84d620000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 04:44:08</sys_updated_on>
+        <type>List Layout</type>
+        <update_guid>e22e784b3615471095fdd1e64f38031a</update_guid>
+        <update_guid_history>e22e784b3615471095fdd1e64f38031a:1100231799</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 04:54:08</sys_created_on>
+        <sys_db_object display_value="" name="sys_ui_list">sys_ui_list</sys_db_object>
+        <sys_id>0d2716226fe14992a0f1c0e60a7790f1</sys_id>
+        <sys_metadata>922ebc4bcfd147108935fb251d851ce0</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_airop_check_definition_v2</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent display_value="">422e384bcf1547108935fb251d851c21</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_ui_list_x_snc_airop_check_definition_v2_null</sys_update_name>
+        <sys_update_version display_value="sys_ui_list_x_snc_airop_check_definition_v2_null">262e784bcf1547108935fb251d851c1a</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 04:54:08</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element audit="true" db_object_id="2bbadf2fcfa00f908935fb251d851c27" label="Assessment Run" max_length="40" name="x_snc_airop_assessment_run" type="collection">
+        <element label="Run Date" max_length="40" name="run_date" type="glide_date_time"/>
+        <element label="CSM Readiness %" max_length="40" name="csm_score" type="integer"/>
+        <element label="TSOM Readiness %" max_length="40" name="tsom_score" type="integer"/>
+        <element label="Field Service Readiness %" max_length="40" name="field_service_score" type="integer"/>
+        <element label="CMDB Readiness %" max_length="40" name="cmdb_score" type="integer"/>
+        <element choice="1" label="Status" mandatory="true" max_length="40" name="status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Running" sequence="100" value="running"/>
+                <element inactive_on_update="false" label="Complete" sequence="200" value="complete"/>
+                <element inactive_on_update="false" label="Failed" sequence="300" value="failed"/>
+            </choice>
+        </element>
+        <element label="Checks Executed" max_length="40" name="checks_executed" type="integer"/>
+        <element label="Platform Readiness %" max_length="40" name="platform_score" type="integer"/>
+        <element label="ITSM Readiness %" max_length="40" name="itsm_score" type="integer"/>
+        <element choice="1" label="Environment Type" max_length="40" name="environment_type" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Unknown" sequence="300" value="unknown"/>
+                <element inactive_on_update="false" label="Production" sequence="100" value="production"/>
+                <element inactive_on_update="false" label="Non-Production" sequence="200" value="non-production"/>
+            </choice>
+        </element>
+        <element choice="3" default="updated" label="Score Calculation Status" max_length="40" name="score_calculation_status" read_only="true" type="string">
+            <choice>
+                <element inactive_on_update="false" label="Requires Recalculation" sequence="2" value="needupdated"/>
+                <element inactive_on_update="false" label="Calculated" sequence="1" value="updated"/>
+            </choice>
+        </element>
+        <element label="Name" mandatory="true" max_length="255" name="name" type="string"/>
+        <element label="GRC Readiness %" max_length="40" name="grc_score" type="integer"/>
+        <element label="SECOPS Readiness %" max_length="20" name="secops_score" read_only="true" type="decimal"/>
+        <element label="DEX Readiness %" max_length="40" name="dex_score" type="integer"/>
+        <element label="HRSD Readiness %" max_length="40" name="hrsd_score" type="integer"/>
+        <element label="Creator Readiness %" max_length="40" name="creator_score" type="integer"/>
+        <element label="WSD Readiness %" max_length="40" name="wsd_score" type="integer"/>
+        <element attributes="height=150px,overflow-y=auto" label="Assessment log" max_length="4000" name="assessment_log" type="journal_input"/>
+        <element label="Triggered By" max_length="32" name="triggered_by" reference="sys_user" type="reference"/>
+        <element label="LSD Readiness %" max_length="40" name="lsd_score" type="integer"/>
+        <element label="OTSM Readiness %" max_length="40" name="otsm_score" type="integer"/>
+        <element label="Overall Readiness %" max_length="40" name="overall_score" type="integer"/>
+        <element label="H &amp; S Readiness %" max_length="40" name="hs_score" type="integer"/>
+        <element label="Clone Detected" max_length="40" name="is_clone_detected" type="boolean"/>
+        <element attributes="edge_encryption_enabled=true" default="javascript:global.getNextObjNumberPadded();" display="true" label="Number" max_length="40" name="number" type="string"/>
+        <element label="Modules Scanned" max_length="500" name="modules_scanned" type="string"/>
+        <element label="Total Checks" max_length="40" name="total_checks" type="integer"/>
+        <element label="SPM Readiness %" max_length="40" name="spm_score" type="integer"/>
+        <element label="SAM Readiness %" max_length="40" name="sam_score" type="integer"/>
+        <element label="TPRM Readiness %" max_length="40" name="tprm_score" type="integer"/>
+        <element label="AIOPS Readiness %" max_length="38" name="aiops_score" read_only="true" type="decimal"/>
+        <element attributes="rows=6" label="Notes" max_length="4000" name="notes" type="string"/>
+        <element label="SPO Readiness %" max_length="40" name="spo_score" type="integer"/>
+        <element label="HAM Readiness %" max_length="40" name="ham_score" type="integer"/>
+        <element label="Virtual Agent Readiness %" max_length="40" name="virtual_agent_score" type="integer"/>
+        <element label="ITOM Readiness %" max_length="40" name="itom_score" type="integer"/>
+        <index name="index">
+            <element name="triggered_by"/>
+        </index>
+    </element>
+</database>

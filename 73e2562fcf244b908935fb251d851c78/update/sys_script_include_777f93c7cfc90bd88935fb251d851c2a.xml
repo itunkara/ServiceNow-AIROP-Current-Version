@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_SAM</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP per-module check library for Software Asset Management (SAM). Contains executable check methods injected from active check definitions.</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_SAM</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_SAM = Class.create();
+AROPCheckLibrary_SAM.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000618: function() {
+        try {
+            return ((function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_now_assist_sam"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Now Assist for SAM is active", finding: "Now Assist for SAM is active. AI-powered software asset recommendations, license optimization suggestions, and reclamation insights are available." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_now_assist_sam"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Now Assist for SAM is active", finding: "Now Assist for SAM is active. AI-powered software asset recommendations, license optimization suggestions, and reclamation insights are available." }; } return { status: "not_ready", actualValue: "Now Assist for SAM not found or inactive", finding: "Now Assist for SAM is not active. All AI-powered SAM capabilities are unavailable without this plugin." }; }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000618: ' + e.message };
+        }
+    },
+    CHK0000619: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("cmdb_sam_sw_install"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No software install records found", finding: "No software install records found. Now Assist SAM has no data to analyze for license optimization or reclamation recommendations." }; } var gaModel = new GlideAggregate("cmdb_sam_sw_install"); gaModel.addQuery("software_model", "!=", ""); gaModel.addAggregate("COUNT"); gaModel.query(); var withModel = gaModel.next() ? parseInt(gaModel.getAggregate("COUNT")) : 0; var pct = Math.round((withModel / total) * 100); var actualValue = pct + "% of software installs have a model (" + withModel + "/" + total + ")"; if (pct >= 80) { return { status: "ready", actualValue: actualValue, finding: pct + "% of software installs are linked to a software model. Now Assist SAM has strong structured data for AI-powered license analysis and optimization." }; } else if (pct >= 50) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of software installs have a software model (target: 80%+). Now Assist SAM AI recommendations will have reduced accuracy without complete model coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of software installs have a software model. Insufficient structured data for meaningful Now Assist SAM AI license optimization recommendations." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000619: ' + e.message };
+        }
+    },
+    CHK0000620: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("alm_license"); gaTotal.addQuery("active", true); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No active license entitlement records found", finding: "No active license entitlement records found. Now Assist SAM cannot perform AI license position analysis without entitlement data." }; } var gaRights = new GlideAggregate("alm_license"); gaRights.addQuery("active", true); gaRights.addQuery("rights", ">", "0"); gaRights.addAggregate("COUNT"); gaRights.query(); var withRights = gaRights.next() ? parseInt(gaRights.getAggregate("COUNT")) : 0; var pct = Math.round((withRights / total) * 100); var actualValue = pct + "% of active licenses have entitlement quantities (" + withRights + "/" + total + ")"; if (pct >= 80) { return { status: "ready", actualValue: actualValue, finding: pct + "% of active licenses have entitlement quantities populated. Now Assist SAM can perform accurate AI license position analysis." }; } else if (pct >= 50) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of active licenses have entitlement quantities (target: 80%+). Now Assist SAM AI license position analysis will be incomplete." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of active licenses have entitlement quantities. Now Assist SAM cannot perform meaningful AI license position analysis without entitlement data." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000620: ' + e.message };
+        }
+    },
+    CHK0000621: function() {
+        try {
+            return ((function() { var ga = new GlideAggregate("alm_license"); ga.addQuery("active", true); ga.addAggregate("COUNT"); ga.query(); var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (count >= 50) { return { status: "ready", actualValue: count + " active license entitlement records", finding: count + " active license records. Now Assist SAM has sufficient entitlement data for AI-powered license optimization analysis." }; } else if (count >= 10) { return { status: "needs_attention", actualValue: count + " active license entitlement records", finding: "Only " + count + " active license records (target: 50+). Now Assist SAM AI analysis will have limited coverage across the software estate." }; } else { return { status: "not_ready", actualValue: count + " active license entitlement records", finding: "Only " + count + " active license records. Insufficient entitlement data for meaningful Now Assist SAM AI license optimization recommendations." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000621: ' + e.message };
+        }
+    },
+    CHK0000622: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("cmdb_sam_sw_install"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No software install records found", finding: "No software install records found. Publisher coverage cannot be assessed." }; } var gaPub = new GlideAggregate("cmdb_sam_sw_install"); gaPub.addQuery("manufacturer", "!=", ""); gaPub.addAggregate("COUNT"); gaPub.query(); var withPub = gaPub.next() ? parseInt(gaPub.getAggregate("COUNT")) : 0; var pct = Math.round((withPub / total) * 100); var actualValue = pct + "% of installs have a publisher (" + withPub + "/" + total + ")"; if (pct >= 85) { return { status: "ready", actualValue: actualValue, finding: pct + "% of software installs have a publisher. Now Assist SAM can group and analyze license obligations by publisher for AI optimization recommendations." }; } else if (pct >= 60) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of installs have a publisher (target: 85%+). Now Assist SAM publisher-level AI analysis will have incomplete coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of installs have a publisher. Now Assist SAM cannot perform meaningful publisher-level AI license analysis without publisher data." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000622: ' + e.message };
+        }
+    },
+    CHK0000623: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("alm_license"); gaTotal.addQuery("active", true); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No active license records found", finding: "No active license records. Publisher coverage cannot be assessed." }; } var gaPub = new GlideAggregate("alm_license"); gaPub.addQuery("active", true); gaPub.addQuery("manufacturer", "!=", ""); gaPub.addAggregate("COUNT"); gaPub.query(); var withPub = gaPub.next() ? parseInt(gaPub.getAggregate("COUNT")) : 0; var pct = Math.round((withPub / total) * 100); var actualValue = pct + "% of active licenses have a publisher (" + withPub + "/" + total + ")"; if (pct >= 85) { return { status: "ready", actualValue: actualValue, finding: pct + "% of active licenses have publisher data. Now Assist SAM has structured publisher information for AI-powered spend analysis and optimization." }; } else if (pct >= 60) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of active licenses have publisher data (target: 85%+). Now Assist SAM publisher-level AI analysis will be incomplete." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of licenses have publisher data. Now Assist SAM cannot perform meaningful publisher-level AI license analysis." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000623: ' + e.message };
+        }
+    },
+    CHK0000624: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("alm_license"); gaTotal.addQuery("active", true); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_applicable", actualValue: "No active license records found", finding: "No active license records. License ownership cannot be assessed." }; } var gaOwned = new GlideAggregate("alm_license"); gaOwned.addQuery("active", true); gaOwned.addEncodedQuery("owned_byISNOTEMPTY^ORmanaged_byISNOTEMPTY^ORassigned_toISNOTEMPTY"); gaOwned.addAggregate("COUNT"); gaOwned.query(); var withOwner = gaOwned.next() ? parseInt(gaOwned.getAggregate("COUNT")) : 0; var pct = Math.round((withOwner / total) * 100); var actualValue = pct + "% of active licenses have an owner/manager (" + withOwner + "/" + total + ")"; if (pct >= 80) { return { status: "ready", actualValue: actualValue, finding: pct + "% of active licenses have ownership assigned. Now Assist SAM AI reclamation and optimization recommendations can be routed to the correct license owners." }; } else if (pct >= 50) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of active licenses have ownership assigned (target: 80%+). Now Assist SAM AI recommendations may not reach the correct stakeholders." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of licenses have ownership assigned. Now Assist SAM AI recommendations cannot be routed without license ownership data." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000624: ' + e.message };
+        }
+    },
+    CHK0000625: function() {
+        try {
+            return ((function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_sam_workspace"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Software Asset Workspace is active", finding: "Software Asset Workspace is active. Now Assist SAM AI insights including license recommendations and reclamation suggestions are surfaced in context for SAM analysts." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_sam_ws"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Software Asset Workspace is active", finding: "Software Asset Workspace is active. Now Assist SAM AI insights are surfaced in context for SAM analysts." }; } return { status: "not_ready", actualValue: "Software Asset Workspace not found or inactive", finding: "Software Asset Workspace is not active. Now Assist SAM AI insights are not accessible in a contextually relevant interface for SAM analysts." }; }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000625: ' + e.message };
+        }
+    },
+    CHK0000626: function() {
+        try {
+            return ((function() { var gaBR = new GlideAggregate("sys_script"); gaBR.addQuery("collection", "cmdb_sam_sw_install"); gaBR.addQuery("active", true); gaBR.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); gaBR.addAggregate("COUNT"); gaBR.query(); var brs1 = gaBR.next() ? parseInt(gaBR.getAggregate("COUNT")) : 0; var gaBR2 = new GlideAggregate("sys_script"); gaBR2.addQuery("collection", "alm_license"); gaBR2.addQuery("active", true); gaBR2.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); gaBR2.addAggregate("COUNT"); gaBR2.query(); var brs2 = gaBR2.next() ? parseInt(gaBR2.getAggregate("COUNT")) : 0; var risk = brs1 + brs2; var actualValue = brs1 + " custom BRs on cmdb_sam_sw_install + " + brs2 + " on alm_license (risk score: " + risk + ")"; if (risk <= 5) { return { status: "ready", actualValue: actualValue, finding: "Low SAM customization risk (score: " + risk + "). Now Assist SAM AI recommendations are unlikely to encounter conflicts with existing customizations." }; } else if (risk <= 10) { return { status: "needs_attention", actualValue: actualValue, finding: "Moderate SAM customization risk (score: " + risk + "). Test Now Assist SAM in sub-production before enabling in production." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "High SAM customization risk (score: " + risk + "). Extensive customization increases the risk of conflicts with Now Assist SAM AI recommendations." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000626: ' + e.message };
+        }
+    },
+    CHK0000627: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("cmdb_sam_sw_install"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No software install records found", finding: "No software install records found. Discovery integration cannot be assessed." }; } var gaDisc = new GlideAggregate("cmdb_sam_sw_install"); gaDisc.addQuery("discovery_source", "!=", ""); gaDisc.addAggregate("COUNT"); gaDisc.query(); var withDisc = gaDisc.next() ? parseInt(gaDisc.getAggregate("COUNT")) : 0; var pct = Math.round((withDisc / total) * 100); var actualValue = pct + "% of installs have a discovery source (" + withDisc + "/" + total + ")"; if (pct >= 80) { return { status: "ready", actualValue: actualValue, finding: pct + "% of software installs have a discovery source. Now Assist SAM AI analysis is based on accurate, automatically discovered software data." }; } else if (pct >= 50) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of installs have a discovery source (target: 80%+). Now Assist SAM AI recommendations may be based on incomplete or manually entered data." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of installs have a discovery source. Now Assist SAM AI recommendations cannot be trusted without automated discovery feeding accurate install data." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000627: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_SAM'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 06:13:20</sys_created_on>
+        <sys_id>777f93c7cfc90bd88935fb251d851c2a</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>AROPCheckLibrary_SAM</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_777f93c7cfc90bd88935fb251d851c2a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[HR catalog items enable Now Assist HRSD to guide employees through structured HR request intake. Low catalog coverage means AI-assisted HR request fulfillment cannot be offered for most HR service types.]]></ai_justification>
+<check_name>HR Service Catalog Coverage</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Count active catalog items linked to HR COEs via sc_cat_item
+    // Using hr_service reference which links catalog to HRSD
+    var gaHR = new GlideAggregate('sc_cat_item');
+    gaHR.addQuery('active', true);
+    gaHR.addQuery('sc_catalogs.title', 'CONTAINS', 'HR');
+    gaHR.addAggregate('COUNT');
+    gaHR.query();
+    var hrItems = gaHR.next() ? parseInt(gaHR.getAggregate('COUNT')) : 0;
+
+    // Fallback: count all active catalog items if HR-filtered returns 0
+    if (hrItems === 0) {
+        var gaAll = new GlideAggregate('sc_cat_item');
+        gaAll.addQuery('active', true);
+        gaAll.addAggregate('COUNT');
+        gaAll.query();
+        var allItems = gaAll.next() ? parseInt(gaAll.getAggregate('COUNT')) : 0;
+        var actualValue = '0 HR-specific catalog items found | ' + allItems + ' total active items (verify HR catalog configuration)';
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'No HR-specific catalog items found. Verify HR catalog configuration — Now Assist HRSD AI-assisted intake requires catalog items for each key HR service type.'
+        };
+    }
+
+    var actualValue = hrItems + ' active HR catalog items';
+
+    if (hrItems >= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: hrItems + ' active HR catalog items. Now Assist HRSD has broad catalog coverage for AI-assisted employee intake.'
+        };
+    } else if (hrItems >= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + hrItems + ' active HR catalog items (target: 20+). Now Assist HRSD AI-assisted intake will have limited coverage for HR service types.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + hrItems + ' active HR catalog items. Insufficient catalog coverage for Now Assist HRSD AI-assisted employee intake.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>HRSD</module>
+<number>CHK0006024</number>
+<order>70</order>
+<remediation_guidance>Create HR catalog items for your top HR service types (benefits enrollment, leave requests, payroll questions). Target: 20+ active HR catalog items. Now Assist HRSD enhances catalog items with AI-assisted intake and guided fulfillment.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>0203a33acfd903108935fb251d851c6b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0203a33acfd903108935fb251d851c6b</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[HR catalog items enable Now Assist HRSD to guide employees through structured HR request intake. Low catalog coverage means AI-assisted HR request fulfillment cannot be offered for most HR service types.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;HR Service Catalog Coverage&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    // Count active catalog items linked to HR COEs via sc_cat_item
+    // Using hr_service reference which links catalog to HRSD
+    var gaHR = new GlideAggregate('sc_cat_item');
+    gaHR.addQuery('active', true);
+    gaHR.addQuery('sc_catalogs.title', 'CONTAINS', 'HR');
+    gaHR.addAggregate('COUNT');
+    gaHR.query();
+    var hrItems = gaHR.next() ? parseInt(gaHR.getAggregate('COUNT')) : 0;
+
+    // Fallback: count all active catalog items if HR-filtered returns 0
+    if (hrItems === 0) {
+        var gaAll = new GlideAggregate('sc_cat_item');
+        gaAll.addQuery('active', true);
+        gaAll.addAggregate('COUNT');
+        gaAll.query();
+        var allItems = gaAll.next() ? parseInt(gaAll.getAggregate('COUNT')) : 0;
+        var actualValue = '0 HR-specific catalog items found | ' + allItems + ' total active items (verify HR catalog configuration)';
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'No HR-specific catalog items found. Verify HR catalog configuration — Now Assist HRSD AI-assisted intake requires catalog items for each key HR service type.'
+        };
+    }
+
+    var actualValue = hrItems + ' active HR catalog items';
+
+    if (hrItems &gt;= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: hrItems + ' active HR catalog items. Now Assist HRSD has broad catalog coverage for AI-assisted employee intake.'
+        };
+    } else if (hrItems &gt;= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + hrItems + ' active HR catalog items (target: 20+). Now Assist HRSD AI-assisted intake will have limited coverage for HR service types.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + hrItems + ' active HR catalog items. Insufficient catalog coverage for Now Assist HRSD AI-assisted employee intake.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;HRSD&lt;/module&gt;
+&lt;number&gt;CHK0006024&lt;/number&gt;
+&lt;order&gt;70&lt;/order&gt;
+&lt;remediation_guidance&gt;Create HR catalog items for your top HR service types (benefits enrollment, leave requests, payroll questions). Target: 20+ active HR catalog items. Now Assist HRSD enhances catalog items with AI-assisted intake and guided fulfillment.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;0203a33acfd903108935fb251d851c6b&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-488566337</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:22</sys_created_on>
+        <sys_id>f3a68d07cf9947108935fb251d851c32</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa61e90000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:22</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>3fa68d072f99471082e65c882f59e630</update_guid>
+        <update_guid_history>3fa68d072f99471082e65c882f59e630:-488566337</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">431f41cfcfdd47108935fb251d851c36</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:11</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>295c66b54b9d44488f21eea4030e3040</sys_id>
+        <sys_metadata>0203a33acfd903108935fb251d851c6b</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0203a33acfd903108935fb251d851c6b</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0203a33acfd903108935fb251d851c6b">f3a68d07cf9947108935fb251d851c32</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:11</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

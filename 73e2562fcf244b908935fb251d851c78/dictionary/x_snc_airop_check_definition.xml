@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="update_synch=true" db_object_id="2715c5c3cf5947108935fb251d851c1c" extends="sys_metadata" label="Check Definition" max_length="40" name="x_snc_airop_check_definition" type="collection">
+        <element label="Check Script" max_length="8000" name="check_script" type="script"/>
+        <element label="Is Active" max_length="40" name="is_active" read_only="true" type="boolean"/>
+        <element label="Remediation Guidance" max_length="5000" name="remediation_guidance" type="translated_text"/>
+        <element label="Manual Check" max_length="40" name="is_manual" type="boolean"/>
+        <element label="Clone Sensitive" max_length="40" name="is_clone_sensitive" type="boolean"/>
+        <element label="Order" max_length="40" name="order" type="integer"/>
+        <element default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" primary="true" read_only="true" type="string"/>
+        <element choice="3" label="Module" max_length="40" name="module" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Security Operations" sequence="110" value="SECOPS"/>
+                <element inactive_on_update="false" label="DEX" sequence="110" value="DEX"/>
+                <element inactive_on_update="false" label="ITOM" sequence="200" value="ITOM"/>
+                <element inactive_on_update="false" label="CSM" sequence="600" value="CSM"/>
+                <element inactive_on_update="false" label="GRC" sequence="900" value="GRC"/>
+                <element inactive_on_update="false" label="Virtual Agent" sequence="1400" value="VIRTUAL_AGENT"/>
+                <element inactive_on_update="false" label="Workplace Service Delivery" sequence="150" value="WSD"/>
+                <element inactive_on_update="false" label="OT Service Management" sequence="250" value="OTSM"/>
+                <element inactive_on_update="false" label="Legal Service Delivery" sequence="170" value="LSD"/>
+                <element inactive_on_update="false" label="Health &amp; Safety" sequence="270" value="HS"/>
+                <element inactive_on_update="false" label="ITSM" sequence="100" value="ITSM"/>
+                <element inactive_on_update="false" label="Third Party Risk Management" sequence="190" value="TPRM"/>
+                <element inactive_on_update="false" label="HRSD" sequence="400" value="HRSD"/>
+                <element inactive_on_update="false" label="AIOps / Event Management" sequence="800" value="AIOPS"/>
+                <element inactive_on_update="false" label="Sourcing &amp; Procurement" sequence="210" value="SPO"/>
+                <element inactive_on_update="false" label="CMDB" sequence="300" value="CMDB"/>
+                <element inactive_on_update="false" label="Hardware Asset Management" sequence="130" value="HAM"/>
+                <element inactive_on_update="false" label="Field Service" sequence="700" value="FIELD_SERVICE"/>
+                <element inactive_on_update="false" label="Platform" sequence="1200" value="PLATFORM"/>
+                <element inactive_on_update="false" label="Software Asset Management" sequence="110" value="SAM"/>
+                <element inactive_on_update="false" label="SPM" sequence="1000" value="SPM"/>
+                <element inactive_on_update="false" label="Now Assist for Creator" sequence="230" value="CREATOR"/>
+            </choice>
+        </element>
+        <element label="AI Justification" max_length="5000" name="ai_justification" type="html"/>
+        <element label="Check Name" max_length="255" name="check_name" type="string"/>
+    </element>
+</database>

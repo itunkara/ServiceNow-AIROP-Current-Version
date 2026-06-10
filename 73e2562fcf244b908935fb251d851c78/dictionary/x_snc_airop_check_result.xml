@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="all_tables.text_index_translations=true" db_object_id="e03b13a3cfe00f908935fb251d851c2b" label="Check Result" max_length="40" name="x_snc_airop_check_result" type="collection">
+        <element label="Finding" max_length="1000" name="finding" type="string"/>
+        <element attributes="rows=4" label="Actual Value" max_length="1000" name="actual_value" type="string"/>
+        <element attributes="edge_encryption_enabled=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" read_only="true" type="string"/>
+        <element choice="1" label="Module" mandatory="true" max_length="40" name="module" read_only="true" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="SECOPS" sequence="2100" value="SECOPS"/>
+                <element inactive="true" inactive_on_update="true" label="Integration" sequence="1300" value="INTEGRATION"/>
+                <element inactive_on_update="false" label="Legal Service Delivery" sequence="180" value="LSD"/>
+                <element inactive_on_update="false" label="CSM" sequence="600" value="CSM"/>
+                <element inactive_on_update="false" label="GRC" sequence="900" value="GRC"/>
+                <element inactive_on_update="false" label="ITOM" sequence="200" value="ITOM"/>
+                <element inactive_on_update="false" label="Health &amp; Safety" sequence="280" value="HS"/>
+                <element inactive_on_update="false" label="Platform" sequence="1200" value="PLATFORM"/>
+                <element inactive="true" inactive_on_update="true" label="Employee Center" sequence="500" value="EMPLOYEE_CENTER"/>
+                <element inactive_on_update="false" label="TSOM" sequence="800" value="TSOM"/>
+                <element inactive_on_update="false" label="Third Party Risk Management" sequence="200" value="TPRM"/>
+                <element inactive_on_update="false" label="Sourcing &amp; Procurement" sequence="220" value="SPO"/>
+                <element inactive_on_update="false" label="ITSM" sequence="100" value="ITSM"/>
+                <element inactive_on_update="false" label="ITSM Pro" sequence="1100" value="ITSM_PRO"/>
+                <element inactive_on_update="false" label="HRSD" sequence="400" value="HRSD"/>
+                <element inactive_on_update="false" label="Field Service" sequence="700" value="FIELD_SERVICE"/>
+                <element inactive_on_update="false" label="Hardware Asset Management" sequence="140" value="HAM"/>
+                <element inactive_on_update="false" label="Software Asset Management" sequence="120" value="SAM"/>
+                <element inactive_on_update="false" label="Now Assist for Creator" sequence="240" value="CREATOR"/>
+                <element inactive_on_update="false" label="DEX" sequence="2200" value="DEX"/>
+                <element inactive_on_update="false" label="SPM" sequence="1000" value="SPM"/>
+                <element inactive_on_update="false" label="CMDB" sequence="300" value="CMDB"/>
+                <element inactive_on_update="false" label="AIOPS" sequence="2000" value="AIOPS"/>
+                <element inactive_on_update="false" label="Workplace Service Delivery" sequence="160" value="WSD"/>
+                <element inactive_on_update="false" label="Virtual Agent" sequence="1400" value="VIRTUAL_AGENT"/>
+                <element inactive_on_update="false" label="OT Service Management" sequence="260" value="OTSM"/>
+            </choice>
+        </element>
+        <element display="true" label="Check Name" mandatory="true" max_length="255" name="check_name" primary="true" read_only="true" type="string"/>
+        <element choice="1" label="Status" mandatory="true" max_length="40" name="status" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Verification Needed" sequence="50" value="verification_needed"/>
+                <element inactive_on_update="false" label="Needs Attention" sequence="200" value="needs_attention"/>
+                <element inactive_on_update="false" label="Not Applicable" sequence="40" value="not_applicable"/>
+                <element inactive_on_update="false" label="Value Blocker" sequence="301" value="not_ready"/>
+                <element inactive_on_update="false" label="Ready" sequence="100" value="ready"/>
+            </choice>
+        </element>
+        <element label="Check Definition" mandatory="true" max_length="32" name="check_definition" reference="x_snc_airop_check_definition" type="reference"/>
+        <element attributes="serializer=com.glide.script.TranslatedTextXMLSerializer" label="Remediation Guidance" max_length="4000" name="remediation_guidance" type="translated_text"/>
+        <element label="Assessment Run" mandatory="true" max_length="32" name="assessment_run" read_only="true" reference="x_snc_airop_assessment_run" type="reference"/>
+        <index name="index">
+            <element name="assessment_run"/>
+        </index>
+        <index name="index2">
+            <element name="check_definition"/>
+        </index>
+    </element>
+</database>

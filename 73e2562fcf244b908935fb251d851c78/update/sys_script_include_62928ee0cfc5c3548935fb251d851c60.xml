@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_DEX</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for DEX module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_DEX</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_DEX = Class.create();
+AROPCheckLibrary_DEX.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000517: function() {
+        try {
+            return (function(checkDef, dateFilter) {    var ga = new GlideAggregate("dex_self_service_issue_config");    ga.addAggregate("COUNT");    ga.query();    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;    var actualValue = count + " DEX self-service issue configurations";    if (count >= 5) {        return { status: "ready", actualValue: actualValue,            finding: count + " self-service configurations found. Employees can use AI-guided workflows to self-diagnose and resolve common device issues." };    } else if (count >= 1) {        return { status: "needs_attention", actualValue: actualValue,            finding: "Only " + count + " self-service configuration(s) found (target: 5+). Configure additional issue types to maximize AI-guided employee deflection." };    } else {        return { status: "not_ready", actualValue: actualValue,            finding: "No DEX self-service issue configurations found. Employees cannot use AI-guided self-service workflows." };    }})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000517: ' + e.message };
+        }
+    },
+    CHK0000521: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-30);
+
+    var ga = new GlideAggregate('dex_ci_application_device_data');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' application health records collected in last 30 days';
+
+    if (count >= 500) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' application health records in the last 30 days. DEX AI has sufficient application performance data for AI-driven diagnosis of app-related issues.'
+        };
+    } else if (count >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' application health records in the last 30 days (target: 500+). Limited application monitoring coverage will reduce DEX AI diagnosis accuracy for app-related issues.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' application health records in the last 30 days. DEX AI application diagnosis skills (Zoom, Office 365, browser performance) require active application health monitoring data.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000521: ' + e.message };
+        }
+    },
+    CHK0000525: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-30);
+
+    var ga = new GlideAggregate('dex_ci_device_data');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' device data records received in last 30 days';
+
+    if (count >= 1000) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' device telemetry records received in the last 30 days. ACC is actively collecting data — DEX AI has current endpoint context for diagnosis and analysis.'
+        };
+    } else if (count >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' device telemetry records in the last 30 days (target: 1,000+). ACC data flow is limited — DEX AI diagnosis will have incomplete endpoint coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' device telemetry records in the last 30 days. Insufficient ACC data flow — DEX AI cannot perform meaningful diagnosis without active telemetry from endpoints.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000525: ' + e.message };
+        }
+    },
+    CHK0000518: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-30);
+
+    var ga = new GlideAggregate('dex_score_device_adh_score_all_agents_daily');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' DEX device score records generated in last 30 days';
+
+    if (count >= 30) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' DEX score records generated in the last 30 days. Score data is current — DEX AI skills have the analytical foundation needed for device diagnosis.'
+        };
+    } else if (count >= 7) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' DEX score records in the last 30 days (target: 30+). Score generation may be intermittent — DEX AI diagnostic accuracy will be reduced without consistent score history.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' DEX score records in the last 30 days. DEX scores are not being generated consistently — AI skills cannot perform meaningful device health analysis without score data.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000518: ' + e.message };
+        }
+    },
+    CHK0000522: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('dex_survey_configuration');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active DEX survey configuration(s)';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active DEX survey configurations. User sentiment data is being collected — DEX AI has qualitative context to complement device and application health metrics.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active DEX survey configuration(s) (target: 3+). Limited sentiment coverage — configure surveys for additional device and application scenarios.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active DEX survey configurations. User sentiment data is not being collected — DEX AI is missing the qualitative dimension needed for comprehensive digital experience analysis.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000522: ' + e.message };
+        }
+    },
+    CHK0000526: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var gr = new GlideRecord('sys_scope');
+    gr.addQuery('scope', 'sn_sow_itsm_cont');
+    gr.addQuery('active', true);
+    gr.setLimit(1);
+    gr.query();
+    var active = gr.next();
+
+    if (active) {
+        return {
+            status: 'ready',
+            actualValue: 'Service Operations Workspace (sn_sow_itsm_cont) is active',
+            finding: 'Service Operations Workspace is active. DEX AI insights — including device health summaries, root cause analysis, and remediation recommendations — are surfaced in context for agents.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: 'Service Operations Workspace (sn_sow_itsm_cont) not found or inactive',
+            finding: 'Service Operations Workspace is not active. DEX AI insights are not accessible in a contextually relevant interface — agents cannot act on AI recommendations without SOW.'
+        };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000526: ' + e.message };
+        }
+    },
+    CHK0000519: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+
+    // Check sn_dex -- may be sys_scope or sys_store_app
+    var dexResult = checkPlugin("sn_dex", "sn_dex");
+    if (!dexResult.found) {
+        var gr = new GlideRecord("sys_scope");
+        gr.addQuery("scope", "sn_dex");
+        gr.addQuery("active", true);
+        gr.setLimit(1);
+        gr.query();
+        if (gr.next()) { dexResult.found = true; dexResult.table = "sys_scope"; }
+    }
+    var dexActive = dexResult.found;
+
+    // Check sn_itsm_gen_ai -- Store App confirmed
+    var itsmAIResult = checkPlugin("sn_itsm_gen_ai", "sn_itsm_gen_ai");
+    var itsmAIActive = itsmAIResult.found;
+
+    var actualValue = "sn_dex: " + (dexActive ? "active" : "inactive") +
+                      " | sn_itsm_gen_ai: " + (itsmAIActive ? "active (v" + itsmAIResult.version + ")" : "inactive");
+
+    if (dexActive && itsmAIActive) {
+        return { status: "ready", actualValue: actualValue,
+            finding: "DEX base plugin and Now Assist for ITSM are both active. DEX AI capabilities are available." };
+    } else if (dexActive && !itsmAIActive) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "DEX base plugin is active but Now Assist for ITSM (sn_itsm_gen_ai) is not. DEX AI diagnosis and agentic workflows are unavailable without sn_itsm_gen_ai." };
+    } else if (!dexActive && itsmAIActive) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Now Assist for ITSM is active but the DEX base plugin (sn_dex) is not. DEX AI capabilities require both plugins." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Neither DEX (sn_dex) nor Now Assist for ITSM (sn_itsm_gen_ai) are active. DEX AI capabilities are completely unavailable." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000519: ' + e.message };
+        }
+    },
+    CHK0000523: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-30);
+
+    var ga = new GlideAggregate('dex_ci_device_metrics');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' device metric records collected in last 30 days';
+
+    if (count >= 1000) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' device metric records in the last 30 days. DEX AI has rich device health signal for root cause analysis and anomaly detection.'
+        };
+    } else if (count >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' device metric records in the last 30 days (target: 1,000+). Limited metric coverage will reduce DEX AI root cause analysis accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' device metric records in the last 30 days. Insufficient device metrics for DEX AI to perform meaningful root cause analysis or anomaly detection.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000523: ' + e.message };
+        }
+    },
+    CHK0000516: function() {
+        try {
+            return (function(checkDef, dateFilter) {    var ga = new GlideAggregate("dex_device");    ga.addAggregate("COUNT");    ga.query();    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;    var actualValue = count + " devices registered in DEX";    if (count >= 100) {        return { status: "ready", actualValue: actualValue,            finding: count + " devices registered in DEX. AI diagnostic capabilities have a broad device population to analyze for patterns and anomalies." };    } else if (count >= 10) {        return { status: "needs_attention", actualValue: actualValue,            finding: "Only " + count + " devices registered in DEX (target: 100+). Expand Desktop Assistant deployment to more endpoints." };    } else {        return { status: "not_ready", actualValue: actualValue,            finding: "Only " + count + " devices registered in DEX. Deploy the DEX Desktop Assistant to managed endpoints first." };    }})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000516: ' + e.message };
+        }
+    },
+    CHK0000520: function() {
+        try {
+            return (function(checkDef, dateFilter) {    var ga = new GlideAggregate("dex_metric_rules");    ga.addAggregate("COUNT");    ga.query();    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;    var actualValue = count + " DEX metric rules configured";    if (count >= 10) {        return { status: "ready", actualValue: actualValue,            finding: count + " metric rules configured. DEX AI has sufficient thresholds to trigger proactive investigation workflows." };    } else if (count >= 3) {        return { status: "needs_attention", actualValue: actualValue,            finding: "Only " + count + " metric rules configured (target: 10+). Limited rule coverage for DEX AI proactive investigation." };    } else {        return { status: "not_ready", actualValue: actualValue,            finding: "Fewer than 3 DEX metric rules found. DEX AI cannot proactively trigger investigation workflows without metric rules." };    }})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000520: ' + e.message };
+        }
+    },
+    CHK0000524: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('dex_remedial_action_configuration');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active DEX remedial action configurations';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active remedial action configurations. DEX AI Agents have automated resolution options available for common endpoint issues.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active remedial action configuration(s) (target: 5+). DEX AI Agent automated resolution is limited — configure additional remedial actions for common issue types.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active DEX remedial action configurations. DEX AI can diagnose issues but cannot execute automated resolutions without configured remedial actions — AI value is significantly limited.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000524: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_DEX'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:02:40</sys_created_on>
+        <sys_id>62928ee0cfc5c3548935fb251d851c60</sys_id>
+        <sys_mod_count>15</sys_mod_count>
+        <sys_name>AROPCheckLibrary_DEX</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_62928ee0cfc5c3548935fb251d851c60</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

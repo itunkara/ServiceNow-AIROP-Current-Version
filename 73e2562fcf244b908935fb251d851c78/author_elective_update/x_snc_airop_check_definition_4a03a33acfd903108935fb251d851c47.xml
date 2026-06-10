@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Business rules and ACLs on the task table can intercept or modify AI Agent read/write actions, causing silent failures or unpredictable behavior.]]></ai_justification>
+<check_name>Agentic AI Customization Risk on Task Table</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaBR = new GlideAggregate('sys_script');
+    gaBR.addQuery('collection', 'task');
+    gaBR.addQuery('active', true);
+    gaBR.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaBR.addAggregate('COUNT');
+    gaBR.query();
+    var brs = gaBR.next() ? parseInt(gaBR.getAggregate('COUNT')) : 0;
+
+    var gaACL = new GlideAggregate('sys_security_acl');
+    gaACL.addQuery('name', 'task');
+    gaACL.addAggregate('COUNT');
+    gaACL.query();
+    var acls = gaACL.next() ? parseInt(gaACL.getAggregate('COUNT')) : 0;
+
+    var risk = brs + acls;
+    var actualValue = brs + ' custom BRs on task | ' + acls + ' ACLs on task | Combined risk score: ' + risk;
+
+    if (risk <= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low Agentic AI customization risk on task table (score: ' + risk + '). AI Agent read/write operations are unlikely to encounter conflicts.'
+        };
+    } else if (risk <= 25) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Moderate Agentic AI customization risk on task table (score: ' + risk + '). Test AI Agent actions in sub-production to identify Business Rule or ACL conflicts before go-live.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High Agentic AI customization risk on task table (score: ' + risk + '). Extensive customization creates significant risk of AI Agent conflicts on read/write operations — review and reduce before AI Agent enablement.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>ITSM</module>
+<number>CHK0005978</number>
+<order>390</order>
+<remediation_guidance>Review and reduce custom Business Rules and ACLs on the task table before Agentic AI enablement. Test AI Agent actions in sub-production to identify conflicts. Disable non-essential Business Rules that may intercept AI Agent read/write operations.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4a03a33acfd903108935fb251d851c47</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4a03a33acfd903108935fb251d851c47</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Business rules and ACLs on the task table can intercept or modify AI Agent read/write actions, causing silent failures or unpredictable behavior.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Agentic AI Customization Risk on Task Table&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var gaBR = new GlideAggregate('sys_script');
+    gaBR.addQuery('collection', 'task');
+    gaBR.addQuery('active', true);
+    gaBR.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaBR.addAggregate('COUNT');
+    gaBR.query();
+    var brs = gaBR.next() ? parseInt(gaBR.getAggregate('COUNT')) : 0;
+
+    var gaACL = new GlideAggregate('sys_security_acl');
+    gaACL.addQuery('name', 'task');
+    gaACL.addAggregate('COUNT');
+    gaACL.query();
+    var acls = gaACL.next() ? parseInt(gaACL.getAggregate('COUNT')) : 0;
+
+    var risk = brs + acls;
+    var actualValue = brs + ' custom BRs on task | ' + acls + ' ACLs on task | Combined risk score: ' + risk;
+
+    if (risk &lt;= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low Agentic AI customization risk on task table (score: ' + risk + '). AI Agent read/write operations are unlikely to encounter conflicts.'
+        };
+    } else if (risk &lt;= 25) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Moderate Agentic AI customization risk on task table (score: ' + risk + '). Test AI Agent actions in sub-production to identify Business Rule or ACL conflicts before go-live.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High Agentic AI customization risk on task table (score: ' + risk + '). Extensive customization creates significant risk of AI Agent conflicts on read/write operations — review and reduce before AI Agent enablement.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;ITSM&lt;/module&gt;
+&lt;number&gt;CHK0005978&lt;/number&gt;
+&lt;order&gt;390&lt;/order&gt;
+&lt;remediation_guidance&gt;Review and reduce custom Business Rules and ACLs on the task table before Agentic AI enablement. Test AI Agent actions in sub-production to identify conflicts. Disable non-essential Business Rules that may intercept AI Agent read/write operations.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4a03a33acfd903108935fb251d851c47&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-854903466</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:18</sys_created_on>
+        <sys_id>f2a64907cf9947108935fb251d851c43</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa53350000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:18</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>3ea6490783994710cdda947a66783941</update_guid>
+        <update_guid_history>3ea6490783994710cdda947a66783941:-854903466</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">882fc5cfcfdd47108935fb251d851ccd</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:15</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>0012fdc05aa54a8781a1f26e4b670e99</sys_id>
+        <sys_metadata>4a03a33acfd903108935fb251d851c47</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4a03a33acfd903108935fb251d851c47</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4a03a33acfd903108935fb251d851c47">f2a64907cf9947108935fb251d851c43</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:15</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

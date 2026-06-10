@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPUtils</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Shared utility methods for AIROP</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPUtils</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPUtils = Class.create();
+AROPUtils.prototype = {
+    initialize: function() {},
+
+    getActiveChecks: function(module) {
+        var checks = [];
+        var gr = new GlideRecord('x_snc_airop_check_definition');
+        gr.addQuery('module', module);
+        gr.addQuery('is_active', true);
+        gr.orderBy('order');
+        gr.query();
+        while (gr.next()) {
+            checks.push({
+                sys_id:              gr.getUniqueValue(),
+                check_id:            gr.getValue('number'),
+                                remediation_guidance:    gr.getValue('remediation_guidance'),
+                check_name:          gr.getValue('check_name'),
+                module:              module,
+                category:            gr.getValue('category'),
+                check_script:        gr.getValue('check_script'),
+                threshold_value:     gr.getValue('threshold_value'),
+                remediation_guidance:gr.getValue('remediation_guidance'),
+                value_impact:        gr.getValue('value_impact'),
+                is_clone_sensitive:  gr.getValue('is_clone_sensitive')
+            });
+        }
+        return checks;
+    },
+
+    storeResult: function(runId, checkDef, status, actualValue, finding) {
+        try {
+            var gr = new GlideRecord('x_snc_airop_check_result');
+            gr.setValue('assessment_run',   runId);
+            gr.setValue('module',           checkDef.module);
+            gr.setValue('check_id',         checkDef.check_id);
+            gr.setValue('check_name',       checkDef.check_name);
+            gr.setValue('check_definition', checkDef.sys_id);
+            gr.setValue('status',           status);
+            gr.setValue('actual_value',     actualValue);
+            gr.setValue('finding',          finding || '');
+            // Copy remediation_guidance from definition only if not ready
+            if (status !== 'ready' && checkDef.remediation_guidance) {
+                gr.setValue('remediation_guidance', checkDef.remediation_guidance);
+            }
+            gr.insert();
+        } catch(e) {
+            gs.error('[AIROP] Error storing result for ' + checkDef.check_id + ': ' + e.message);
+        }
+    },
+
+    calculateScore: function(runId, module) {
+        try {
+            var points = 0;
+            var total  = 0;
+            var gr = new GlideRecord('x_snc_airop_check_result');
+            gr.addQuery('assessment_run', runId);
+            gr.addQuery('module', module);
+            gr.addQuery('status', '!=', 'not_applicable');
+            gr.query();
+            while (gr.next()) {
+                var status = gr.getValue('status');
+                var isManual = gr.check_definition.is_manual == true;
+                total++;
+                if (status === 'ready')                points += 1.0;
+                else if (status === 'needs_attention') points += 0.5;
+                else if (isManual && status === 'needs_validation') points += 0;
+                // value_blocker = 0 points
+            }
+            return total === 0 ? 0 : Math.round((points / total) * 100);
+        } catch(e) {
+            gs.error('[AIROP] Error calculating score for ' + module + ': ' + e.message);
+            return 0;
+        }
+    },
+
+    getModuleScoreField: function(module) {
+        var map = {
+            'ITSM':            'itsm_score',
+            'ITOM':            'itom_score',
+            'CMDB':            'cmdb_score',
+            'HRSD':            'hrsd_score',
+                        'CSM':             'csm_score',
+            'FIELD_SERVICE':   'field_service_score',
+            'AIOPS':           'aiops_score',
+            'GRC':             'grc_score',
+            'SPM':             'spm_score',
+            'ITSM_PRO':        'itsm_pro_score',
+            'PLATFORM':        'platform_score',
+                        'VIRTUAL_AGENT':   'virtual_agent_score',
+            'DEX':             'dex_score',
+            'SECOPS':          'secops_score',
+            'HS':          'hs_score',
+            'OTSM':          'otsm_score',
+            'CREATOR':          'creator_score',
+            'SPO':          'spo_score',
+            'TPRM':          'tprm_score',
+            'LSD':          'lsd_score',
+            'WSD':          'wsd_score',
+            'HAM':          'ham_score',
+            'SAM':          'sam_score',
+            'DEX':             'dex_score'
+        };
+        return map[module] || null;
+    },
+
+    updateRunScore: function(runId, module, score) {
+        try {
+            var field = this.getModuleScoreField(module);
+            if (!field) {
+                gs.error('[AIROP] No score field mapping for module: ' + module);
+                return;
+            }
+            var gr = new GlideRecord('x_snc_airop_assessment_run');
+            if (gr.get(runId)) {
+                gr.setValue(field, score);
+                gr.update();
+                gs.info('[AIROP] Updated ' + field + ' = ' + score + '% for run: ' + runId);
+            }
+        } catch(e) {
+            gs.error('[AIROP] Error updating score for ' + module + ': ' + e.message);
+        }
+    },
+
+    detectClone: function() {
+        var result = { isClone: false, reason: 'No clone indicators detected' };
+        try {
+            // Check 1: clone property
+            var cloneProp = gs.getProperty('glide.db.clone.instance', '');
+            if (cloneProp) {
+                result.isClone = true;
+                result.reason  = 'glide.db.clone.instance is set: ' + cloneProp;
+                return result;
+            }
+            // Check 2: instance name indicators
+            var instanceName = gs.getProperty('instance_name', '').toLowerCase();
+            var indicators   = ['dev','test','stage','uat','clone','preprod','sandbox','qa'];
+            for (var i = 0; i < indicators.length; i++) {
+                if (instanceName.indexOf(indicators[i]) !== -1) {
+                    result.isClone = true;
+                    result.reason  = 'Instance name suggests non-production: ' + indicators[i];
+                    return result;
+                }
+            }
+            // Check 3: discovery staleness > 30 days
+            var disco = new GlideRecord('discovery_status');
+            disco.addQuery('state', 'complete');
+            disco.orderByDesc('sys_created_on');
+            disco.setLimit(1);
+            disco.query();
+            if (!disco.next()) {
+                result.isClone = true;
+                result.reason  = 'No completed discovery runs found on this instance';
+                return result;
+            }
+            var lastRun  = new GlideDateTime(disco.getValue('sys_created_on'));
+            var now      = new GlideDateTime();
+            var diff     = GlideDateTime.subtract(lastRun, now);
+            var days     = Math.abs(diff.getRoundedDayPart());
+            if (days > 30) {
+                result.isClone = true;
+                result.reason  = 'Discovery stale: ' + days + ' days since last run';
+            }
+        } catch(e) {
+            gs.error('[AIROP] detectClone error: ' + e.message);
+        }
+        return result;
+    },
+
+    isModuleEnabled: function(module) {
+        var propMap = {
+            'ITSM':            'x_snc_airop.run_itsm',
+            'ITOM':            'x_snc_airop.run_itom',
+            'CMDB':            'x_snc_airop.run_cmdb',
+            'HRSD':            'x_snc_airop.run_hrsd',
+                        'CSM':             'x_snc_airop.run_csm',
+            'FIELD_SERVICE':   'x_snc_airop.run_field_service',
+            'AIOPS':           'x_snc_airop.module.AIOPS.enabled',
+            'GRC':             'x_snc_airop.run_grc',
+            'SPM':             'x_snc_airop.run_spm',
+            'ITSM_PRO':        'x_snc_airop.run_itsm_pro',
+            'PLATFORM':        'x_snc_airop.run_platform',
+                        'VIRTUAL_AGENT':   'x_snc_airop.run_virtual_agent'
+        };
+        var prop = propMap[module];
+        return prop ? gs.getProperty(prop, 'false') === 'true' : false;
+    },
+
+    getDateRangeFilter: function() {
+        return {
+            enabled:   gs.getProperty('x_snc_airop.date_range_filter', 'false') === 'true',
+            startDate: gs.getProperty('x_snc_airop.date_range_start', '')
+        };
+    },
+
+
+        triggerAssessment: function() {
+        try {
+            // Check for already-running assessment
+            var running = new GlideRecord('x_snc_airop_assessment_run');
+            running.addQuery('status', 'running');
+            running.setLimit(1);
+            running.query();
+            if (running.next()) {
+                this.newItem().setAttribute('answer', 'ERROR|An assessment is already running: ' + running.getDisplayValue('name'));
+                return;
+            }
+
+            // Trigger the scheduled job immediately
+            var job = new GlideRecord('sysauto_script');
+            job.addQuery('name', 'AIROP Scheduled Assessment');
+            job.setLimit(1);
+            job.query();
+            if (!job.next()) {
+                this.newItem().setAttribute('answer', 'ERROR|Scheduled job not found');
+                return;
+            }
+
+            job.setValue('next_action', new GlideDateTime());
+            job.setValue('active', true);
+            job.update();
+
+            // Create a pending run record to redirect to
+            var run = new GlideRecord('x_snc_airop_assessment_run');
+            run.setValue('name', 'AIROP Run - ' + new GlideDateTime());
+            run.setValue('status', 'running');
+            run.setValue('run_date', new GlideDateTime());
+            var runId = run.insert();
+
+            this.newItem().setAttribute('answer', 'OK|' + runId);
+
+        } catch(e) {
+            this.newItem().setAttribute('answer', 'ERROR|' + e.toString());
+        }
+    },
+    type: 'AROPUtils'
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-05 17:55:16</sys_created_on>
+        <sys_id>b319162bcfe84b908935fb251d851c5c</sys_id>
+        <sys_mod_count>17</sys_mod_count>
+        <sys_name>AROPUtils</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_b319162bcfe84b908935fb251d851c5c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-29 20:53:19</sys_updated_on>
+    </sys_script_include>
+</record_update>

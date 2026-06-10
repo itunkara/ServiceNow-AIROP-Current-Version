@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_form_sections form_id="4456cb7bcfa047d08935fb251d851cc0" sys_domain="global" table="x_snc_airop_assessment_run" version="3">
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>0</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 15:47:20</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>4456cb7bcfa047d08935fb251d851cc3</sys_id>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_airop_assessment_run" name="x_snc_airop_assessment_run" sys_domain="global" view="Default view">4456cb7bcfa047d08935fb251d851cc0</sys_ui_form>
+            <sys_ui_section caption="NULL" display_value="" name="x_snc_airop_assessment_run" sys_domain="global" view="Default view">7bba9f27cfa00f908935fb251d851c46</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-06-03 02:58:20</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>1</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 15:47:20</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>4456cb7bcfa047d08935fb251d851cc8</sys_id>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_airop_assessment_run" name="x_snc_airop_assessment_run" sys_domain="global" view="Default view">4456cb7bcfa047d08935fb251d851cc0</sys_ui_form>
+            <sys_ui_section caption="Assessment Details" display_value="Assessment Details" name="x_snc_airop_assessment_run" sys_domain="global" view="Default view">4456cb7bcfa047d08935fb251d851cc4</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-06-03 14:40:40</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>2</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 15:58:09</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>d6c8c7ffcfe047d08935fb251d851c02</sys_id>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_airop_assessment_run" name="x_snc_airop_assessment_run" sys_domain="global" view="Default view">4456cb7bcfa047d08935fb251d851cc0</sys_ui_form>
+            <sys_ui_section caption="Check Results" display_value="Check Results" name="x_snc_airop_assessment_run" sys_domain="global" view="Default view">9ac887ffcfe047d08935fb251d851cfd</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-06-03 14:40:40</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>3</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-06-03 02:56:20</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>f652ecb0cf11cbdc8935fb251d851c38</sys_id>
+            <sys_mod_count>3</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_snc_airop_assessment_run" name="x_snc_airop_assessment_run" sys_domain="global" view="Default view">4456cb7bcfa047d08935fb251d851cc0</sys_ui_form>
+            <sys_ui_section caption="Logs" display_value="Logs" name="x_snc_airop_assessment_run" sys_domain="global" view="Default view">ba52e430cf11cbdc8935fb251d851c73</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-06-03 14:40:40</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form action="INSERT_OR_UPDATE">
+            <name>x_snc_airop_assessment_run</name>
+            <roles/>
+            <sys_class_name>sys_ui_form</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-06 15:47:20</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>4456cb7bcfa047d08935fb251d851cc0</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_snc_airop_assessment_run</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+            <sys_update_name>sys_ui_form_sections_4456cb7bcfa047d08935fb251d851cc0</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-06 15:47:20</sys_updated_on>
+            <sys_user/>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_form>
+    </sys_ui_form_sections>
+</record_update>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Stale KB articles cause Now Assist to surface outdated solutions to agents and end users. AI Search ranks articles by relevance but cannot determine accuracy -- fresh content directly improves AI response quality.]]></ai_justification>
+<check_name>KB Article Age and Staleness</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaPublished = new GlideAggregate('kb_knowledge');
+    gaPublished.addQuery('workflow_state', 'published');
+    gaPublished.addQuery('active', true);
+    gaPublished.addAggregate('COUNT');
+    gaPublished.query();
+    var published = gaPublished.next() ? parseInt(gaPublished.getAggregate('COUNT')) : 0;
+
+    if (published === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. KB staleness cannot be assessed.'
+        };
+    }
+
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-365);
+
+    var gaStale = new GlideAggregate('kb_knowledge');
+    gaStale.addQuery('workflow_state', 'published');
+    gaStale.addQuery('active', true);
+    gaStale.addQuery('sys_updated_on', '<', cutoff.getValue());
+    gaStale.addAggregate('COUNT');
+    gaStale.query();
+    var stale = gaStale.next() ? parseInt(gaStale.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((stale / published) * 100);
+    var actualValue = pct + '% stale (' + stale + ' of ' + published + ' articles over 12 months old)';
+
+    if (pct <= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of published KB articles are over 12 months old. KB content is current — Now Assist AI Search will return accurate, relevant results.'
+        };
+    } else if (pct <= 40) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: pct + '% of published KB articles are over 12 months old (target: ≤20%). Stale articles reduce Now Assist AI Search quality — establish a KB review cycle.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: pct + '% of published KB articles are over 12 months old. Majority of KB content is stale — Now Assist AI Search will return outdated information, degrading self-service quality.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>ITSM</module>
+<number>CHK0005941</number>
+<order>20</order>
+<remediation_guidance>Establish a KB governance process with mandatory annual review cycles. Use the KB article review queue to identify and update or retire stale articles. Target: ≤20% of published articles over 12 months old.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4603a33acfd903108935fb251d851c03</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4603a33acfd903108935fb251d851c03</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Stale KB articles cause Now Assist to surface outdated solutions to agents and end users. AI Search ranks articles by relevance but cannot determine accuracy -- fresh content directly improves AI response quality.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;KB Article Age and Staleness&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var gaPublished = new GlideAggregate('kb_knowledge');
+    gaPublished.addQuery('workflow_state', 'published');
+    gaPublished.addQuery('active', true);
+    gaPublished.addAggregate('COUNT');
+    gaPublished.query();
+    var published = gaPublished.next() ? parseInt(gaPublished.getAggregate('COUNT')) : 0;
+
+    if (published === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. KB staleness cannot be assessed.'
+        };
+    }
+
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-365);
+
+    var gaStale = new GlideAggregate('kb_knowledge');
+    gaStale.addQuery('workflow_state', 'published');
+    gaStale.addQuery('active', true);
+    gaStale.addQuery('sys_updated_on', '&lt;', cutoff.getValue());
+    gaStale.addAggregate('COUNT');
+    gaStale.query();
+    var stale = gaStale.next() ? parseInt(gaStale.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((stale / published) * 100);
+    var actualValue = pct + '% stale (' + stale + ' of ' + published + ' articles over 12 months old)';
+
+    if (pct &lt;= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of published KB articles are over 12 months old. KB content is current — Now Assist AI Search will return accurate, relevant results.'
+        };
+    } else if (pct &lt;= 40) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: pct + '% of published KB articles are over 12 months old (target: ≤20%). Stale articles reduce Now Assist AI Search quality — establish a KB review cycle.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: pct + '% of published KB articles are over 12 months old. Majority of KB content is stale — Now Assist AI Search will return outdated information, degrading self-service quality.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;ITSM&lt;/module&gt;
+&lt;number&gt;CHK0005941&lt;/number&gt;
+&lt;order&gt;20&lt;/order&gt;
+&lt;remediation_guidance&gt;Establish a KB governance process with mandatory annual review cycles. Use the KB article review queue to identify and update or retire stale articles. Target: ≤20% of published articles over 12 months old.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4603a33acfd903108935fb251d851c03&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>632321077</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:23</sys_created_on>
+        <sys_id>c8b6cd07cf9947108935fb251d851c42</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa65ca0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:23</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>04b6cd0702994710bfc5c33f45ece341</update_guid>
+        <update_guid_history>04b6cd0702994710bfc5c33f45ece341:632321077</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">3f1fc5cfcfdd47108935fb251d851c83</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:15</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>0ccb05252d0244bd8172148d203fd9c1</sys_id>
+        <sys_metadata>4603a33acfd903108935fb251d851c03</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4603a33acfd903108935fb251d851c03</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4603a33acfd903108935fb251d851c03">c8b6cd07cf9947108935fb251d851c42</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:15</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

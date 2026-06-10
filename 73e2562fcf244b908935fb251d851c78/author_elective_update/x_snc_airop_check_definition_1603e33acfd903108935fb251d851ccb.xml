@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Building assignments on space records enable Now Assist WSD to provide location-aware AI space recommendations. Without building data, AI cannot filter spaces by proximity to the employee or their team.]]></ai_justification>
+<check_name>Location Coverage on Spaces</check_name>
+<check_script><![CDATA[(function() { var gaTotal = new GlideAggregate("sn_wsd_core_space"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No space records found", finding: "No space records found. Location coverage cannot be assessed." }; } var gaLoc = new GlideAggregate("sn_wsd_core_space"); gaLoc.addQuery("building", "!=", ""); gaLoc.addAggregate("COUNT"); gaLoc.query(); var withBuilding = gaLoc.next() ? parseInt(gaLoc.getAggregate("COUNT")) : 0; var pct = Math.round((withBuilding / total) * 100); var actualValue = pct + "% of spaces have a building assigned (" + withBuilding + "/" + total + ")"; if (pct >= 90) { return { status: "ready", actualValue: actualValue, finding: pct + "% of spaces have building assignments. Now Assist WSD can provide accurate location-aware AI space recommendations." }; } else if (pct >= 60) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of spaces have building assignments (target: 90%+). Now Assist WSD AI location filtering will have incomplete coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of spaces have building assignments. Now Assist WSD cannot provide location-aware AI recommendations without building data on spaces." }; } })]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>WSD</module>
+<number>CHK0006231</number>
+<order>900</order>
+<remediation_guidance>Assign building references to all space records in Workplace Core. Building data is required for Now Assist WSD to filter and recommend spaces by employee location.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:06:00</sys_created_on>
+<sys_id>1603e33acfd903108935fb251d851ccb</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:06:00</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_1603e33acfd903108935fb251d851ccb</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Building assignments on space records enable Now Assist WSD to provide location-aware AI space recommendations. Without building data, AI cannot filter spaces by proximity to the employee or their team.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Location Coverage on Spaces&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function() { var gaTotal = new GlideAggregate("sn_wsd_core_space"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No space records found", finding: "No space records found. Location coverage cannot be assessed." }; } var gaLoc = new GlideAggregate("sn_wsd_core_space"); gaLoc.addQuery("building", "!=", ""); gaLoc.addAggregate("COUNT"); gaLoc.query(); var withBuilding = gaLoc.next() ? parseInt(gaLoc.getAggregate("COUNT")) : 0; var pct = Math.round((withBuilding / total) * 100); var actualValue = pct + "% of spaces have a building assigned (" + withBuilding + "/" + total + ")"; if (pct &gt;= 90) { return { status: "ready", actualValue: actualValue, finding: pct + "% of spaces have building assignments. Now Assist WSD can provide accurate location-aware AI space recommendations." }; } else if (pct &gt;= 60) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of spaces have building assignments (target: 90%+). Now Assist WSD AI location filtering will have incomplete coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of spaces have building assignments. Now Assist WSD cannot provide location-aware AI recommendations without building data on spaces." }; } })]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;WSD&lt;/module&gt;
+&lt;number&gt;CHK0006231&lt;/number&gt;
+&lt;order&gt;900&lt;/order&gt;
+&lt;remediation_guidance&gt;Assign building references to all space records in Workplace Core. Building data is required for Now Assist WSD to filter and recommend spaces by employee location.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:06:00&lt;/sys_created_on&gt;
+&lt;sys_id&gt;1603e33acfd903108935fb251d851ccb&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:06:00&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-450788955</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:23</sys_created_on>
+        <sys_id>ccb6cd07cf9947108935fb251d851cf2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa68110000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:23</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>08b6cd07ea994710e406683f4134e0f1</update_guid>
+        <update_guid_history>08b6cd07ea994710e406683f4134e0f1:-450788955</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">271f05cfcfdd47108935fb251d851c42</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:13</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>6f7be8f5a4124b94ba5d7516f64ca4c9</sys_id>
+        <sys_metadata>1603e33acfd903108935fb251d851ccb</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_1603e33acfd903108935fb251d851ccb</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_1603e33acfd903108935fb251d851ccb">ccb6cd07cf9947108935fb251d851cf2</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:13</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

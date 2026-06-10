@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[AI entity resolution matches incident descriptions and alert sources to specific CIs by name. CIs with copy/test/temp naming patterns cause false matches and lead Now Assist to associate incidents with wrong CIs.]]></ai_justification>
+<check_name>CI Name Consistency</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Use separate queries to avoid OR precedence issues with multiple LIKE clauses
+    var suspects = {};
+
+    function collectSuspect(pattern) {
+        var gr = new GlideRecord('cmdb_ci');
+        gr.addQuery('install_status', 1);
+        gr.addQuery('name', 'CONTAINS', pattern);
+        gr.query();
+        while (gr.next()) {
+            suspects[gr.getUniqueValue()] = true;
+        }
+    }
+
+    collectSuspect('copy');
+    collectSuspect('test');
+    collectSuspect('temp');
+    collectSuspect('COPY');
+    collectSuspect('TEST');
+    collectSuspect('TEMP');
+
+    var suspect = Object.keys(suspects).length;
+
+    var actualValue = suspect + ' CIs with suspect naming patterns (copy/test/temp)';
+
+    if (suspect === 0) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'No CIs with suspect naming patterns detected. Now Assist entity resolution will not encounter false matches from test or copy records.' };
+    } else if (suspect < 100) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: suspect + ' CIs have suspect naming patterns (copy/test/temp). These may cause Now Assist entity resolution false matches — review and rename or retire these CIs.' };
+    } else if (suspect < 500) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: suspect + ' CIs have suspect naming patterns. Significant naming inconsistency — Now Assist entity resolution accuracy is at risk. Establish and enforce a CI naming standard.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: suspect + ' CIs have suspect naming patterns. Critical naming hygiene issue — Now Assist entity resolution will produce frequent false matches across ' + suspect + ' poorly named records.' };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>CMDB</module>
+<number>CHK0006000</number>
+<order>30</order>
+<remediation_guidance>Identify and rename CIs with copy/test/temp naming patterns via cmdb_ci_list.do?sysparm_query=nameLIKEcopy^ORnameLIKEtest^ORnameLIKEtemp. Establish and enforce a CI naming standard. Consider retiring test/copy CIs no longer needed. Inconsistent naming causes Now Assist entity resolution false matches.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4a03a33acfd903108935fb251d851c52</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4a03a33acfd903108935fb251d851c52</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[AI entity resolution matches incident descriptions and alert sources to specific CIs by name. CIs with copy/test/temp naming patterns cause false matches and lead Now Assist to associate incidents with wrong CIs.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;CI Name Consistency&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    // Use separate queries to avoid OR precedence issues with multiple LIKE clauses
+    var suspects = {};
+
+    function collectSuspect(pattern) {
+        var gr = new GlideRecord('cmdb_ci');
+        gr.addQuery('install_status', 1);
+        gr.addQuery('name', 'CONTAINS', pattern);
+        gr.query();
+        while (gr.next()) {
+            suspects[gr.getUniqueValue()] = true;
+        }
+    }
+
+    collectSuspect('copy');
+    collectSuspect('test');
+    collectSuspect('temp');
+    collectSuspect('COPY');
+    collectSuspect('TEST');
+    collectSuspect('TEMP');
+
+    var suspect = Object.keys(suspects).length;
+
+    var actualValue = suspect + ' CIs with suspect naming patterns (copy/test/temp)';
+
+    if (suspect === 0) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'No CIs with suspect naming patterns detected. Now Assist entity resolution will not encounter false matches from test or copy records.' };
+    } else if (suspect &lt; 100) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: suspect + ' CIs have suspect naming patterns (copy/test/temp). These may cause Now Assist entity resolution false matches — review and rename or retire these CIs.' };
+    } else if (suspect &lt; 500) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: suspect + ' CIs have suspect naming patterns. Significant naming inconsistency — Now Assist entity resolution accuracy is at risk. Establish and enforce a CI naming standard.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: suspect + ' CIs have suspect naming patterns. Critical naming hygiene issue — Now Assist entity resolution will produce frequent false matches across ' + suspect + ' poorly named records.' };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;CMDB&lt;/module&gt;
+&lt;number&gt;CHK0006000&lt;/number&gt;
+&lt;order&gt;30&lt;/order&gt;
+&lt;remediation_guidance&gt;Identify and rename CIs with copy/test/temp naming patterns via cmdb_ci_list.do?sysparm_query=nameLIKEcopy^ORnameLIKEtest^ORnameLIKEtemp. Establish and enforce a CI naming standard. Consider retiring test/copy CIs no longer needed. Inconsistent naming causes Now Assist entity resolution false matches.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4a03a33acfd903108935fb251d851c52&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-134768233</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:19</sys_created_on>
+        <sys_id>c7a68907cf9947108935fb251d851ce2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa56b20000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:19</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>03a68907b499471073ce97f0d83cf3e1</update_guid>
+        <update_guid_history>03a68907b499471073ce97f0d83cf3e1:-134768233</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">842f09cfcfdd47108935fb251d851c4c</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:15</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>5b7f7f2785714766b0284ef6434b07c4</sys_id>
+        <sys_metadata>4a03a33acfd903108935fb251d851c52</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4a03a33acfd903108935fb251d851c52</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4a03a33acfd903108935fb251d851c52">c7a68907cf9947108935fb251d851ce2</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:15</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

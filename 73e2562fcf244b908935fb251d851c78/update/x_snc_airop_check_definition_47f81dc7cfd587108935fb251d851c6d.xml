@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[HR case relationships (parent cases, related incidents, linked tasks) provide context Now Assist uses for comprehensive case summarization. Isolated cases without relationships limit AI summary depth.]]></ai_justification>
+        <check_name>HR Case Related Records</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('task_rel_task');
+    ga.addEncodedQuery('parent.sys_class_name=sn_hr_core_case^ORchild.sys_class_name=sn_hr_core_case');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' HR case relationships in task_rel_task';
+
+    if (count >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' HR case relationships. Now Assist HRSD summarization has rich relationship context for comprehensive AI-generated case summaries.'
+        };
+    } else if (count >= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' HR case relationships (target: 50+). Now Assist HRSD summarization will have limited relationship context for AI summary depth.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' HR case relationships. Now Assist HRSD summarization uses related records for comprehensive context — encourage agents to link related cases and tasks.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HRSD</module>
+        <number>CHK0000410</number>
+        <order>180</order>
+        <remediation_guidance>Encourage HR agents to link related cases, incidents, and tasks using the Related Records tab. Configure automation to auto-link related HR cases by employee. Now Assist HRSD summarization improves with relationship context.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>47f81dc7cfd587108935fb251d851c6d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>HR Case Related Records</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_47f81dc7cfd587108935fb251d851c6d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

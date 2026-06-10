@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Discovery credentials are required to authenticate and collect detailed CI attributes. Gaps in credential coverage mean Now Assist receives partial or empty CI data for uncovered infrastructure classes.]]></ai_justification>
+        <check_name>Discovery Credentials Coverage</check_name>
+        <check_script><![CDATA[(function() {
+    var t = new GlideRecord("discovery_credentials");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table discovery_credentials not found", finding: "Discovery Credentials table (discovery_credentials) is not available. Verify the Discovery plugin is active." };
+    }
+    var ga = new GlideAggregate("discovery_credentials");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active discovery credentials configured";
+    if (count >= 5) {
+        return { status: "ready", actualValue: actualValue, finding: count + " active discovery credentials. Now Assist ITOM has broad authenticated access to infrastructure for current CI data." };
+    } else if (count >= 1) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " active discovery credential(s) (target: 5+). Missing credentials mean some CI classes are not being discovered — Now Assist ITOM will have partial infrastructure context." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "No active discovery credentials configured. Without credentials, discovery cannot authenticate to infrastructure targets — Now Assist ITOM will have no reliable CI data." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITOM</module>
+        <number>CHK0000359</number>
+        <order>50</order>
+        <remediation_guidance>Configure discovery credentials for all key CI classes via discovery_credential_list.do. Ensure coverage across Windows (WMI), Linux (SSH), Network (SNMP), VMware (vCenter API), and Cloud (AWS/Azure/GCP). Credential gaps mean Now Assist ITOM receives partial or empty CI data.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>fef8d9c7cfd587108935fb251d851cf8</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Discovery Credentials Coverage</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_fef8d9c7cfd587108935fb251d851cf8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

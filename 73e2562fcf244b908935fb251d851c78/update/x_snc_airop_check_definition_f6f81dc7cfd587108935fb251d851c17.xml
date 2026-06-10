@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist AI-driven assignment and routing uses CI ownership to recommend the correct team. Zero ownership population means every AI assignment recommendation defaults to generic logic.]]></ai_justification>
+        <check_name>CI Owned By / Managed By Population</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaOwned = new GlideAggregate('cmdb_ci');
+    gaOwned.addQuery('install_status', 1);
+    gaOwned.addQuery('owned_by', '!=', '');
+    gaOwned.addAggregate('COUNT');
+    gaOwned.query();
+    var withOwner = gaOwned.next() ? parseInt(gaOwned.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. Ownership population cannot be assessed.' };
+    }
+
+    var pct = Math.round((withOwner / total) * 100);
+    var actualValue = pct + '% of active CIs have owned_by populated (' + withOwner + ' of ' + total + ')';
+
+    if (pct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of active CIs have an owner assigned. Now Assist can route AI recommendations and escalations to the correct owners.' };
+    } else if (pct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs have an owner (target: 80%+). Now Assist AI escalation routing will fail for CIs without ownership data.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs have an owner. Critical ownership gap — Now Assist cannot route AI-generated recommendations or escalations without CI ownership data.' };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>CMDB</module>
+        <number>CHK0000376</number>
+        <order>40</order>
+        <remediation_guidance>Populate owned_by and managed_by fields via import set from HR or asset management data. Use discovery enrichment rules to auto-assign ownership by IP range or organizational unit. Target: 80%+ of active CIs with ownership populated.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>f6f81dc7cfd587108935fb251d851c17</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>CI Owned By / Managed By Population</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_f6f81dc7cfd587108935fb251d851c17</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

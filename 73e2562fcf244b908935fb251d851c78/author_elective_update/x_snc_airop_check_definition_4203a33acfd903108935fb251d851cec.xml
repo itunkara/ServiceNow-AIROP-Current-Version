@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Predictive Intelligence powers Now Assist similarity, classification, and routing recommendations. Without active PI, AI-driven incident routing, similar record suggestions, and field predictions are unavailable.]]></ai_justification>
+<check_name>Predictive Intelligence Plugin Status</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Use functional evidence — ml_solution table existing and being valid
+    // means PI is installed regardless of scope naming conventions
+    var testGr = new GlideRecord('ml_solution');
+    testGr.setLimit(1);
+    testGr.query();
+    var piActive = testGr.isValid();
+
+    if (piActive) {
+        return {
+            status: 'ready',
+            actualValue: 'Predictive Intelligence is active',
+            finding: 'Predictive Intelligence is active. AI-driven routing, similarity matching, and classification recommendations are available for Now Assist.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: 'Predictive Intelligence not found or inactive',
+            finding: 'Predictive Intelligence is not active. PI powers Now Assist similarity matching, classification, and AI-driven routing — all of these capabilities are unavailable without PI.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>PLATFORM</module>
+<number>CHK0006108</number>
+<order>40</order>
+<remediation_guidance>Activate Predictive Intelligence (com.glide.platform_ml) via sys_plugins_list.do. Train PI solutions on incident, change, and case data after activation. PI requires a minimum of 1,000 historical records per solution to train effectively.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4203a33acfd903108935fb251d851cec</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851cec</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Predictive Intelligence powers Now Assist similarity, classification, and routing recommendations. Without active PI, AI-driven incident routing, similar record suggestions, and field predictions are unavailable.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Predictive Intelligence Plugin Status&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    // Use functional evidence — ml_solution table existing and being valid
+    // means PI is installed regardless of scope naming conventions
+    var testGr = new GlideRecord('ml_solution');
+    testGr.setLimit(1);
+    testGr.query();
+    var piActive = testGr.isValid();
+
+    if (piActive) {
+        return {
+            status: 'ready',
+            actualValue: 'Predictive Intelligence is active',
+            finding: 'Predictive Intelligence is active. AI-driven routing, similarity matching, and classification recommendations are available for Now Assist.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: 'Predictive Intelligence not found or inactive',
+            finding: 'Predictive Intelligence is not active. PI powers Now Assist similarity matching, classification, and AI-driven routing — all of these capabilities are unavailable without PI.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;PLATFORM&lt;/module&gt;
+&lt;number&gt;CHK0006108&lt;/number&gt;
+&lt;order&gt;40&lt;/order&gt;
+&lt;remediation_guidance&gt;Activate Predictive Intelligence (com.glide.platform_ml) via sys_plugins_list.do. Train PI solutions on incident, change, and case data after activation. PI requires a minimum of 1,000 historical records per solution to train effectively.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4203a33acfd903108935fb251d851cec&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-569250881</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:25</sys_created_on>
+        <sys_id>a0b68147cf9947108935fb251d851c07</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa6e690000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:25</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>e8b681476f9947109bac7b8b86c41a05</update_guid>
+        <update_guid_history>e8b681476f9947109bac7b8b86c41a05:-569250881</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">fb1f85cfcfdd47108935fb251d851ce6</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:14</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>2044ead4d17a4f5c879671a76d66ac11</sys_id>
+        <sys_metadata>4203a33acfd903108935fb251d851cec</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851cec</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4203a33acfd903108935fb251d851cec">a0b68147cf9947108935fb251d851c07</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:14</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

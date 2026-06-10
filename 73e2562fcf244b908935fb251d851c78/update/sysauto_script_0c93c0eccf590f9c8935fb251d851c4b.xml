@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysauto_script">
+    <sysauto_script action="INSERT_OR_UPDATE">
+        <active>false</active>
+        <business_calendar/>
+        <condition/>
+        <conditional>false</conditional>
+        <entered_time/>
+        <max_drift/>
+        <name>AIROP LSD Global Scope Test</name>
+        <offset/>
+        <offset_type>0</offset_type>
+        <run_as display_value="AIROP Service Account">73843d08cff8cbd08935fb251d851c79</run_as>
+        <run_as_tz/>
+        <run_dayofmonth>1</run_dayofmonth>
+        <run_dayofweek>1</run_dayofweek>
+        <run_period>1970-01-01 00:00:30</run_period>
+        <run_start>2026-06-02 06:04:19</run_start>
+        <run_time>1970-01-01 08:00:00</run_time>
+        <run_type>periodically</run_type>
+        <script><![CDATA[gs.info("[AIROP GLOBAL TEST] Running as: " + gs.getUserName());
+gs.info("[AIROP GLOBAL TEST] Has legal_admin: " + gs.hasRole("sn_lg_ops.legal_admin"));
+gs.info("[AIROP GLOBAL TEST] Testing sn_lg_ops_request...");
+try {
+    var ga = new GlideAggregate("sn_lg_ops_request");
+    ga.addAggregate("COUNT");
+    ga.query();
+    if (ga.next()) {
+        gs.info("[AIROP GLOBAL TEST] count=" + ga.getAggregate("COUNT"));
+    } else {
+        gs.info("[AIROP GLOBAL TEST] blocked or empty");
+    }
+} catch(e) {
+    gs.info("[AIROP GLOBAL TEST] ERROR: " + e.message);
+}
+gs.info("[AIROP GLOBAL TEST] Done.");]]></script>
+        <sys_class_name>sysauto_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-02 06:03:19</sys_created_on>
+        <sys_id>0c93c0eccf590f9c8935fb251d851c4b</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>AIROP LSD Global Scope Test</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sysauto_script_0c93c0eccf590f9c8935fb251d851c4b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-02 06:19:24</sys_updated_on>
+        <time_zone/>
+        <upgrade_safe>false</upgrade_safe>
+    </sysauto_script>
+</record_update>

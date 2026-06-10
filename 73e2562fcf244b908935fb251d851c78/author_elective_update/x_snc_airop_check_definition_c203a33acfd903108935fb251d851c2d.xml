@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Post-incident review data allows Now Assist to identify systemic failure patterns and generate recurrence prevention recommendations. Low PIR coverage means this AI capability has no historical data.]]></ai_justification>
+<check_name>Post-Incident Review (PIR) Linkage Rate</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate('incident');
+    totalGr.addQuery('priority', 1);
+    totalGr.addQuery('state', 'IN', '6,7');
+    totalGr.addAggregate('COUNT');
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No resolved/closed P1 incidents found',
+            finding: 'No resolved P1 incidents found. PIR linkage cannot be assessed.' };
+    }
+
+    var linkedGr = new GlideAggregate('incident');
+    linkedGr.addQuery('priority', 1);
+    linkedGr.addQuery('state', 'IN', '6,7');
+    linkedGr.addQuery('problem_id', '!=', '');
+    linkedGr.addAggregate('COUNT');
+    linkedGr.query();
+    var linked = linkedGr.next() ? parseInt(linkedGr.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((linked / total) * 100);
+    var actualValue = linked + ' of ' + total + ' resolved P1 incidents linked to a Problem record (' + pct + '%)';
+
+    if (pct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of P1 incidents linked to a problem record. Now Assist can surface recurring P1 patterns and PIR-driven recommendations.' };
+    } else if (pct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents linked to a problem (target: 80%). PIR recommendations will have incomplete data.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents are linked to a problem record. Now Assist cannot surface recurring major incident patterns or PIR insights.' };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>ITSM</module>
+<number>CHK0005975</number>
+<order>360</order>
+<remediation_guidance>Link all resolved P1 incidents to a Problem record using the OOB Problem field (problem_id). Enforce via a mandatory field policy on P1 resolution or an automated workflow that creates a problem record for every P1. Do not use custom relationship tables — Now Assist reads the OOB problem_id reference field.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>c203a33acfd903108935fb251d851c2d</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_c203a33acfd903108935fb251d851c2d</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Post-incident review data allows Now Assist to identify systemic failure patterns and generate recurrence prevention recommendations. Low PIR coverage means this AI capability has no historical data.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Post-Incident Review (PIR) Linkage Rate&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate('incident');
+    totalGr.addQuery('priority', 1);
+    totalGr.addQuery('state', 'IN', '6,7');
+    totalGr.addAggregate('COUNT');
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No resolved/closed P1 incidents found',
+            finding: 'No resolved P1 incidents found. PIR linkage cannot be assessed.' };
+    }
+
+    var linkedGr = new GlideAggregate('incident');
+    linkedGr.addQuery('priority', 1);
+    linkedGr.addQuery('state', 'IN', '6,7');
+    linkedGr.addQuery('problem_id', '!=', '');
+    linkedGr.addAggregate('COUNT');
+    linkedGr.query();
+    var linked = linkedGr.next() ? parseInt(linkedGr.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((linked / total) * 100);
+    var actualValue = linked + ' of ' + total + ' resolved P1 incidents linked to a Problem record (' + pct + '%)';
+
+    if (pct &gt;= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of P1 incidents linked to a problem record. Now Assist can surface recurring P1 patterns and PIR-driven recommendations.' };
+    } else if (pct &gt;= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents linked to a problem (target: 80%). PIR recommendations will have incomplete data.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents are linked to a problem record. Now Assist cannot surface recurring major incident patterns or PIR insights.' };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;ITSM&lt;/module&gt;
+&lt;number&gt;CHK0005975&lt;/number&gt;
+&lt;order&gt;360&lt;/order&gt;
+&lt;remediation_guidance&gt;Link all resolved P1 incidents to a Problem record using the OOB Problem field (problem_id). Enforce via a mandatory field policy on P1 resolution or an automated workflow that creates a problem record for every P1. Do not use custom relationship tables — Now Assist reads the OOB problem_id reference field.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;c203a33acfd903108935fb251d851c2d&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-727117548</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:25</sys_created_on>
+        <sys_id>60b68147cf9947108935fb251d851c04</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa6e4c0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:25</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>a8b6814730994710c45186e0bfe7db02</update_guid>
+        <update_guid_history>a8b6814730994710c45186e0bfe7db02:-727117548</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">192f4103cf1187108935fb251d851c39</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:20</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>7284fc4dfead4158aa6e98d88ed3d284</sys_id>
+        <sys_metadata>c203a33acfd903108935fb251d851c2d</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_c203a33acfd903108935fb251d851c2d</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_c203a33acfd903108935fb251d851c2d">60b68147cf9947108935fb251d851c04</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:20</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

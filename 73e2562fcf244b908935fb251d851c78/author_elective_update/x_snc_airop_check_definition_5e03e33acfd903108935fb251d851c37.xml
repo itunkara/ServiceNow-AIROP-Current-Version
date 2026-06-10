@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Custom Business Rules and Client Scripts on the security incident table can intercept or conflict with Now Assist SIR AI Agent actions. High customization density increases the risk of AI actions failing silently or producing unexpected results.]]></ai_justification>
+<check_name>Security Incident Customization Risk</check_name>
+<check_script><![CDATA[(function() { var gaBR = new GlideAggregate("sys_script"); gaBR.addQuery("collection", "sn_si_incident"); gaBR.addQuery("active", true); gaBR.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); gaBR.addAggregate("COUNT"); gaBR.query(); var brs = gaBR.next() ? parseInt(gaBR.getAggregate("COUNT")) : 0; var gaCS = new GlideAggregate("sys_script_client"); gaCS.addQuery("table", "sn_si_incident"); gaCS.addQuery("active", true); gaCS.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); gaCS.addAggregate("COUNT"); gaCS.query(); var cs = gaCS.next() ? parseInt(gaCS.getAggregate("COUNT")) : 0; var risk = brs + cs; var actualValue = brs + " custom BRs + " + cs + " client scripts on sn_si_incident (risk score: " + risk + ")"; if (risk <= 5) { return { status: "ready", actualValue: actualValue, finding: "Low security incident customization risk (score: " + risk + "). Now Assist SIR AI Agent actions are unlikely to encounter conflicts." }; } else if (risk <= 10) { return { status: "needs_attention", actualValue: actualValue, finding: "Moderate security incident customization risk (score: " + risk + "). Test Now Assist SIR in sub-production before enabling in production." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "High security incident customization risk (score: " + risk + "). Extensive customization increases the risk of conflicts with Now Assist SIR AI Agent actions." }; } })]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>SECOPS</module>
+<number>CHK0006160</number>
+<order>900</order>
+<remediation_guidance>Review custom Business Rules and Client Scripts on sn_si_incident. Test Now Assist SIR in a sub-production environment to identify and resolve conflicts before enabling in production.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:06:00</sys_created_on>
+<sys_id>5e03e33acfd903108935fb251d851c37</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:06:00</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_5e03e33acfd903108935fb251d851c37</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Custom Business Rules and Client Scripts on the security incident table can intercept or conflict with Now Assist SIR AI Agent actions. High customization density increases the risk of AI actions failing silently or producing unexpected results.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Security Incident Customization Risk&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function() { var gaBR = new GlideAggregate("sys_script"); gaBR.addQuery("collection", "sn_si_incident"); gaBR.addQuery("active", true); gaBR.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); gaBR.addAggregate("COUNT"); gaBR.query(); var brs = gaBR.next() ? parseInt(gaBR.getAggregate("COUNT")) : 0; var gaCS = new GlideAggregate("sys_script_client"); gaCS.addQuery("table", "sn_si_incident"); gaCS.addQuery("active", true); gaCS.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); gaCS.addAggregate("COUNT"); gaCS.query(); var cs = gaCS.next() ? parseInt(gaCS.getAggregate("COUNT")) : 0; var risk = brs + cs; var actualValue = brs + " custom BRs + " + cs + " client scripts on sn_si_incident (risk score: " + risk + ")"; if (risk &lt;= 5) { return { status: "ready", actualValue: actualValue, finding: "Low security incident customization risk (score: " + risk + "). Now Assist SIR AI Agent actions are unlikely to encounter conflicts." }; } else if (risk &lt;= 10) { return { status: "needs_attention", actualValue: actualValue, finding: "Moderate security incident customization risk (score: " + risk + "). Test Now Assist SIR in sub-production before enabling in production." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "High security incident customization risk (score: " + risk + "). Extensive customization increases the risk of conflicts with Now Assist SIR AI Agent actions." }; } })]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;SECOPS&lt;/module&gt;
+&lt;number&gt;CHK0006160&lt;/number&gt;
+&lt;order&gt;900&lt;/order&gt;
+&lt;remediation_guidance&gt;Review custom Business Rules and Client Scripts on sn_si_incident. Test Now Assist SIR in a sub-production environment to identify and resolve conflicts before enabling in production.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:06:00&lt;/sys_created_on&gt;
+&lt;sys_id&gt;5e03e33acfd903108935fb251d851c37&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:06:00&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1471911124</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:26</sys_created_on>
+        <sys_id>bcb68147cf9947108935fb251d851ccf</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa71db0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:26</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>f4b68147069947107a886965890e6bce</update_guid>
+        <update_guid_history>f4b68147069947107a886965890e6bce:1471911124</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">e02fc9cfcfdd47108935fb251d851cba</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:17</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>31a7d89005be42e8a4a56e77e64b94c9</sys_id>
+        <sys_metadata>5e03e33acfd903108935fb251d851c37</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_5e03e33acfd903108935fb251d851c37</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_5e03e33acfd903108935fb251d851c37">bcb68147cf9947108935fb251d851ccf</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:17</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

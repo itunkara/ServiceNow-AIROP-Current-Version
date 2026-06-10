@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Duplicate CIs cause Now Assist to split AI context across multiple records for the same physical asset. Summarization and impact analysis produce conflicting results when the same CI has multiple representations.]]></ai_justification>
+<check_name>Duplicate CI Rate</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var testGr = new GlideRecord('reconcile_duplicate_task');
+    testGr.setLimit(1);
+    testGr.query();
+    if (!testGr.isValid()) {
+        return { status: 'not_applicable', actualValue: 'IRE deduplication table not found',
+            finding: 'IRE deduplication table (reconcile_duplicate_task) does not exist on this instance. IRE may not be activated — duplicate CI detection is unavailable.' };
+    }
+
+    var ga = new GlideAggregate('reconcile_duplicate_task');
+    ga.addQuery('state', 'IN', 'Open,open,1');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var open = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = open + ' open deduplication tasks';
+
+    if (open === 0) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'No open deduplication tasks. CMDB has no known duplicate CIs — Now Assist AI context is not split across duplicate records.' };
+    } else if (open < 100) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: open + ' open deduplication tasks. Duplicate CIs cause Now Assist to split AI context across multiple records for the same physical asset — remediate these tasks.' };
+    } else if (open < 500) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: open + ' open deduplication tasks. Significant duplicate CI issue — Now Assist AI context fragmentation is affecting a large portion of the CMDB.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: open + ' open deduplication tasks. Critical duplicate CI problem — Now Assist AI context is severely fragmented. Bulk deduplication is required before AI capabilities will be reliable.' };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>CMDB</module>
+<number>CHK0006007</number>
+<order>100</order>
+<remediation_guidance>Remediate open IRE deduplication tasks via reconcile_duplicate_task_list.do. Use the Duplicate CI Remediator tool to merge duplicate records. Enable IRE identification rules to prevent future duplicates. Duplicate CIs cause Now Assist to split AI context across multiple records for the same physical asset.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>0a03a33acfd903108935fb251d851c62</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c62</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Duplicate CIs cause Now Assist to split AI context across multiple records for the same physical asset. Summarization and impact analysis produce conflicting results when the same CI has multiple representations.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Duplicate CI Rate&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var testGr = new GlideRecord('reconcile_duplicate_task');
+    testGr.setLimit(1);
+    testGr.query();
+    if (!testGr.isValid()) {
+        return { status: 'not_applicable', actualValue: 'IRE deduplication table not found',
+            finding: 'IRE deduplication table (reconcile_duplicate_task) does not exist on this instance. IRE may not be activated — duplicate CI detection is unavailable.' };
+    }
+
+    var ga = new GlideAggregate('reconcile_duplicate_task');
+    ga.addQuery('state', 'IN', 'Open,open,1');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var open = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = open + ' open deduplication tasks';
+
+    if (open === 0) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'No open deduplication tasks. CMDB has no known duplicate CIs — Now Assist AI context is not split across duplicate records.' };
+    } else if (open &lt; 100) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: open + ' open deduplication tasks. Duplicate CIs cause Now Assist to split AI context across multiple records for the same physical asset — remediate these tasks.' };
+    } else if (open &lt; 500) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: open + ' open deduplication tasks. Significant duplicate CI issue — Now Assist AI context fragmentation is affecting a large portion of the CMDB.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: open + ' open deduplication tasks. Critical duplicate CI problem — Now Assist AI context is severely fragmented. Bulk deduplication is required before AI capabilities will be reliable.' };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;CMDB&lt;/module&gt;
+&lt;number&gt;CHK0006007&lt;/number&gt;
+&lt;order&gt;100&lt;/order&gt;
+&lt;remediation_guidance&gt;Remediate open IRE deduplication tasks via reconcile_duplicate_task_list.do. Use the Duplicate CI Remediator tool to merge duplicate records. Enable IRE identification rules to prevent future duplicates. Duplicate CIs cause Now Assist to split AI context across multiple records for the same physical asset.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;0a03a33acfd903108935fb251d851c62&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>2117342595</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:20</sys_created_on>
+        <sys_id>dba60d07cf9947108935fb251d851c74</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa5bad0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:20</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>17a60d07f99947104dd6988845946173</update_guid>
+        <update_guid_history>17a60d07f99947104dd6988845946173:2117342595</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">531f81cfcfdd47108935fb251d851c3c</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:12</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>2d09278ec1a1457eb5d328f1f3cf9701</sys_id>
+        <sys_metadata>0a03a33acfd903108935fb251d851c62</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c62</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c62">dba60d07cf9947108935fb251d851c74</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:12</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Generic relationship types (Unknown, Connected by) provide minimal context for Now Assist impact traversal. Specific typed relationships allow the AI to reason about dependency direction and impact scope.]]></ai_justification>
+<check_name>Relationship Type Distribution</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTypes = new GlideAggregate('cmdb_rel_type');
+    gaTypes.addAggregate('COUNT');
+    gaTypes.query();
+    var types = gaTypes.next() ? parseInt(gaTypes.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_rel_ci');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var totalRels = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    var gaGeneric = new GlideAggregate('cmdb_rel_ci');
+    gaGeneric.addQuery('type.name', 'CONTAINS', 'Unknown');
+    gaGeneric.addAggregate('COUNT');
+    gaGeneric.query();
+    var generic = gaGeneric.next() ? parseInt(gaGeneric.getAggregate('COUNT')) : 0;
+
+    var genericPct = totalRels > 0 ? Math.round((generic / totalRels) * 100) : 0;
+    var actualValue = types + ' distinct relationship types | ' + generic + ' generic/Unknown relationships (' + genericPct + '%)';
+
+    if (types >= 10 && genericPct <= 10) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: types + ' distinct relationship types with only ' + genericPct + '% generic. Now Assist can reason about dependency direction and impact scope using typed CI relationships.' };
+    } else if (types >= 5 || genericPct <= 30) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: types + ' relationship types with ' + genericPct + '% generic/Unknown (targets: 10+ types, ≤10% generic). Improve relationship typing for more accurate Now Assist impact analysis.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + types + ' relationship types with ' + genericPct + '% generic/Unknown relationships. Now Assist cannot determine dependency direction or impact scope without well-typed CI relationships.' };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>CMDB</module>
+<number>CHK0006009</number>
+<order>120</order>
+<remediation_guidance>Review and replace generic relationship types (Unknown, Connected by) with specific typed relationships (Runs on, Depends on, Hosted on). Service Mapping auto-creates typed relationships during discovery. Specific types allow Now Assist to reason about dependency direction and impact scope.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>0a03a33acfd903108935fb251d851c63</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c63</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Generic relationship types (Unknown, Connected by) provide minimal context for Now Assist impact traversal. Specific typed relationships allow the AI to reason about dependency direction and impact scope.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Relationship Type Distribution&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var gaTypes = new GlideAggregate('cmdb_rel_type');
+    gaTypes.addAggregate('COUNT');
+    gaTypes.query();
+    var types = gaTypes.next() ? parseInt(gaTypes.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_rel_ci');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var totalRels = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    var gaGeneric = new GlideAggregate('cmdb_rel_ci');
+    gaGeneric.addQuery('type.name', 'CONTAINS', 'Unknown');
+    gaGeneric.addAggregate('COUNT');
+    gaGeneric.query();
+    var generic = gaGeneric.next() ? parseInt(gaGeneric.getAggregate('COUNT')) : 0;
+
+    var genericPct = totalRels &gt; 0 ? Math.round((generic / totalRels) * 100) : 0;
+    var actualValue = types + ' distinct relationship types | ' + generic + ' generic/Unknown relationships (' + genericPct + '%)';
+
+    if (types &gt;= 10 &amp;&amp; genericPct &lt;= 10) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: types + ' distinct relationship types with only ' + genericPct + '% generic. Now Assist can reason about dependency direction and impact scope using typed CI relationships.' };
+    } else if (types &gt;= 5 || genericPct &lt;= 30) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: types + ' relationship types with ' + genericPct + '% generic/Unknown (targets: 10+ types, ≤10% generic). Improve relationship typing for more accurate Now Assist impact analysis.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + types + ' relationship types with ' + genericPct + '% generic/Unknown relationships. Now Assist cannot determine dependency direction or impact scope without well-typed CI relationships.' };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;CMDB&lt;/module&gt;
+&lt;number&gt;CHK0006009&lt;/number&gt;
+&lt;order&gt;120&lt;/order&gt;
+&lt;remediation_guidance&gt;Review and replace generic relationship types (Unknown, Connected by) with specific typed relationships (Runs on, Depends on, Hosted on). Service Mapping auto-creates typed relationships during discovery. Specific types allow Now Assist to reason about dependency direction and impact scope.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;0a03a33acfd903108935fb251d851c63&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1943958377</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:25</sys_created_on>
+        <sys_id>ecb68147cf9947108935fb251d851c63</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa6f7d0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:25</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>28b68147969947102ba0ca6f4cde0c62</update_guid>
+        <update_guid_history>28b68147969947102ba0ca6f4cde0c62:-1943958377</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">531f81cfcfdd47108935fb251d851c43</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:12</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>39911398e08a4ef0a633cbe08e26ac90</sys_id>
+        <sys_metadata>0a03a33acfd903108935fb251d851c63</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c63</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c63">ecb68147cf9947108935fb251d851c63</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:12</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

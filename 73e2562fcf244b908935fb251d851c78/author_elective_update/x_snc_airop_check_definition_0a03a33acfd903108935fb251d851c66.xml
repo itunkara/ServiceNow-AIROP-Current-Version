@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[<p>CMDB Health jobs produce the Completeness and Correctness scores that quantify AI data readiness. Without these jobs running, CMDB-01 and CMDB-06 cannot return real scores.</p>]]></ai_justification>
+<check_name>CMDB Health Scheduled Job Status</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var healthJobs = { completeness: false, correctness: false, compliance: false };
+    var jobDetails = [];
+    var scheduledCount = 0;
+    var totalFound = 0;
+
+    var gr = new GlideRecord('sysauto_script');
+    gr.addQuery('name', 'CONTAINS', 'CMDB Health Dashboard');
+    gr.addActiveQuery();
+    gr.query();
+
+    while (gr.next()) {
+        totalFound++;
+        var name = gr.getValue('name');
+        var runType = gr.getValue('run_type');
+        var isScheduled = (runType !== 'none' && runType !== 'on_demand' && runType !== null);
+        if (isScheduled) scheduledCount++;
+
+        if (name.indexOf('Completeness') > -1) healthJobs.completeness = isScheduled;
+        if (name.indexOf('Correctness')  > -1) healthJobs.correctness  = isScheduled;
+        if (name.indexOf('Compliance')   > -1) healthJobs.compliance   = isScheduled;
+
+        jobDetails.push(name + ' [' + runType + ']');
+    }
+
+    var coreJobsScheduled = healthJobs.completeness && healthJobs.correctness && healthJobs.compliance;
+    var actualValue = totalFound + ' CMDB Health jobs found | ' + scheduledCount + ' scheduled';
+
+    if (totalFound === 0) {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'No CMDB Health Dashboard jobs found. Navigate to: All > Configuration > CMDB Dashboard > CMDB Health Dashboard Jobs to enable. Without these jobs, CHK0002210 and CHK0002215 cannot return official health scores.' };
+    } else if (!coreJobsScheduled) {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'CMDB Health Dashboard jobs exist but one or more core jobs (Completeness, Correctness, Compliance) are not scheduled. Found: ' + totalFound + ' jobs, ' + scheduledCount + ' scheduled. Jobs: ' + jobDetails.join(' | ') };
+    } else {
+        return { status: 'ready', actualValue: actualValue,
+            finding: scheduledCount + ' of ' + totalFound + ' CMDB Health Dashboard jobs are scheduled and active. Official CMDB health scores are being generated. Jobs: ' + jobDetails.join(' | ') };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>CMDB</module>
+<number>CHK0006015</number>
+<order>180</order>
+<remediation_guidance>Enable all 3 CMDB Health jobs via: All &gt; Configuration &gt; CMDB Dashboard &gt; CMDB View &gt; CMDB Health Dashboard Jobs. Activate Completeness, Correctness, and Compliance Score Calculation jobs. Without these running, CMDB health scores cannot be calculated.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>0a03a33acfd903108935fb251d851c66</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c66</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[&lt;p&gt;CMDB Health jobs produce the Completeness and Correctness scores that quantify AI data readiness. Without these jobs running, CMDB-01 and CMDB-06 cannot return real scores.&lt;/p&gt;]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;CMDB Health Scheduled Job Status&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var healthJobs = { completeness: false, correctness: false, compliance: false };
+    var jobDetails = [];
+    var scheduledCount = 0;
+    var totalFound = 0;
+
+    var gr = new GlideRecord('sysauto_script');
+    gr.addQuery('name', 'CONTAINS', 'CMDB Health Dashboard');
+    gr.addActiveQuery();
+    gr.query();
+
+    while (gr.next()) {
+        totalFound++;
+        var name = gr.getValue('name');
+        var runType = gr.getValue('run_type');
+        var isScheduled = (runType !== 'none' &amp;&amp; runType !== 'on_demand' &amp;&amp; runType !== null);
+        if (isScheduled) scheduledCount++;
+
+        if (name.indexOf('Completeness') &gt; -1) healthJobs.completeness = isScheduled;
+        if (name.indexOf('Correctness')  &gt; -1) healthJobs.correctness  = isScheduled;
+        if (name.indexOf('Compliance')   &gt; -1) healthJobs.compliance   = isScheduled;
+
+        jobDetails.push(name + ' [' + runType + ']');
+    }
+
+    var coreJobsScheduled = healthJobs.completeness &amp;&amp; healthJobs.correctness &amp;&amp; healthJobs.compliance;
+    var actualValue = totalFound + ' CMDB Health jobs found | ' + scheduledCount + ' scheduled';
+
+    if (totalFound === 0) {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'No CMDB Health Dashboard jobs found. Navigate to: All &gt; Configuration &gt; CMDB Dashboard &gt; CMDB Health Dashboard Jobs to enable. Without these jobs, CHK0002210 and CHK0002215 cannot return official health scores.' };
+    } else if (!coreJobsScheduled) {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'CMDB Health Dashboard jobs exist but one or more core jobs (Completeness, Correctness, Compliance) are not scheduled. Found: ' + totalFound + ' jobs, ' + scheduledCount + ' scheduled. Jobs: ' + jobDetails.join(' | ') };
+    } else {
+        return { status: 'ready', actualValue: actualValue,
+            finding: scheduledCount + ' of ' + totalFound + ' CMDB Health Dashboard jobs are scheduled and active. Official CMDB health scores are being generated. Jobs: ' + jobDetails.join(' | ') };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;CMDB&lt;/module&gt;
+&lt;number&gt;CHK0006015&lt;/number&gt;
+&lt;order&gt;180&lt;/order&gt;
+&lt;remediation_guidance&gt;Enable all 3 CMDB Health jobs via: All &amp;gt; Configuration &amp;gt; CMDB Dashboard &amp;gt; CMDB View &amp;gt; CMDB Health Dashboard Jobs. Activate Completeness, Correctness, and Compliance Score Calculation jobs. Without these running, CMDB health scores cannot be calculated.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;0a03a33acfd903108935fb251d851c66&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1128408898</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:19</sys_created_on>
+        <sys_id>0fa68907cf9947108935fb251d851cf1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa575c0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:19</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>47a689076c994710d4851455785070f0</update_guid>
+        <update_guid_history>47a689076c994710d4851455785070f0:1128408898</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">971f81cfcfdd47108935fb251d851c7d</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:12</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>0c02e07730ef4e618d7b9ae0aab1a729</sys_id>
+        <sys_metadata>0a03a33acfd903108935fb251d851c66</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c66</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0a03a33acfd903108935fb251d851c66">0fa68907cf9947108935fb251d851cf1</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:12</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

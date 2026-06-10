@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[License entitlement records are the core dataset Now Assist SAM analyzes for AI optimization recommendations. Without sufficient entitlements, AI has no basis for identifying over-licensing, compliance risks, or cost reduction opportunities.]]></ai_justification>
+        <check_name>Active License Entitlements</check_name>
+        <check_script><![CDATA[(function() { var ga = new GlideAggregate("alm_license"); ga.addQuery("active", true); ga.addAggregate("COUNT"); ga.query(); var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (count >= 50) { return { status: "ready", actualValue: count + " active license entitlement records", finding: count + " active license records. Now Assist SAM has sufficient entitlement data for AI-powered license optimization analysis." }; } else if (count >= 10) { return { status: "needs_attention", actualValue: count + " active license entitlement records", finding: "Only " + count + " active license records (target: 50+). Now Assist SAM AI analysis will have limited coverage across the software estate." }; } else { return { status: "not_ready", actualValue: count + " active license entitlement records", finding: "Only " + count + " active license records. Insufficient entitlement data for meaningful Now Assist SAM AI license optimization recommendations." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SAM</module>
+        <number>CHK0000621</number>
+        <order>400</order>
+        <remediation_guidance>Import software license entitlements from publisher contracts and procurement records. Navigate to Software Asset Management &gt; Licenses &gt; New to create entitlement records for all managed software titles.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:21</sys_created_on>
+        <sys_id>57f89dc7cfd587108935fb251d851c9d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Active License Entitlements</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_57f89dc7cfd587108935fb251d851c9d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

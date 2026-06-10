@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Active Studio application projects indicate platform investment in custom development. A healthy volume of projects signals that Now Assist for Creator will have meaningful impact accelerating developer productivity across the portfolio.]]></ai_justification>
+<check_name>Studio Application Projects Volume</check_name>
+<check_script><![CDATA[(function(){
+var ga=new GlideAggregate("sn_app_eng_studio_project");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=5)return{status:"ready",actualValue:c+" projects",finding:c+" AES projects found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" projects",finding:c+" AES project(s) found."};
+return{status:"needs_attention",actualValue:"0 projects",finding:"No App Engine Studio projects found."};
+})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>CREATOR</module>
+<number>CHK0006188</number>
+<order/>
+<remediation_guidance>Ensure developers are using App Engine Studio for application development.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:06:00</sys_created_on>
+<sys_id>d603e33acfd903108935fb251d851c90</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:06:00</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_d603e33acfd903108935fb251d851c90</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Active Studio application projects indicate platform investment in custom development. A healthy volume of projects signals that Now Assist for Creator will have meaningful impact accelerating developer productivity across the portfolio.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Studio Application Projects Volume&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(){
+var ga=new GlideAggregate("sn_app_eng_studio_project");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c&gt;=5)return{status:"ready",actualValue:c+" projects",finding:c+" AES projects found."};
+if(c&gt;0)return{status:"needs_attention",actualValue:c+" projects",finding:c+" AES project(s) found."};
+return{status:"needs_attention",actualValue:"0 projects",finding:"No App Engine Studio projects found."};
+})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;CREATOR&lt;/module&gt;
+&lt;number&gt;CHK0006188&lt;/number&gt;
+&lt;order/&gt;
+&lt;remediation_guidance&gt;Ensure developers are using App Engine Studio for application development.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:06:00&lt;/sys_created_on&gt;
+&lt;sys_id&gt;d603e33acfd903108935fb251d851c90&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:06:00&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1161678300</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:27</sys_created_on>
+        <sys_id>78b6c147cf9947108935fb251d851cab</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa74a70000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:27</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>b0b6c147f2994710600df67e4415beaa</update_guid>
+        <update_guid_history>b0b6c147f2994710600df67e4415beaa:-1161678300</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">652fc103cf1187108935fb251d851cbd</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:21</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>4853b1b3e4b548018436f0a071089bf1</sys_id>
+        <sys_metadata>d603e33acfd903108935fb251d851c90</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_d603e33acfd903108935fb251d851c90</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_d603e33acfd903108935fb251d851c90">78b6c147cf9947108935fb251d851cab</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:21</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

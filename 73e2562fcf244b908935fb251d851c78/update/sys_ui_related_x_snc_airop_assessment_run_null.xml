@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_related sys_domain="global" table="x_snc_airop_assessment_run" version="2" view="">
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>0</position>
+            <related_list>REL:a973f707cf494bd88935fb251d851c3f</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>81fdff4fcfcd4bd88935fb251d851c6b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>1</position>
+            <related_list>REL:6573fbc7cf494bd88935fb251d851ca7</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>01fdff4fcfcd4bd88935fb251d851c6c</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>2</position>
+            <related_list>REL:2d73fbc7cf494bd88935fb251d851cac</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>85fdff4fcfcd4bd88935fb251d851c6c</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>3</position>
+            <related_list>REL:e173fbc7cf494bd88935fb251d851cb2</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>0dfdff4fcfcd4bd88935fb251d851c6c</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>4</position>
+            <related_list>REL:a973fbc7cf494bd88935fb251d851cb7</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>81fdff4fcfcd4bd88935fb251d851c6d</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>5</position>
+            <related_list>REL:ed73fbc7cf494bd88935fb251d851cd5</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>09fdff4fcfcd4bd88935fb251d851c6d</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>6</position>
+            <related_list>REL:a573fbc7cf494bd88935fb251d851cdb</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>8dfdff4fcfcd4bd88935fb251d851c6d</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>7</position>
+            <related_list>REL:a173fbc7cf494bd88935fb251d851cff</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>05fdff4fcfcd4bd88935fb251d851c6e</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>8</position>
+            <related_list>REL:e973fbc7cf494bd88935fb251d851cf9</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>89fdff4fcfcd4bd88935fb251d851c6e</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>9</position>
+            <related_list>REL:2d733fc7cf494bd88935fb251d851c42</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>01fdff4fcfcd4bd88935fb251d851c6f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>10</position>
+            <related_list>REL:e1733fc7cf494bd88935fb251d851c48</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>85fdff4fcfcd4bd88935fb251d851c6f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>11</position>
+            <related_list>REL:54b0fbcbcfc54bd88935fb251d851cc6</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>0dfdff4fcfcd4bd88935fb251d851c6f</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>12</position>
+            <related_list>REL:a9733fc7cf494bd88935fb251d851c4d</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>81fdff4fcfcd4bd88935fb251d851c70</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>13</position>
+            <related_list>REL:61733fc7cf494bd88935fb251d851c53</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>09fdff4fcfcd4bd88935fb251d851c70</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>14</position>
+            <related_list>REL:29733fc7cf494bd88935fb251d851c58</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>8dfdff4fcfcd4bd88935fb251d851c70</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>15</position>
+            <related_list>REL:6d733fc7cf494bd88935fb251d851c76</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>05fdff4fcfcd4bd88935fb251d851c71</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>16</position>
+            <related_list>REL:25733fc7cf494bd88935fb251d851c7c</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>89fdff4fcfcd4bd88935fb251d851c71</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>17</position>
+            <related_list>REL:e9733fc7cf494bd88935fb251d851c81</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>01fdff4fcfcd4bd88935fb251d851c72</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>18</position>
+            <related_list>REL:a1733fc7cf494bd88935fb251d851c87</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>85fdff4fcfcd4bd88935fb251d851c72</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>19</position>
+            <related_list>REL:69733fc7cf494bd88935fb251d851c8c</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>0dfdff4fcfcd4bd88935fb251d851c72</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>20</position>
+            <related_list>REL:21733fc7cf494bd88935fb251d851c92</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>81fdff4fcfcd4bd88935fb251d851c73</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list_entry action="INSERT_OR_UPDATE">
+            <filter/>
+            <list_id display_value="Assessment Run - Default view" name="x_snc_airop_assessment_run" related_list="NULL" sys_domain="global" view="Default view">09fdff4fcfcd4bd88935fb251d851c69</list_id>
+            <order_by/>
+            <position>21</position>
+            <related_list>REL:e5733fc7cf494bd88935fb251d851c97</related_list>
+            <sys_class_name>sys_ui_related_list_entry</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_id>09fdff4fcfcd4bd88935fb251d851c73</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+        </sys_ui_related_list_entry>
+        <sys_ui_related_list action="INSERT_OR_UPDATE">
+            <calculated_name>Assessment Run - Default view</calculated_name>
+            <filter/>
+            <name>x_snc_airop_assessment_run</name>
+            <order_by/>
+            <position/>
+            <related_list/>
+            <sys_class_name>sys_ui_related_list</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 08:26:23</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>09fdff4fcfcd4bd88935fb251d851c69</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Assessment Run - Default view</sys_name>
+            <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+            <sys_update_name>sys_ui_related_x_snc_airop_assessment_run_null</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 08:26:23</sys_updated_on>
+            <sys_user/>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_related_list>
+    </sys_ui_related>
+</record_update>

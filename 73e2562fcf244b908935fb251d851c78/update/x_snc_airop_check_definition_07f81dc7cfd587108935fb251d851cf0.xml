@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Risk scoring configuration enables Now Assist GRC to provide quantified AI risk assessment recommendations.]]></ai_justification>
+        <check_name>Risk Scoring Configuration</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('sn_risk_risk');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active risk records found',
+            finding: 'No active risks in the risk register. Risk scoring cannot be assessed.'
+        };
+    }
+
+    var gaScored = new GlideAggregate('sn_risk_risk');
+    gaScored.addQuery('active', true);
+    gaScored.addQuery('residual_risk_score', '>', 0);
+    gaScored.addAggregate('COUNT');
+    gaScored.query();
+    var scored = gaScored.next() ? parseInt(gaScored.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((scored / total) * 100);
+    var actualValue = pct + '% of active risks have residual scores (' + scored + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of risks have residual risk scores — Now Assist GRC can provide quantified AI risk recommendations.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of risks have residual scores (target: 80%). Now Assist GRC quantified risk assessment will have gaps for unscored records.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: (total - scored) + ' risks missing residual risk scores (' + pct + '% scored). Now Assist GRC quantified risk assessment requires scored risk records.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>GRC</module>
+        <number>CHK0000463</number>
+        <order>90</order>
+        <remediation_guidance>Configure risk scoring methodology (likelihood x impact). Ensure all active risks have a residual_risk_score greater than zero. A score of 0 provides no quantified signal for Now Assist GRC.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>07f81dc7cfd587108935fb251d851cf0</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Risk Scoring Configuration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_07f81dc7cfd587108935fb251d851cf0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

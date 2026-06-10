@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_GRC</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for GRC module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_GRC</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_GRC = Class.create();
+AROPCheckLibrary_GRC.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000455: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("sn_irm_gen_ai", "sn_irm_gen_ai");
+    if (result.found) {
+        return {
+            status: "ready",
+            actualValue: "Now Assist for GRC (" + "sn_irm_gen_ai" + ") installed | version: " + result.version + " | source: " + result.table,
+            finding: "Now Assist for GRC is installed. AI-assisted policy authoring and risk summarization are available."
+        };
+    } else {
+        return {
+            status: "not_ready",
+            actualValue: "Now Assist for GRC (sn_irm_gen_ai) not found in sys_store_app or sys_plugins",
+            finding: "Now Assist for GRC (sn_irm_gen_ai) not found. AI-assisted policy authoring and risk summarization are unavailable."
+        };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000455: ' + e.message };
+        }
+    },
+    CHK0000456: function() {
+        try {
+            return (function() {
+    var policyTable = new GlideRecord("sn_compliance_policy");
+    if (!policyTable.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table sn_compliance_policy not found", finding: "Compliance Policy table (sn_compliance_policy) is not available. Verify the Policy and Compliance plugin is active." };
+    }
+    var gaPolicy = new GlideAggregate("sn_compliance_policy");
+    gaPolicy.addQuery("active", true);
+    gaPolicy.addAggregate("COUNT");
+    gaPolicy.query();
+    var policies = gaPolicy.next() ? parseInt(gaPolicy.getAggregate("COUNT")) : 0;
+    var controls = 0;
+    var controlTable = new GlideRecord("sn_compliance_control");
+    if (controlTable.isValid()) {
+        var gaControl = new GlideAggregate("sn_compliance_control");
+        gaControl.addQuery("active", true);
+        gaControl.addAggregate("COUNT");
+        gaControl.query();
+        controls = gaControl.next() ? parseInt(gaControl.getAggregate("COUNT")) : 0;
+    }
+    var actualValue = policies + " active policies | " + controls + " active controls";
+    if (policies >= 10 && controls >= 50) {
+        return { status: "ready", actualValue: actualValue, finding: "Good GRC data foundation — Now Assist can perform AI-assisted compliance assessment across " + policies + " policies and " + controls + " controls." };
+    } else if (policies >= 5 || controls >= 20) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Partial GRC data (" + policies + " policies, " + controls + " controls). Now Assist GRC AI assessment will have limited coverage. Target: 10+ policies, 50+ controls." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Insufficient GRC data (" + policies + " policies, " + controls + " controls). Now Assist GRC AI assessment requires a comprehensive policy and control foundation." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000456: ' + e.message };
+        }
+    },
+    CHK0000457: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sn_risk_risk');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active risk records';
+
+    if (count >= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active risks — Now Assist GRC has sufficient risk context for AI-driven scoring and mitigation recommendations.'
+        };
+    } else if (count >= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active risks (target: 20+). Now Assist GRC risk recommendations will have limited coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active risks. Now Assist GRC requires a populated risk register for AI-driven risk scoring and mitigation recommendations.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000457: ' + e.message };
+        }
+    },
+    CHK0000458: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("asmt_assessment_instance");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table asmt_assessment_instance not found", finding: "Assessment Instance table is not available. Verify the Assessments plugin is active." };
+    }
+    var ga = new GlideAggregate("asmt_assessment_instance");
+    ga.addQuery("state", "in_progress");
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active attestation instances";
+    if (count >= 10) {
+        return { status: "ready", actualValue: actualValue, finding: count + " active attestation instances — Now Assist GRC has active workflow history for AI-assisted compliance verification." };
+    } else if (count >= 3) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " active attestation instances (target: 10+). Now Assist GRC automated evidence collection will have limited workflow coverage." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Only " + count + " active attestation instances. Now Assist GRC AI automated evidence collection requires active attestation workflows." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000458: ' + e.message };
+        }
+    },
+    CHK0000459: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    if (!gs.tableExists('sn_audit_control_test')) {
+        return { status: 'not_applicable', actualValue: 'sn_audit_control_test not found', finding: 'Audit Management is not installed. Control test result check is not applicable.' };
+    }
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+    var gaTotal = new GlideAggregate('sn_audit_control_test');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+    if (total === 0) {
+        return { status: 'not_ready', actualValue: 'No control tests in last 12 months', finding: 'No control tests found in the last 12 months. Now Assist GRC AI audit preparation requires recent control test history.' };
+    }
+    var gaPass = new GlideAggregate('sn_audit_control_test');
+    gaPass.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaPass.addQuery('state', 'complete');
+    gaPass.addAggregate('COUNT');
+    gaPass.query();
+    var passed = gaPass.next() ? parseInt(gaPass.getAggregate('COUNT')) : 0;
+    var pct = Math.round((passed / total) * 100);
+    var actualValue = total + ' control tests (last 12 months) | ' + pct + '% complete';
+    if (total >= 50 && pct >= 70) {
+        return { status: 'ready', actualValue: actualValue, finding: total + ' control tests with ' + pct + '% completion. Now Assist GRC has sufficient test history for AI-powered audit preparation.' };
+    } else if (total >= 20 || pct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue, finding: total + ' control tests with ' + pct + '% completion (targets: 50+, 70%+). Now Assist GRC audit preparation will have reduced coverage.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue, finding: 'Insufficient control test coverage (' + total + ' tests, ' + pct + '% complete). Now Assist GRC AI audit preparation requires comprehensive recent test history.' };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000459: ' + e.message };
+        }
+    },
+    CHK0000460: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sn_compliance_authority_document');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active authority documents / frameworks';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' regulatory frameworks mapped — Now Assist GRC can provide framework-specific AI compliance guidance.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' framework(s) mapped (target: 3+). Now Assist GRC compliance recommendations will be limited to a narrow regulatory scope.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No regulatory frameworks mapped. Now Assist GRC requires framework context (e.g. SOC2, ISO27001, NIST) for AI compliance recommendations.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000460: ' + e.message };
+        }
+    },
+    CHK0000461: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("sn_grc_issue");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table sn_grc_issue not found", finding: "GRC Issue table (sn_grc_issue) is not available. Verify the GRC plugin is active." };
+    }
+    var ga = new GlideAggregate("sn_grc_issue");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active GRC issues";
+    if (count >= 10) {
+        return { status: "ready", actualValue: actualValue, finding: count + " active GRC issues being tracked — Now Assist GRC has remediation context for AI risk prioritization." };
+    } else if (count >= 3) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " active GRC issues (target: 10+). Now Assist GRC risk prioritization recommendations will have limited issue context." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Only " + count + " active GRC issues tracked. Now Assist GRC uses active issue history for AI risk prioritization and remediation recommendations." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000461: ' + e.message };
+        }
+    },
+    CHK0000462: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sn_audit_engagement');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active audit engagements';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active audit engagements — Now Assist GRC can provide proactive AI compliance recommendations based on upcoming audit timelines.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active audit engagement(s) (target: 3+). Now Assist GRC proactive recommendations will be limited in scope.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active audit engagements. Now Assist GRC proactive recommendations require an active audit schedule.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000462: ' + e.message };
+        }
+    },
+    CHK0000463: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('sn_risk_risk');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active risk records found',
+            finding: 'No active risks in the risk register. Risk scoring cannot be assessed.'
+        };
+    }
+
+    var gaScored = new GlideAggregate('sn_risk_risk');
+    gaScored.addQuery('active', true);
+    gaScored.addQuery('residual_risk_score', '>', 0);
+    gaScored.addAggregate('COUNT');
+    gaScored.query();
+    var scored = gaScored.next() ? parseInt(gaScored.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((scored / total) * 100);
+    var actualValue = pct + '% of active risks have residual scores (' + scored + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of risks have residual risk scores — Now Assist GRC can provide quantified AI risk recommendations.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of risks have residual scores (target: 80%). Now Assist GRC quantified risk assessment will have gaps for unscored records.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: (total - scored) + ' risks missing residual risk scores (' + pct + '% scored). Now Assist GRC quantified risk assessment requires scored risk records.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000463: ' + e.message };
+        }
+    },
+    CHK0000464: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script');
+    ga.addQuery('collection', 'IN', 'sn_compliance_control,sn_risk_risk');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom Business Rules on GRC tables';
+
+    if (count <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low GRC customization risk (' + count + ' custom BRs). Now Assist GRC AI workflow automation is unlikely to encounter conflicts.'
+        };
+    } else if (count <= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom BRs on GRC tables. Moderate customization risk — test Now Assist GRC in sub-production before enabling in production.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High GRC customization risk: ' + count + ' custom BRs on core GRC tables. Now Assist GRC AI workflow automation may conflict with existing customizations.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000464: ' + e.message };
+        }
+    },
+    CHK0000465: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("sn_vdr_risk_asmt_vdr_tiering_assessment");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table sn_vdr_risk_asmt_vdr_tiering_assessment not found", finding: "TPRM Vendor Tiering Assessment table is not available. Verify the Vendor Risk Management plugin is active." };
+    }
+    var ga = new GlideAggregate("sn_vdr_risk_asmt_vdr_tiering_assessment");
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " vendor tiering assessments";
+    if (count >= 10) {
+        return { status: "ready", actualValue: actualValue, finding: count + " vendor tiering assessments — Now Assist GRC has sufficient vendor context for AI supply chain risk analysis." };
+    } else if (count >= 3) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " vendor tiering assessments (target: 10+). Now Assist GRC supply chain risk recommendations will have limited vendor coverage." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Only " + count + " vendor tiering assessments. Now Assist GRC uses vendor data for AI supply chain risk recommendations — insufficient data for meaningful analysis." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000465: ' + e.message };
+        }
+    },
+    CHK0000466: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Use separate queries per keyword to avoid OR precedence issues
+    // then deduplicate by sys_id to avoid double-counting indicators
+    // that match multiple keywords
+    var matched = {};
+
+    function collectMatches(keyword) {
+        var gr = new GlideRecord('pa_indicators');
+        gr.addQuery('active', true);
+        gr.addQuery('name', 'CONTAINS', keyword);
+        gr.query();
+        while (gr.next()) {
+            matched[gr.getUniqueValue()] = true;
+        }
+    }
+
+    collectMatches('risk');
+    collectMatches('compliance');
+    collectMatches('audit');
+
+    var count = Object.keys(matched).length;
+    var actualValue = count + ' active GRC PA indicators';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active GRC PA indicators — Now Assist can provide trend-based compliance AI insights.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active GRC PA indicator(s) (target: 3+). Now Assist GRC trend-based insights will be limited — point-in-time analysis only for uncovered metrics.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active GRC PA indicators found. Now Assist GRC uses trend data for predictive compliance insights — without PA data AI can only provide point-in-time analysis.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000466: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_GRC'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:02:28</sys_created_on>
+        <sys_id>bf82cae0cfc5c3548935fb251d851c72</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>AROPCheckLibrary_GRC</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_bf82cae0cfc5c3548935fb251d851c72</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

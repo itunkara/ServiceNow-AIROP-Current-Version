@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="module" table="x_snc_airop_check_result" version="3">
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>module</element>
+            <name>x_snc_airop_check_result</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:33</sys_created_on>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>module</sys_name>
+            <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+            <sys_update_name>sys_choice_x_snc_airop_check_result_module</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:33</sys_updated_on>
+        </sys_choice_set>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>ITSM</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>100</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:33</sys_updated_on>
+            <value>ITSM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Software Asset Management</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>120</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 06:22:32</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 06:22:32</sys_updated_on>
+            <value>SAM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Hardware Asset Management</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>140</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 06:22:32</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 06:22:32</sys_updated_on>
+            <value>HAM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Workplace Service Delivery</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>160</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 06:22:32</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 06:22:32</sys_updated_on>
+            <value>WSD</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Legal Service Delivery</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>180</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 06:22:32</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 06:22:32</sys_updated_on>
+            <value>LSD</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>ITOM</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>200</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:33</sys_updated_on>
+            <value>ITOM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Third Party Risk Management</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>200</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 06:22:32</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 06:22:32</sys_updated_on>
+            <value>TPRM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Sourcing &amp; Procurement</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>220</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 06:22:32</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 06:22:32</sys_updated_on>
+            <value>SPO</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Now Assist for Creator</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>240</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 06:22:32</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 06:22:32</sys_updated_on>
+            <value>CREATOR</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>OT Service Management</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>260</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 06:22:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 06:22:33</sys_updated_on>
+            <value>OTSM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Health &amp; Safety</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>280</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-29 06:22:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-29 06:22:33</sys_updated_on>
+            <value>HS</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>CMDB</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>300</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:33</sys_updated_on>
+            <value>CMDB</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>HRSD</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>400</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:33</sys_updated_on>
+            <value>HRSD</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>true</inactive>
+            <label>Employee Center</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>500</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-26 15:06:33</sys_updated_on>
+            <value>EMPLOYEE_CENTER</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>CSM</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>600</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:33</sys_updated_on>
+            <value>CSM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Field Service</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>700</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:33</sys_updated_on>
+            <value>FIELD_SERVICE</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>TSOM</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>800</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:33</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:33</sys_updated_on>
+            <value>TSOM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>GRC</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>900</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:34</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:34</sys_updated_on>
+            <value>GRC</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>SPM</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>1000</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:34</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:34</sys_updated_on>
+            <value>SPM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>ITSM Pro</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>1100</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:34</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:34</sys_updated_on>
+            <value>ITSM_PRO</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Platform</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>1200</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:34</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:34</sys_updated_on>
+            <value>PLATFORM</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>true</inactive>
+            <label>Integration</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>1300</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:34</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>1</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-26 15:06:22</sys_updated_on>
+            <value>INTEGRATION</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Virtual Agent</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>1400</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-05 23:02:34</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-05 23:02:34</sys_updated_on>
+            <value>VIRTUAL_AGENT</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>AIOPS</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>2000</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-26 15:09:10</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-26 15:09:10</sys_updated_on>
+            <value>AIOPS</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>SECOPS</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>2100</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-26 15:11:06</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-26 15:11:44</sys_updated_on>
+            <value>SECOPS</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>module</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>DEX</label>
+            <language>en</language>
+            <name>x_snc_airop_check_result</name>
+            <sequence>2200</sequence>
+            <synonyms/>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2026-05-26 15:11:23</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2026-05-26 15:11:49</sys_updated_on>
+            <value>DEX</value>
+        </sys_choice>
+    </sys_choice>
+</record_update>

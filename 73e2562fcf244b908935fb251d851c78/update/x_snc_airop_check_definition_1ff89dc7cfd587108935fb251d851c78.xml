@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Hardware models provide the structured product data Now Assist HAM uses for AI lifecycle analysis, end-of-life detection, and refresh recommendations. Without model coverage, AI cannot identify aging hardware or generate accurate replacement recommendations.]]></ai_justification>
+        <check_name>Hardware Asset Model Coverage</check_name>
+        <check_script><![CDATA[(function() { var gaTotal = new GlideAggregate("alm_hardware"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No hardware asset records found", finding: "No hardware asset records found. Model coverage cannot be assessed." }; } var gaModel = new GlideAggregate("alm_hardware"); gaModel.addQuery("model", "!=", ""); gaModel.addAggregate("COUNT"); gaModel.query(); var withModel = gaModel.next() ? parseInt(gaModel.getAggregate("COUNT")) : 0; var pct = Math.round((withModel / total) * 100); var actualValue = pct + "% of hardware assets have a model (" + withModel + "/" + total + ")"; if (pct >= 90) { return { status: "ready", actualValue: actualValue, finding: pct + "% of hardware assets are linked to a model. Now Assist HAM has strong structured data for AI lifecycle analysis and refresh planning." }; } else if (pct >= 70) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of hardware assets have a model (target: 90%+). Now Assist HAM AI refresh recommendations will have reduced accuracy." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of hardware assets have a model. Insufficient structured data for meaningful Now Assist HAM AI lifecycle recommendations." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HAM</module>
+        <number>CHK0000610</number>
+        <order>300</order>
+        <remediation_guidance>Link all hardware assets to a model record. Use the Hardware Asset Workspace normalization tools to identify and map unmodeled assets. Model data is critical for AI lifecycle and refresh analysis.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:21</sys_created_on>
+        <sys_id>1ff89dc7cfd587108935fb251d851c78</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Hardware Asset Model Coverage</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_1ff89dc7cfd587108935fb251d851c78</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

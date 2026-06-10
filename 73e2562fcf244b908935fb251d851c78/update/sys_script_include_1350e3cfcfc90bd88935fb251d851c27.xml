@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_HS</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP per-module check library for Health and Safety (HS). Contains executable check methods injected from active check definitions.</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_HS</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_HS = Class.create();
+AROPCheckLibrary_HS.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000539: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_hs_rm_hazard");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=50)return{status:"ready",actualValue:c+" hazards",finding:c+" hazard records found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" hazards",finding:c+" hazard records found."};
+return{status:"value_blocker",actualValue:"0 hazards",finding:"No hazard records found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000539: ' + e.message };
+        }
+    },
+    CHK0000543: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sys_user_group");
+ga.addQuery("name","CONTAINS","safety");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=2)return{status:"ready",actualValue:c+" groups",finding:c+" safety assignment groups found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" group",finding:c+" safety group found."};
+return{status:"value_blocker",actualValue:"0 groups",finding:"No safety assignment groups found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000543: ' + e.message };
+        }
+    },
+    CHK0000540: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_hs_rm_finding");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=20)return{status:"ready",actualValue:c+" findings",finding:c+" HS findings found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" findings",finding:c+" HS findings found."};
+return{status:"needs_attention",actualValue:"0 findings",finding:"No HS findings found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000540: ' + e.message };
+        }
+    },
+    CHK0000544: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_hs_cm_case");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=100)return{status:"ready",actualValue:c+" cases",finding:c+" HS cases found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" cases",finding:c+" HS cases found. Limited data."};
+return{status:"needs_attention",actualValue:"0 cases",finding:"No HS cases found. Module may be newly deployed."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000544: ' + e.message };
+        }
+    },
+    CHK0000537: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_hs_rm_inspection");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=20)return{status:"ready",actualValue:c+" inspections",finding:c+" inspections found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" inspections",finding:c+" inspections found."};
+return{status:"needs_attention",actualValue:"0 inspections",finding:"No safety inspections found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000537: ' + e.message };
+        }
+    },
+    CHK0000541: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_hs_rm_work_permit");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=20)return{status:"ready",actualValue:c+" permits",finding:c+" work permits found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" permits",finding:c+" work permits found."};
+return{status:"needs_attention",actualValue:"0 permits",finding:"No work permits found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000541: ' + e.message };
+        }
+    },
+    CHK0000545: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_hs_rm_audit");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=20)return{status:"ready",actualValue:c+" audits",finding:c+" HS audits found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" audits",finding:c+" HS audits found."};
+return{status:"needs_attention",actualValue:"0 audits",finding:"No HS audits found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000545: ' + e.message };
+        }
+    },
+    CHK0000538: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_hs_rm_safety_register");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=10)return{status:"ready",actualValue:c+" register items",finding:c+" safety register items found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" register items",finding:c+" safety register items found."};
+return{status:"needs_attention",actualValue:"0 items",finding:"No safety register items found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000538: ' + e.message };
+        }
+    },
+    CHK0000542: function() {
+        try {
+            return (function(){
+var sa=new GlideRecord("sys_store_app");
+sa.addQuery("scope","sn_hs_gen_ai");
+sa.setLimit(1);sa.query();
+if(sa.next())return{status:"ready",actualValue:"v"+sa.getValue("version"),finding:"Now Assist for Health & Safety is installed."};
+return{status:"value_blocker",actualValue:"Not installed",finding:"Now Assist for Health & Safety (sn_hs_gen_ai) is not installed."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000542: ' + e.message };
+        }
+    },
+    CHK0000546: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_hs_rm_risk_assessment");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=10)return{status:"ready",actualValue:c+" assessments",finding:c+" HS risk assessments found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" assessments",finding:c+" HS risk assessments found."};
+return{status:"needs_attention",actualValue:"0 assessments",finding:"No HS risk assessments found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000546: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_HS'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 06:17:07</sys_created_on>
+        <sys_id>1350e3cfcfc90bd88935fb251d851c27</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>AROPCheckLibrary_HS</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_1350e3cfcfc90bd88935fb251d851c27</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

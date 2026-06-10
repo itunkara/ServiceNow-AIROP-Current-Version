@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist for WSD is the foundational plugin enabling all AI capabilities for workplace service delivery including space recommendations, reservation summarization, and occupancy insights. Without it no AI features are available regardless of data quality.]]></ai_justification>
+        <check_name>Now Assist for WSD Plugin Status</check_name>
+        <check_script><![CDATA[(function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_now_assist_wsd"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Now Assist for WSD is active", finding: "Now Assist for Workplace Service Delivery is active. AI-powered space recommendations, reservation summarization, and workplace insights are available." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_now_assist_wsd"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Now Assist for WSD is active", finding: "Now Assist for Workplace Service Delivery is active. AI-powered space recommendations and workplace insights are available." }; } return { status: "not_ready", actualValue: "Now Assist for WSD not found or inactive", finding: "Now Assist for WSD is not active. All AI-powered workplace service delivery capabilities are unavailable without this plugin." }; })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>WSD</module>
+        <number>CHK0000598</number>
+        <order>100</order>
+        <remediation_guidance>Activate Now Assist for Workplace Service Delivery via the ServiceNow Store. Confirm entitlement with your ServiceNow account team before activation.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:21</sys_created_on>
+        <sys_id>5bf89dc7cfd587108935fb251d851c5f</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Now Assist for WSD Plugin Status</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_5bf89dc7cfd587108935fb251d851c5f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_action">
+    <sys_ui_action action="INSERT_OR_UPDATE">
+        <action_name>sysverb_update</action_name>
+        <active>true</active>
+        <client>false</client>
+        <client_script_v2><![CDATA[function onClick(g_form) {
+
+}]]></client_script_v2>
+        <comments>Recalculates all module readiness scores from existing check result records. Use after updating manual checks.</comments>
+        <condition>current.score_calculation_status == 'needupdated'</condition>
+        <form_action>true</form_action>
+        <form_button>false</form_button>
+        <form_button_v2>false</form_button_v2>
+        <form_context_menu>false</form_context_menu>
+        <form_link>true</form_link>
+        <form_menu_button_v2>false</form_menu_button_v2>
+        <form_style/>
+        <format_for_configurable_workspace>false</format_for_configurable_workspace>
+        <hint/>
+        <isolate_script>false</isolate_script>
+        <list_action>false</list_action>
+        <list_banner_button>false</list_banner_button>
+        <list_button>false</list_button>
+        <list_choice>false</list_choice>
+        <list_context_menu>false</list_context_menu>
+        <list_link>false</list_link>
+        <list_save_with_form_button>false</list_save_with_form_button>
+        <list_style/>
+        <messages/>
+        <name>Recalculate Scores</name>
+        <onclick/>
+        <order>100</order>
+        <script><![CDATA[action.setRedirectURL(current);
+
+var runSysId = current.getUniqueValue();
+
+var moduleMap = {
+    "ITSM":          "itsm_score",
+    "ITOM":          "itom_score",
+    "CMDB":          "cmdb_score",
+    "HRSD":          "hrsd_score",
+    "CSM":           "csm_score",
+    "FIELD_SERVICE": "field_service_score",
+    "AIOPS":         "aiops_score",
+    "GRC":           "grc_score",
+    "SPM":           "spm_score",
+    "PLATFORM":      "platform_score",
+    "VIRTUAL_AGENT": "va_score",
+    "DEX":           "dex_score",
+    "SECOPS":        "secops_score",
+    "HS":            "hs_score",
+    "OTSM":          "otsm_score",
+    "CREATOR":       "creator_score",
+    "SPO":           "spo_score",
+    "TPRM":          "tprm_score",
+    "LSD":           "lsd_score",
+    "WSD":           "wsd_score",
+    "HAM":           "ham_score",
+    "SAM":           "sam_score"
+};
+
+var EXCLUDED = { "not_applicable": true, "manual": true };
+
+var totalPoints = 0;
+var totalDenominator = 0;
+var modulesScored = 0;
+
+for (var module in moduleMap) {
+    var scoreField = moduleMap[module];
+    var points = 0;
+    var denominator = 0;
+
+    var ga = new GlideAggregate("x_snc_airop_check_result");
+    ga.addQuery("assessment_run", runSysId);
+    ga.addQuery("module", module);
+    ga.addAggregate("COUNT");
+    ga.groupBy("status");
+    ga.query();
+
+    while (ga.next()) {
+        var status = ga.getValue("status");
+        var count = parseInt(ga.getAggregate("COUNT"));
+        if (EXCLUDED[status]) continue;
+        denominator += count;
+        if (status === "ready")           points += count * 1.0;
+        if (status === "needs_attention") points += count * 0.5;
+    }
+
+    var score = denominator > 0 ? Math.round((points / denominator) * 100) : 0;
+    current.setValue(scoreField, score);
+
+    if (denominator > 0) {
+        totalPoints += points;
+        totalDenominator += denominator;
+        modulesScored++;
+    }
+
+    gs.addInfoMessage(module + ": " + points + "/" + denominator + " = " + score + "%");
+}
+
+var overallScore = totalDenominator > 0 ? Math.round((totalPoints / totalDenominator) * 100) : 0;
+current.setValue("overall_score", overallScore);
+current.setValue("score_calculation_status", "updated");
+current.assessment_log = 'Scores manually recalculated by ' + gs.getUserDisplayName() + '. Overall: ' + overallScore + '% across ' + modulesScored + ' modules.';
+current.update();
+gs.addInfoMessage("Overall Readiness: " + overallScore + "% across " + modulesScored + " modules.");]]></script>
+        <show_insert>false</show_insert>
+        <show_multiple_update>false</show_multiple_update>
+        <show_query>false</show_query>
+        <show_update>true</show_update>
+        <sys_class_name>sys_ui_action</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 17:58:26</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>64e04a17cfc5cfd88935fb251d851c6d</sys_id>
+        <sys_mod_count>13</sys_mod_count>
+        <sys_name>Recalculate Scores</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_ui_action_64e04a17cfc5cfd88935fb251d851c6d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-03 15:28:34</sys_updated_on>
+        <table>x_snc_airop_assessment_run</table>
+        <ui11_compatible>true</ui11_compatible>
+        <ui16_compatible>false</ui16_compatible>
+    </sys_ui_action>
+</record_update>

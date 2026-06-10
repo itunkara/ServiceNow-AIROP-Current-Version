@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[CMDB normalization standardizes CI names across discovery sources. Without it, the same physical asset appears under multiple distinct names and Now Assist entity resolution splits AI context across duplicate CI representations.]]></ai_justification>
+        <check_name>CMDB Normalization Job Status</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Use separate queries to avoid OR precedence issues
+    var found = {};
+
+    function collectNormJobs(keyword) {
+        var gr = new GlideRecord('sys_trigger');
+        gr.addQuery('name', 'CONTAINS', keyword);
+        gr.query();
+        while (gr.next()) {
+            found[gr.getUniqueValue()] = gr.getValue('run_type');
+        }
+    }
+
+    collectNormJobs('normalization');
+    collectNormJobs('Normalization');
+
+    var total = Object.keys(found).length;
+    var scheduled = 0;
+    for (var id in found) {
+        var rt = found[id];
+        if (rt && rt !== 'none' && rt !== 'on_demand') scheduled++;
+    }
+
+    var actualValue = total + ' normalization jobs found | ' + scheduled + ' scheduled';
+
+    if (scheduled >= 1) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: scheduled + ' of ' + total + ' normalization job(s) are scheduled. CMDB normalization is running — Now Assist entity resolution will not be split across unnormalized CI representations.' };
+    } else if (total >= 1) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: total + ' normalization job(s) found but none are scheduled. Enable scheduling for normalization jobs — without regular runs, the same physical asset may appear under multiple names, splitting Now Assist AI context.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'No CMDB normalization jobs found. Without normalization, the same physical asset appears under multiple distinct names and Now Assist entity resolution splits AI context across duplicate CI representations.' };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>CMDB</module>
+        <number>CHK0000391</number>
+        <order>190</order>
+        <remediation_guidance>Schedule CMDB normalization jobs via All &gt; Configuration &gt; CMDB &gt; Normalization &gt; Scheduled Jobs. Ensure jobs run at least weekly. Without normalization, the same physical asset may appear under multiple names, splitting Now Assist AI context across duplicate CI representations.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>b6f81dc7cfd587108935fb251d851c27</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>CMDB Normalization Job Status</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_b6f81dc7cfd587108935fb251d851c27</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

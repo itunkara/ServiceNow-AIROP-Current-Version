@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist plugins must be installed and active before any AI features can be enabled. This is the prerequisite gate -- no plugin means no Now Assist functionality.]]></ai_justification>
+        <check_name>Now Assist Plugin Activation</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    // Check core first
+    var core = checkPlugin("now_assist_core", "now_assist_core");
+    // Count all now_assist store apps
+    var totalNA = 0;
+    try {
+        var naGA = new GlideAggregate("sys_store_app");
+        naGA.addQuery("scope", "CONTAINS", "now_assist");
+        naGA.addAggregate("COUNT");
+        naGA.query();
+        totalNA = naGA.next() ? parseInt(naGA.getAggregate("COUNT")) || 0 : 0;
+    } catch(e) {}
+    var actualValue = "now_assist_core: " + (core.found ? "active (v" + core.version + ")" : "inactive") +
+                      " | " + totalNA + " total Now Assist apps installed";
+    if (core.found && totalNA >= 2) {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Now Assist Core is active with " + totalNA + " Now Assist app(s) installed. Plugin activation prerequisite satisfied." };
+    } else if (core.found) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Now Assist Core is active but only " + totalNA + " Now Assist app(s) found. Ensure module-specific Now Assist apps are also installed." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Now Assist Core (now_assist_core) not found in sys_store_app or sys_plugins. No Now Assist AI features will work without it." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000340</number>
+        <order>260</order>
+        <remediation_guidance>Activate Now Assist plugins via the ServiceNow Store. Ensure now_assist_core and the ITSM-specific Now Assist plugin are both active. Plugin activation is the prerequisite gate for all Now Assist ITSM functionality.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>b6f8d9c7cfd587108935fb251d851c68</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Now Assist Plugin Activation</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_b6f8d9c7cfd587108935fb251d851c68</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Security playbooks are the automated response procedures that Now Assist SIR recommends based on AI incident classification. Without playbooks, AI can identify incident type but cannot suggest structured response actions.]]></ai_justification>
+        <check_name>Security Playbook Configuration</check_name>
+        <check_script><![CDATA[(function() {
+    var t = new GlideRecord("sys_pd_process_definition");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table sys_pd_process_definition not found", finding: "Process Automation Designer table is not available. Verify the Security Incident Response plugin is active." };
+    }
+    var ga = new GlideAggregate("sys_pd_process_definition");
+    ga.addQuery("sys_scope.scope", "sn_si");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    if (count >= 5) {
+        return { status: "ready", actualValue: count + " active security playbooks configured", finding: count + " active security playbooks. Now Assist SIR can recommend AI-matched playbooks based on incident type and threat category." };
+    } else if (count >= 1) {
+        return { status: "needs_attention", actualValue: count + " active security playbooks configured", finding: "Only " + count + " active security playbook(s) (target: 5+). Now Assist SIR playbook recommendations will have limited coverage across incident types." };
+    } else {
+        return { status: "value_blocker", actualValue: "No active security playbooks found", finding: "No active security playbooks configured. Now Assist SIR cannot recommend playbooks without defined response procedures." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SECOPS</module>
+        <number>CHK0000532</number>
+        <order>600</order>
+        <remediation_guidance>Configure security playbooks for each major incident category. Navigate to Security Operations &gt; Playbooks to create and activate playbooks for phishing, malware, data breach, insider threat, and DDoS scenarios.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>dff85dc7cfd587108935fb251d851cb5</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Security Playbook Configuration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_dff85dc7cfd587108935fb251d851cb5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

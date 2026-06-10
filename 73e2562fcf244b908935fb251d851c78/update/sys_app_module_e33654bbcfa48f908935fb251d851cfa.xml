@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <application display_value="ServiceNow AI Readiness Optimization Pla">24ef5263cf208b908935fb251d851c56</application>
+        <assessment/>
+        <device_type/>
+        <filter/>
+        <hint>Click Run Assessment Now button to start an assessment</hint>
+        <homepage/>
+        <image/>
+        <link_type>DIRECT</link_type>
+        <map_page/>
+        <mobile_title>Run Assessment Now</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name>x_snc_airop_run_assessment.do</name>
+        <order>50</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query>x_snc_airop_run_assessment.do</query>
+        <report/>
+        <require_confirmation>true</require_confirmation>
+        <roles>43d49623cfe44b908935fb251d851cd1,dfd4d623cfe44b908935fb251d851c05,admin</roles>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 02:58:04</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>e33654bbcfa48f908935fb251d851cfa</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Run Assessment Now</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_app_module_e33654bbcfa48f908935fb251d851cfa</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 12:58:45</sys_updated_on>
+        <timeline_page/>
+        <title>Run Assessment Now</title>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+        <window_name/>
+    </sys_app_module>
+</record_update>

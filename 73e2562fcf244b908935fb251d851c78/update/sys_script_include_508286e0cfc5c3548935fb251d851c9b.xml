@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_CMDB</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for CMDB module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_CMDB</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_CMDB = Class.create();
+AROPCheckLibrary_CMDB.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000373: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("cmdb_health_scorecard");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table cmdb_health_scorecard not found", finding: "CMDB Health Scorecard table is not available. Verify the CMDB Health plugin is active." };
+    }
+    var gr = new GlideRecord("cmdb_health_scorecard");
+    gr.orderByDesc("sys_created_on");
+    gr.setLimit(1);
+    gr.query();
+    if (gr.next()) {
+        var score = parseFloat(gr.getValue("completeness_score") || 0);
+        var actualValue = "CMDB Completeness Score: " + score + "% (from health dashboard)";
+        if (score >= 80) return { status: "ready", actualValue: actualValue, finding: "CMDB Completeness Score is " + score + "%. Now Assist has sufficient CI attribute data for accurate AI impact analysis and recommendations." };
+        if (score >= 60) return { status: "needs_attention", actualValue: actualValue, finding: "CMDB Completeness Score is " + score + "% (target: 80%+). Incomplete CI data will cause Now Assist to produce generic rather than environment-specific AI insights." };
+        return { status: "value_blocker", actualValue: actualValue, finding: "CMDB Completeness Score is only " + score + "%. Severely incomplete CI data means Now Assist cannot produce reliable AI insights." };
+    }
+    var gaComplete = new GlideAggregate("cmdb_ci_server");
+    gaComplete.addQuery("install_status", 1);
+    gaComplete.addQuery("name", "!=", "");
+    gaComplete.addQuery("os_version", "!=", "");
+    gaComplete.addQuery("ip_address", "!=", "");
+    gaComplete.addAggregate("COUNT");
+    gaComplete.query();
+    var complete = gaComplete.next() ? parseInt(gaComplete.getAggregate("COUNT")) : 0;
+    var gaTotal = new GlideAggregate("cmdb_ci_server");
+    gaTotal.addQuery("install_status", 1);
+    gaTotal.addAggregate("COUNT");
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0;
+    var pct = total > 0 ? Math.round((complete / total) * 100) : 0;
+    var actualValue = "Proxy score: " + pct + "% (" + complete + " of " + total + " server CIs with mandatory fields). Enable CMDB Health jobs for official score.";
+    if (pct >= 80) return { status: "ready", actualValue: actualValue, finding: "Proxy completeness: " + pct + "% of server CIs have mandatory fields populated." };
+    if (pct >= 60) return { status: "needs_attention", actualValue: actualValue, finding: "Proxy completeness: only " + pct + "% of server CIs have mandatory fields (target: 80%+)." };
+    return { status: "value_blocker", actualValue: actualValue, finding: "Proxy completeness: only " + pct + "% of server CIs have mandatory fields. Critical CMDB completeness gap." };
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000373: ' + e.message };
+        }
+    },
+    CHK0000374: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaComplete = new GlideAggregate('cmdb_ci_server');
+    gaComplete.addQuery('install_status', 1);
+    gaComplete.addQuery('name', '!=', '');
+    gaComplete.addQuery('os_version', '!=', '');
+    gaComplete.addQuery('ip_address', '!=', '');
+    gaComplete.addAggregate('COUNT');
+    gaComplete.query();
+    var complete = gaComplete.next() ? parseInt(gaComplete.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci_server');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active server CIs found',
+            finding: 'No active server CIs found. Mandatory field population cannot be assessed.' };
+    }
+
+    var pct = Math.round((complete / total) * 100);
+    var actualValue = pct + '% of Server CIs have mandatory fields populated (' + complete + ' of ' + total + ')';
+
+    if (pct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of server CIs have name, OS version, and IP address populated. Now Assist has strong CI attribute data for AI analysis.' };
+    } else if (pct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of server CIs have mandatory fields populated (target: 80%+). Incomplete CI data reduces Now Assist AI accuracy for server-related analysis.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of server CIs have mandatory fields. Critical data gap — Now Assist cannot accurately reason about server infrastructure without name, OS version, and IP address.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000374: ' + e.message };
+        }
+    },
+    CHK0000375: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Use separate queries to avoid OR precedence issues with multiple LIKE clauses
+    var suspects = {};
+
+    function collectSuspect(pattern) {
+        var gr = new GlideRecord('cmdb_ci');
+        gr.addQuery('install_status', 1);
+        gr.addQuery('name', 'CONTAINS', pattern);
+        gr.query();
+        while (gr.next()) {
+            suspects[gr.getUniqueValue()] = true;
+        }
+    }
+
+    collectSuspect('copy');
+    collectSuspect('test');
+    collectSuspect('temp');
+    collectSuspect('COPY');
+    collectSuspect('TEST');
+    collectSuspect('TEMP');
+
+    var suspect = Object.keys(suspects).length;
+
+    var actualValue = suspect + ' CIs with suspect naming patterns (copy/test/temp)';
+
+    if (suspect === 0) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'No CIs with suspect naming patterns detected. Now Assist entity resolution will not encounter false matches from test or copy records.' };
+    } else if (suspect < 100) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: suspect + ' CIs have suspect naming patterns (copy/test/temp). These may cause Now Assist entity resolution false matches — review and rename or retire these CIs.' };
+    } else if (suspect < 500) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: suspect + ' CIs have suspect naming patterns. Significant naming inconsistency — Now Assist entity resolution accuracy is at risk. Establish and enforce a CI naming standard.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: suspect + ' CIs have suspect naming patterns. Critical naming hygiene issue — Now Assist entity resolution will produce frequent false matches across ' + suspect + ' poorly named records.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000375: ' + e.message };
+        }
+    },
+    CHK0000376: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaOwned = new GlideAggregate('cmdb_ci');
+    gaOwned.addQuery('install_status', 1);
+    gaOwned.addQuery('owned_by', '!=', '');
+    gaOwned.addAggregate('COUNT');
+    gaOwned.query();
+    var withOwner = gaOwned.next() ? parseInt(gaOwned.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. Ownership population cannot be assessed.' };
+    }
+
+    var pct = Math.round((withOwner / total) * 100);
+    var actualValue = pct + '% of active CIs have owned_by populated (' + withOwner + ' of ' + total + ')';
+
+    if (pct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of active CIs have an owner assigned. Now Assist can route AI recommendations and escalations to the correct owners.' };
+    } else if (pct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs have an owner (target: 80%+). Now Assist AI escalation routing will fail for CIs without ownership data.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs have an owner. Critical ownership gap — Now Assist cannot route AI-generated recommendations or escalations without CI ownership data.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000376: ' + e.message };
+        }
+    },
+    CHK0000377: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaUnknown = new GlideAggregate('cmdb_ci');
+    gaUnknown.addQuery('install_status', 1);
+    gaUnknown.addNullQuery('operational_status');
+    gaUnknown.addAggregate('COUNT');
+    gaUnknown.query();
+    var unknown = gaUnknown.next() ? parseInt(gaUnknown.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. Operational status accuracy cannot be assessed.' };
+    }
+
+    var pct = Math.round((unknown / total) * 100);
+    var actualValue = pct + '% of active CIs have Unknown operational status (' + unknown + ' of ' + total + ')';
+
+    if (pct <= 5) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs have Unknown operational status. Now Assist impact analysis will accurately scope to operational assets.' };
+    } else if (pct <= 30) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: pct + '% of active CIs have Unknown operational status (target: ≤5%). Now Assist may ambiguously scope impact analysis and include potentially decommissioned assets.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: pct + '% of active CIs have Unknown operational status. Widespread operational status gaps mean Now Assist impact analysis is unreliable — it cannot distinguish operational from decommissioned assets.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000377: ' + e.message };
+        }
+    },
+    CHK0000378: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("cmdb_health_scorecard");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table cmdb_health_scorecard not found", finding: "CMDB Health Scorecard table is not available. Verify the CMDB Health plugin is active." };
+    }
+    var gr = new GlideRecord("cmdb_health_scorecard");
+    gr.orderByDesc("sys_created_on");
+    gr.setLimit(1);
+    gr.query();
+    if (gr.next()) {
+        var score = parseFloat(gr.getValue("correctness_score") || 0);
+        var actualValue = "CMDB Correctness Score: " + score + "%";
+        if (score >= 75) return { status: "ready", actualValue: actualValue, finding: "CMDB Correctness Score is " + score + "%. CI data is current and accurate — Now Assist AI recommendations will reflect the actual state of infrastructure." };
+        if (score >= 50) return { status: "needs_attention", actualValue: actualValue, finding: "CMDB Correctness Score is " + score + "% (target: 75%+). Incorrect CI data will cause Now Assist to recommend remediations based on outdated infrastructure state." };
+        return { status: "value_blocker", actualValue: actualValue, finding: "CMDB Correctness Score is only " + score + "%. Critical correctness gap — Now Assist AI recommendations are unreliable when the majority of CI data is incorrect or stale." };
+    }
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+    var gaFresh = new GlideAggregate("cmdb_ci");
+    gaFresh.addQuery("install_status", 1);
+    gaFresh.addQuery("sys_updated_on", ">=", cutoff.getValue());
+    gaFresh.addAggregate("COUNT");
+    gaFresh.query();
+    var fresh = gaFresh.next() ? parseInt(gaFresh.getAggregate("COUNT")) : 0;
+    var gaTotal = new GlideAggregate("cmdb_ci");
+    gaTotal.addQuery("install_status", 1);
+    gaTotal.addAggregate("COUNT");
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0;
+    var pct = total > 0 ? Math.round((fresh / total) * 100) : 0;
+    var actualValue = "Proxy correctness: " + pct + "% of CIs updated in last 90 days (" + fresh + " of " + total + "). Enable CMDB Health jobs for official score.";
+    if (pct >= 75) return { status: "ready", actualValue: actualValue, finding: "Proxy correctness: " + pct + "% of CIs updated in last 90 days." };
+    if (pct >= 50) return { status: "needs_attention", actualValue: actualValue, finding: "Proxy correctness: only " + pct + "% of CIs updated in last 90 days (target: 75%+)." };
+    return { status: "value_blocker", actualValue: actualValue, finding: "Proxy correctness: only " + pct + "% of CIs updated in last 90 days. Most CI data is likely stale." };
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000378: ' + e.message };
+        }
+    },
+    CHK0000379: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaStale = new GlideAggregate('cmdb_ci');
+    gaStale.addQuery('install_status', 1);
+    gaStale.addQuery('sys_updated_on', '<', cutoff.getValue());
+    gaStale.addAggregate('COUNT');
+    gaStale.query();
+    var stale = gaStale.next() ? parseInt(gaStale.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. Stale CI rate cannot be assessed.' };
+    }
+
+    var pct = Math.round((stale / total) * 100);
+    var actualValue = pct + '% of active CIs not updated in 90+ days (' + stale + ' of ' + total + ')';
+
+    if (pct <= 20) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs are stale at 90 days. CMDB data is current — Now Assist AI recommendations reflect recent infrastructure state.' };
+    } else if (pct <= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: pct + '% of active CIs have not been updated in 90+ days (target: ≤20%). Stale CI data reduces Now Assist AI accuracy — expand discovery coverage and frequency.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: pct + '% of active CIs are stale at 90 days. Majority of CMDB data is outdated — Now Assist AI recommendations based on this data will be unreliable.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000379: ' + e.message };
+        }
+    },
+    CHK0000380: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-180);
+
+    var gaStale = new GlideAggregate('cmdb_ci');
+    gaStale.addQuery('install_status', 1);
+    gaStale.addQuery('sys_updated_on', '<', cutoff.getValue());
+    gaStale.addAggregate('COUNT');
+    gaStale.query();
+    var stale = gaStale.next() ? parseInt(gaStale.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. 180-day stale CI rate cannot be assessed.' };
+    }
+
+    var pct = Math.round((stale / total) * 100);
+    var actualValue = pct + '% of active CIs not updated in 180+ days (' + stale + ' of ' + total + ')';
+
+    if (pct <= 10) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active CIs are stale at 180 days. CMDB has minimal ghost records — Now Assist impact analysis will not be polluted by decommissioned assets.' };
+    } else if (pct <= 30) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: pct + '% of active CIs have not been updated in 180+ days (target: ≤10%). These are likely ghost records — Now Assist may recommend remediations for non-existent assets.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: pct + '% of active CIs are stale at 180 days. High ghost record rate — Now Assist impact analysis is likely to include significant numbers of decommissioned or non-existent assets.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000380: ' + e.message };
+        }
+    },
+    CHK0000381: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaAuth = new GlideAggregate('cmdb_ci');
+    gaAuth.addQuery('install_status', 1);
+    gaAuth.addQuery('discovery_source', '!=', '');
+    gaAuth.addQuery('discovery_source', 'NOT IN', 'manual,Manual,Manual Entry');
+    gaAuth.addAggregate('COUNT');
+    gaAuth.query();
+    var authoritative = gaAuth.next() ? parseInt(gaAuth.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. Authoritative source coverage cannot be assessed.' };
+    }
+
+    var pct = Math.round((authoritative / total) * 100);
+    var actualValue = pct + '% of active CIs have an authoritative discovery source (' + authoritative + ' of ' + total + ')';
+
+    if (pct >= 90) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of active CIs are discovery-sourced. Now Assist AI recommendations are based on reliably maintained, auto-discovered CI data.' };
+    } else if (pct >= 70) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of CIs have an authoritative source (target: 90%+). Manually entered CIs become stale quickly and reduce Now Assist context reliability.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of CIs are from authoritative sources. High manual CI rate means Now Assist is reasoning over data that is likely stale and unreliable.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000381: ' + e.message };
+        }
+    },
+    CHK0000382: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var testGr = new GlideRecord('reconcile_duplicate_task');
+    testGr.setLimit(1);
+    testGr.query();
+    if (!testGr.isValid()) {
+        return { status: 'not_applicable', actualValue: 'IRE deduplication table not found',
+            finding: 'IRE deduplication table (reconcile_duplicate_task) does not exist on this instance. IRE may not be activated — duplicate CI detection is unavailable.' };
+    }
+
+    var ga = new GlideAggregate('reconcile_duplicate_task');
+    ga.addQuery('state', 'IN', 'Open,open,1');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var open = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = open + ' open deduplication tasks';
+
+    if (open === 0) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'No open deduplication tasks. CMDB has no known duplicate CIs — Now Assist AI context is not split across duplicate records.' };
+    } else if (open < 100) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: open + ' open deduplication tasks. Duplicate CIs cause Now Assist to split AI context across multiple records for the same physical asset — remediate these tasks.' };
+    } else if (open < 500) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: open + ' open deduplication tasks. Significant duplicate CI issue — Now Assist AI context fragmentation is affecting a large portion of the CMDB.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: open + ' open deduplication tasks. Critical duplicate CI problem — Now Assist AI context is severely fragmented. Bulk deduplication is required before AI capabilities will be reliable.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000382: ' + e.message };
+        }
+    },
+    CHK0000383: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaRels = new GlideAggregate('cmdb_rel_ci');
+    gaRels.addAggregate('COUNT');
+    gaRels.query();
+    var rels = gaRels.next() ? parseInt(gaRels.getAggregate('COUNT')) : 0;
+
+    var gaCIs = new GlideAggregate('cmdb_ci');
+    gaCIs.addQuery('install_status', 1);
+    gaCIs.addAggregate('COUNT');
+    gaCIs.query();
+    var cis = gaCIs.next() ? parseInt(gaCIs.getAggregate('COUNT')) : 0;
+
+    if (cis === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. CI relationship coverage cannot be assessed.' };
+    }
+
+    var ratio = Math.round(rels / cis);
+    var actualValue = rels + ' total CI relationships | ' + cis + ' active CIs | ~' + ratio + ' relationships per CI';
+
+    if (ratio >= 5) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: '~' + ratio + ' relationships per CI. Now Assist has rich CI relationship data for AI impact traversal and dependency analysis.' };
+    } else if (ratio >= 1) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ~' + ratio + ' relationship(s) per CI (target: 5+). Limited relationship coverage reduces the depth of Now Assist AI impact analysis.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'No CI relationships found. Now Assist cannot perform impact analysis without CI relationships — isolated CIs provide zero traversal context for AI.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000383: ' + e.message };
+        }
+    },
+    CHK0000384: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTypes = new GlideAggregate('cmdb_rel_type');
+    gaTypes.addAggregate('COUNT');
+    gaTypes.query();
+    var types = gaTypes.next() ? parseInt(gaTypes.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('cmdb_rel_ci');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var totalRels = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    var gaGeneric = new GlideAggregate('cmdb_rel_ci');
+    gaGeneric.addQuery('type.name', 'CONTAINS', 'Unknown');
+    gaGeneric.addAggregate('COUNT');
+    gaGeneric.query();
+    var generic = gaGeneric.next() ? parseInt(gaGeneric.getAggregate('COUNT')) : 0;
+
+    var genericPct = totalRels > 0 ? Math.round((generic / totalRels) * 100) : 0;
+    var actualValue = types + ' distinct relationship types | ' + generic + ' generic/Unknown relationships (' + genericPct + '%)';
+
+    if (types >= 10 && genericPct <= 10) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: types + ' distinct relationship types with only ' + genericPct + '% generic. Now Assist can reason about dependency direction and impact scope using typed CI relationships.' };
+    } else if (types >= 5 || genericPct <= 30) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: types + ' relationship types with ' + genericPct + '% generic/Unknown (targets: 10+ types, ≤10% generic). Improve relationship typing for more accurate Now Assist impact analysis.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + types + ' relationship types with ' + genericPct + '% generic/Unknown relationships. Now Assist cannot determine dependency direction or impact scope without well-typed CI relationships.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000384: ' + e.message };
+        }
+    },
+    CHK0000385: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('cmdb_rel_ci');
+    ga.addEncodedQuery('parent.sys_class_pathISEMPTY^ORchild.sys_class_pathISEMPTY');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var broken = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = broken + ' broken cmdb_rel_ci records (NULL parent/child sys_class_path)';
+
+    if (broken === 0) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'No broken CI relationship records found. Now Assist impact traversal has no dead ends from orphaned relationship records.' };
+    } else if (broken < 100) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: broken + ' broken CI relationship records. These create dead ends in Now Assist impact traversal — clean up orphaned records.' };
+    } else if (broken < 1000) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: broken + ' broken CI relationship records. Significant orphaned relationship issue — Now Assist impact analysis will encounter frequent dead ends.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: broken + ' broken CI relationship records. Critical orphaned relationship problem — Now Assist impact traversal is severely impaired by the volume of broken records.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000385: ' + e.message };
+        }
+    },
+    CHK0000386: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('cmdb_ci_appl');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active application CIs found',
+            finding: 'No active application CIs found. Application-to-infrastructure mapping cannot be assessed.' };
+    }
+
+    var gaMapped = new GlideAggregate('cmdb_rel_ci');
+    gaMapped.addQuery('parent.sys_class_name', 'cmdb_ci_appl');
+    gaMapped.addQuery('child.sys_class_name', 'IN', 'cmdb_ci_server,cmdb_ci_database');
+    gaMapped.addAggregate('COUNT');
+    gaMapped.query();
+    var mapped = gaMapped.next() ? parseInt(gaMapped.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((mapped / total) * 100);
+    var actualValue = pct + '% of application CIs mapped to infrastructure (' + mapped + ' of ' + total + ' app CIs)';
+
+    if (pct >= 50) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of application CIs are mapped to server or database infrastructure. Now Assist can perform AI impact analysis from application down to infrastructure level.' };
+    } else if (pct >= 10) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of application CIs are mapped to infrastructure (target: 50%+). Now Assist AI impact analysis will be incomplete for unmapped applications.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of application CIs are mapped to infrastructure. Now Assist cannot perform meaningful AI impact analysis without application-to-infrastructure relationships.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000386: ' + e.message };
+        }
+    },
+    CHK0000387: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaBizApps = new GlideAggregate('cmdb_ci_business_app');
+    gaBizApps.addAggregate('COUNT');
+    gaBizApps.query();
+    var bizApps = gaBizApps.next() ? parseInt(gaBizApps.getAggregate('COUNT')) : 0;
+
+    var gaOfferings = new GlideAggregate('service_offering');
+    gaOfferings.addAggregate('COUNT');
+    gaOfferings.query();
+    var offerings = gaOfferings.next() ? parseInt(gaOfferings.getAggregate('COUNT')) : 0;
+
+    var actualValue = 'Business Apps: ' + bizApps + ' | Service Offerings: ' + offerings;
+
+    if (bizApps >= 10 && offerings >= 5) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: bizApps + ' Business Applications and ' + offerings + ' Service Offerings defined. CSDM alignment ensures Now Assist is reasoning over the correct data model for AI service impact analysis.' };
+    } else if (bizApps >= 3 || offerings >= 1) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Partial CSDM alignment (' + bizApps + ' Business Apps, ' + offerings + ' Service Offerings). Targets: 10+ Business Apps, 5+ Service Offerings. Incomplete CSDM limits Now Assist service-level AI analysis.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'No CSDM alignment (' + bizApps + ' Business Apps, ' + offerings + ' Service Offerings). Now Assist is designed to reason over the CSDM data model — without it, service-level AI analysis is not possible.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000387: ' + e.message };
+        }
+    },
+    CHK0000388: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('cmdb_ci');
+    ga.addQuery('operational_status', 6); // 6 = Retired (Decommissioned not present on this instance)
+    ga.addQuery('install_status', 1);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var mismatched = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = mismatched + ' CIs in Retired status still flagged as Installed';
+
+    if (mismatched === 0) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'No lifecycle state mismatches found. Now Assist impact analysis will not be polluted by ghost records from retired assets.' };
+    } else if (mismatched < 100) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: mismatched + ' retired CIs still flagged as Installed. These ghost records will pollute Now Assist impact analysis with non-existent assets.' };
+    } else if (mismatched < 1000) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: mismatched + ' lifecycle state mismatches. Significant ghost record issue — Now Assist AI impact scope includes a large number of retired assets.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: mismatched + ' retired CIs still flagged as Installed. Critical lifecycle management failure — Now Assist impact analysis is heavily polluted with ghost records.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000388: ' + e.message };
+        }
+    },
+    CHK0000389: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('cmdb_identifier');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var rules = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = rules + ' active IRE identification rules';
+
+    if (rules >= 10) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: rules + ' active IRE identification rules. Robust IRE configuration prevents duplicate CI creation and maintains CMDB integrity for Now Assist AI analysis.' };
+    } else if (rules >= 1) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + rules + ' active IRE identification rule(s) (target: 10+). Limited IRE coverage increases the risk of duplicate CI creation — a primary source of Now Assist AI context fragmentation.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'No active IRE identification rules. Without IRE, every discovery run risks creating duplicate CIs — the primary source of CMDB data quality degradation that impacts Now Assist AI accuracy.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000389: ' + e.message };
+        }
+    },
+    CHK0000390: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var healthJobs = { completeness: false, correctness: false, compliance: false };
+    var jobDetails = [];
+    var scheduledCount = 0;
+    var totalFound = 0;
+
+    var gr = new GlideRecord('sysauto_script');
+    gr.addQuery('name', 'CONTAINS', 'CMDB Health Dashboard');
+    gr.addActiveQuery();
+    gr.query();
+
+    while (gr.next()) {
+        totalFound++;
+        var name = gr.getValue('name');
+        var runType = gr.getValue('run_type');
+        var isScheduled = (runType !== 'none' && runType !== 'on_demand' && runType !== null);
+        if (isScheduled) scheduledCount++;
+
+        if (name.indexOf('Completeness') > -1) healthJobs.completeness = isScheduled;
+        if (name.indexOf('Correctness')  > -1) healthJobs.correctness  = isScheduled;
+        if (name.indexOf('Compliance')   > -1) healthJobs.compliance   = isScheduled;
+
+        jobDetails.push(name + ' [' + runType + ']');
+    }
+
+    var coreJobsScheduled = healthJobs.completeness && healthJobs.correctness && healthJobs.compliance;
+    var actualValue = totalFound + ' CMDB Health jobs found | ' + scheduledCount + ' scheduled';
+
+    if (totalFound === 0) {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'No CMDB Health Dashboard jobs found. Navigate to: All > Configuration > CMDB Dashboard > CMDB Health Dashboard Jobs to enable. Without these jobs, CHK0002210 and CHK0002215 cannot return official health scores.' };
+    } else if (!coreJobsScheduled) {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'CMDB Health Dashboard jobs exist but one or more core jobs (Completeness, Correctness, Compliance) are not scheduled. Found: ' + totalFound + ' jobs, ' + scheduledCount + ' scheduled. Jobs: ' + jobDetails.join(' | ') };
+    } else {
+        return { status: 'ready', actualValue: actualValue,
+            finding: scheduledCount + ' of ' + totalFound + ' CMDB Health Dashboard jobs are scheduled and active. Official CMDB health scores are being generated. Jobs: ' + jobDetails.join(' | ') };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000390: ' + e.message };
+        }
+    },
+    CHK0000391: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Use separate queries to avoid OR precedence issues
+    var found = {};
+
+    function collectNormJobs(keyword) {
+        var gr = new GlideRecord('sys_trigger');
+        gr.addQuery('name', 'CONTAINS', keyword);
+        gr.query();
+        while (gr.next()) {
+            found[gr.getUniqueValue()] = gr.getValue('run_type');
+        }
+    }
+
+    collectNormJobs('normalization');
+    collectNormJobs('Normalization');
+
+    var total = Object.keys(found).length;
+    var scheduled = 0;
+    for (var id in found) {
+        var rt = found[id];
+        if (rt && rt !== 'none' && rt !== 'on_demand') scheduled++;
+    }
+
+    var actualValue = total + ' normalization jobs found | ' + scheduled + ' scheduled';
+
+    if (scheduled >= 1) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: scheduled + ' of ' + total + ' normalization job(s) are scheduled. CMDB normalization is running — Now Assist entity resolution will not be split across unnormalized CI representations.' };
+    } else if (total >= 1) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: total + ' normalization job(s) found but none are scheduled. Enable scheduling for normalization jobs — without regular runs, the same physical asset may appear under multiple names, splitting Now Assist AI context.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'No CMDB normalization jobs found. Without normalization, the same physical asset appears under multiple distinct names and Now Assist entity resolution splits AI context across duplicate CI representations.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000391: ' + e.message };
+        }
+    },
+    CHK0000392: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("cmdb_health_scorecard");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table cmdb_health_scorecard not found", finding: "CMDB Health Scorecard table is not available. Verify the CMDB Health plugin is active." };
+    }
+    var ga = new GlideAggregate("cmdb_health_scorecard");
+    ga.addAggregate("COUNT");
+    ga.query();
+    var scores = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = scores + " cmdb_health_scorecard records (0 = health jobs have never run successfully)";
+    if (scores > 0) return { status: "ready", actualValue: actualValue, finding: scores + " CMDB health scorecard records found. CMDB Health Workspace is configured and health jobs have run — official completeness and correctness scores are available." };
+    return { status: "value_blocker", actualValue: actualValue, finding: "No CMDB health scorecard records found. CMDB Health Workspace has never run successfully — official health scores are unavailable. Proxy metrics are being used instead." };
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000392: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_CMDB'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:02:14</sys_created_on>
+        <sys_id>508286e0cfc5c3548935fb251d851c9b</sys_id>
+        <sys_mod_count>10</sys_mod_count>
+        <sys_name>AROPCheckLibrary_CMDB</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_508286e0cfc5c3548935fb251d851c9b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

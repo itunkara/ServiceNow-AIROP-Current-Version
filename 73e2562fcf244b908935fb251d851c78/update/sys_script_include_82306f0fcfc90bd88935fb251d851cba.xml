@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_OTSM</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP per-module check library for OT Service Management (OTSM). Contains executable check methods injected from active check definitions.</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_OTSM</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_OTSM = Class.create();
+AROPCheckLibrary_OTSM.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000553: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_ot_incident");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=50)return{status:"ready",actualValue:c+" incidents",finding:c+" OT incidents found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" incidents",finding:c+" OT incidents found."};
+return{status:"value_blocker",actualValue:"0 incidents",finding:"No OT incidents found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000553: ' + e.message };
+        }
+    },
+    CHK0000549: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sys_user_group");
+ga.addQuery("name","CONTAINS","OT");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=2)return{status:"ready",actualValue:c+" groups",finding:c+" OT assignment groups found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" group",finding:c+" OT group found."};
+return{status:"needs_attention",actualValue:"0 groups",finding:"No OT assignment groups found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000549: ' + e.message };
+        }
+    },
+    CHK0000554: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("cmdb_rel_ci");
+ga.addQuery("parent.sys_class_name","cmdb_ci_ot");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=50)return{status:"ready",actualValue:c+" relationships",finding:c+" OT CI relationships found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" relationships",finding:c+" OT CI relationships found."};
+return{status:"value_blocker",actualValue:"0 relationships",finding:"No OT CI relationships found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000554: ' + e.message };
+        }
+    },
+    CHK0000550: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_ot_incident");
+ga.addQuery("close_notes","!=","");
+ga.addAggregate("COUNT");ga.query();
+var withNotes=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+var ga2=new GlideAggregate("sn_ot_incident");
+ga2.addAggregate("COUNT");ga2.query();
+var total=ga2.next()?parseInt(ga2.getAggregate("COUNT")):0;
+var pct=total>0?Math.round(withNotes/total*100):0;
+if(pct>=50)return{status:"ready",actualValue:withNotes+"/"+total+" ("+pct+"%) with notes",finding:pct+"% of OT incidents have close notes."};
+if(withNotes>0)return{status:"needs_attention",actualValue:withNotes+"/"+total+" ("+pct+"%) with notes",finding:"Only "+pct+"% of OT incidents have close notes."};
+return{status:"value_blocker",actualValue:"0/"+total+" with notes",finding:"No OT incidents have close notes. AI summarization will be limited."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000550: ' + e.message };
+        }
+    },
+    CHK0000555: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("cmdb_ot_entity");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=100)return{status:"ready",actualValue:c+" OT entities",finding:c+" OT entities found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" OT entities",finding:c+" OT entities found."};
+return{status:"value_blocker",actualValue:"0 entities",finding:"No OT entities found in CMDB."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000555: ' + e.message };
+        }
+    },
+    CHK0000547: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("cmdb_ci_ot");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=100)return{status:"ready",actualValue:c+" OT assets",finding:c+" OT assets found in CMDB."};
+if(c>0)return{status:"needs_attention",actualValue:c+" OT assets",finding:c+" OT assets in CMDB."};
+return{status:"value_blocker",actualValue:"0 OT assets",finding:"No OT assets found in CMDB."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000547: ' + e.message };
+        }
+    },
+    CHK0000551: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("sn_ot_change_request");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=20)return{status:"ready",actualValue:c+" changes",finding:c+" OT change requests found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" changes",finding:c+" OT change requests found."};
+return{status:"needs_attention",actualValue:"0 changes",finding:"No OT change requests found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000551: ' + e.message };
+        }
+    },
+    CHK0000556: function() {
+        try {
+            return (function(){
+var sa=new GlideRecord("sys_store_app");
+sa.addQuery("scope","sn_otsm_gen_ai");
+sa.setLimit(1);sa.query();
+if(sa.next())return{status:"ready",actualValue:"v"+sa.getValue("version"),finding:"Now Assist for OT Security is installed."};
+return{status:"value_blocker",actualValue:"Not installed",finding:"Now Assist for OT Security (sn_otsm_gen_ai) is not installed."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000556: ' + e.message };
+        }
+    },
+    CHK0000548: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("kb_knowledge");
+ga.addQuery("workflow_state","published");
+ga.addQuery("short_description","CONTAINS","OT");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=5)return{status:"ready",actualValue:c+" articles",finding:c+" OT KB articles found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" articles",finding:c+" OT KB articles found."};
+return{status:"needs_attention",actualValue:"0 articles",finding:"No OT KB articles found."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000548: ' + e.message };
+        }
+    },
+    CHK0000552: function() {
+        try {
+            return (function(){
+var ga=new GlideAggregate("cmdb_ci_site");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=5)return{status:"ready",actualValue:c+" sites",finding:c+" site records found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" sites",finding:c+" site record(s) found."};
+return{status:"needs_attention",actualValue:"0 sites",finding:"No site records found. Site context improves AI impact analysis."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000552: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_OTSM'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 06:16:29</sys_created_on>
+        <sys_id>82306f0fcfc90bd88935fb251d851cba</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>AROPCheckLibrary_OTSM</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_82306f0fcfc90bd88935fb251d851cba</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

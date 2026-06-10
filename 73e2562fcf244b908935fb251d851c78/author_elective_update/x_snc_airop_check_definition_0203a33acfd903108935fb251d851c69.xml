@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[HR case resolution notes are the primary training signal for Now Assist HRSD case summarization. Missing resolution notes mean Now Assist has no structured resolution context to learn from or summarize.]]></ai_justification>
+<check_name>HR Case Resolution Notes</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    // HR case closed states: 3=Closed Complete, 4=Closed Incomplete
+    // close_notes is the OOB resolution field on sn_hr_core_case
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_hr_core_case');
+    gaTotal.addQuery('state', 'IN', '3,4');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed HR cases in last 12 months',
+            finding: 'No closed HR cases found in the last 12 months. Close notes coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('sn_hr_core_case');
+    gaMissing.addQuery('state', 'IN', '3,4');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('close_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed HR cases have close notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed HR cases have close notes. Now Assist HRSD summarization has strong resolution context for AI-generated case summaries.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed HR cases have close notes (target: 80%). Now Assist HRSD summarization quality will be reduced for cases missing resolution context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: missing + ' closed HR cases missing close notes (' + pct + '% populated). Critical gap — Now Assist HRSD cannot generate meaningful case summaries without resolution context.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>HRSD</module>
+<number>CHK0006020</number>
+<order>30</order>
+<remediation_guidance>Make close notes mandatory at HR case closure via UI policy. Train HR service desk agents to document resolution steps in close_notes before closing cases. Target: 80%+ of closed HR cases with close notes in the trailing 12 months.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>0203a33acfd903108935fb251d851c69</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0203a33acfd903108935fb251d851c69</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[HR case resolution notes are the primary training signal for Now Assist HRSD case summarization. Missing resolution notes mean Now Assist has no structured resolution context to learn from or summarize.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;HR Case Resolution Notes&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    // HR case closed states: 3=Closed Complete, 4=Closed Incomplete
+    // close_notes is the OOB resolution field on sn_hr_core_case
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_hr_core_case');
+    gaTotal.addQuery('state', 'IN', '3,4');
+    gaTotal.addQuery('closed_at', '&gt;=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed HR cases in last 12 months',
+            finding: 'No closed HR cases found in the last 12 months. Close notes coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('sn_hr_core_case');
+    gaMissing.addQuery('state', 'IN', '3,4');
+    gaMissing.addQuery('closed_at', '&gt;=', cutoff.getValue());
+    gaMissing.addQuery('close_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed HR cases have close notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct &gt;= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed HR cases have close notes. Now Assist HRSD summarization has strong resolution context for AI-generated case summaries.'
+        };
+    } else if (pct &gt;= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed HR cases have close notes (target: 80%). Now Assist HRSD summarization quality will be reduced for cases missing resolution context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: missing + ' closed HR cases missing close notes (' + pct + '% populated). Critical gap — Now Assist HRSD cannot generate meaningful case summaries without resolution context.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;HRSD&lt;/module&gt;
+&lt;number&gt;CHK0006020&lt;/number&gt;
+&lt;order&gt;30&lt;/order&gt;
+&lt;remediation_guidance&gt;Make close notes mandatory at HR case closure via UI policy. Train HR service desk agents to document resolution steps in close_notes before closing cases. Target: 80%+ of closed HR cases with close notes in the trailing 12 months.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;0203a33acfd903108935fb251d851c69&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-131891689</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:21</sys_created_on>
+        <sys_id>23a64d07cf9947108935fb251d851cad</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa60340000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:21</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>6ba64d074d9947107075340982716dab</update_guid>
+        <update_guid_history>6ba64d074d9947107075340982716dab:-131891689</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">8b1f41cfcfdd47108935fb251d851c1b</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:11</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>009b3c5813fa4f4480033598ff33da90</sys_id>
+        <sys_metadata>0203a33acfd903108935fb251d851c69</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0203a33acfd903108935fb251d851c69</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0203a33acfd903108935fb251d851c69">23a64d07cf9947108935fb251d851cad</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:11</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

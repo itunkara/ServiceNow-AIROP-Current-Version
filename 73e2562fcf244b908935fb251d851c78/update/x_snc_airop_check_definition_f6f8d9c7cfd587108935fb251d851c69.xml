@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Sufficient change history allows Now Assist to learn risk patterns, generate accurate change summaries, and provide AI-assisted risk assessments grounded in historical data.]]></ai_justification>
+        <check_name>Change Record Volume</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var ga = new GlideAggregate('change_request');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var total = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' change requests created in last 12 months';
+
+    if (total >= 500) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' change requests in the last 12 months. Sufficient history for Now Assist change risk assessment AI learning.'
+        };
+    } else if (total >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' change requests in the last 12 months (target: 500+). Now Assist change risk assessment AI will have limited pattern coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' change requests in the last 12 months. Insufficient change history for meaningful Now Assist change risk assessment AI learning.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000341</number>
+        <order>270</order>
+        <remediation_guidance>Allow change record volume to accumulate before enabling Now Assist change risk assessment features. Focus on data quality: descriptions, CI association, and closure notes. Target: 500+ change requests in the trailing 12 months.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>f6f8d9c7cfd587108935fb251d851c69</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Change Record Volume</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_f6f8d9c7cfd587108935fb251d851c69</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

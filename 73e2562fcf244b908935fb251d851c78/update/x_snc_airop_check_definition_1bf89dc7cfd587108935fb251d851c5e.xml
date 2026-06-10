@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Virtual Agent topics for legal enable conversational AI self-service for common legal requests. Existing topic coverage indicates readiness to activate Now Assist conversational capabilities and AI Agents for legal intake.]]></ai_justification>
+        <check_name>Legal Virtual Agent Topics</check_name>
+        <check_script><![CDATA[(function(){
+var ga=new GlideAggregate("sys_cs_topic");
+ga.addQuery("name","CONTAINS","legal");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=3)return{status:"ready",actualValue:c+" topics",finding:c+" legal VA topics found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" topics",finding:c+" legal VA topic(s) found."};
+return{status:"needs_attention",actualValue:"0 topics",finding:"No legal Virtual Agent topics found."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>LSD</module>
+        <number>CHK0000597</number>
+        <order/>
+        <remediation_guidance>Build Virtual Agent conversation topics for common legal requests.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:21</sys_created_on>
+        <sys_id>1bf89dc7cfd587108935fb251d851c5e</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Legal Virtual Agent Topics</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_1bf89dc7cfd587108935fb251d851c5e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

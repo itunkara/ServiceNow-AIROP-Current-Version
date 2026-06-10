@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist change summarization reads description, risk, impact, and assignment_group. Well-populated change records enable AI-generated risk assessments with real specificity.]]></ai_justification>
+        <check_name>Change Record Data Completeness</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('change_request');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No change requests in last 12 months',
+            finding: 'No change requests found in the last 12 months. Change data completeness cannot be assessed.'
+        };
+    }
+
+    var gaMissingDesc = new GlideAggregate('change_request');
+    gaMissingDesc.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaMissingDesc.addQuery('short_description', '');
+    gaMissingDesc.addAggregate('COUNT');
+    gaMissingDesc.query();
+    var missingDesc = gaMissingDesc.next() ? parseInt(gaMissingDesc.getAggregate('COUNT')) : 0;
+
+    var descPct = Math.round((missingDesc / total) * 100);
+    var actualValue = 'Missing description: ' + descPct + '% (' + missingDesc + ' of ' + total + ' changes in last 12 months)';
+
+    if (descPct <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + descPct + '% of recent change requests are missing descriptions. Now Assist change summarization has strong text content for AI risk assessment.'
+        };
+    } else if (descPct <= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: descPct + '% of recent change requests are missing descriptions (target: ≤5%). Now Assist change risk assessment will have gaps for undescribed changes.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: descPct + '% of recent change requests are missing descriptions. Now Assist change summarization reads short_description for AI risk assessment — critical data gap.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000342</number>
+        <order>280</order>
+        <remediation_guidance>Enforce short_description as mandatory at change creation via UI policy. Target: ≤5% of changes missing descriptions in the trailing 12 months. Now Assist change summarization reads this field to generate AI risk assessments.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>3af8d9c7cfd587108935fb251d851c6a</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Change Record Data Completeness</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_3af8d9c7cfd587108935fb251d851c6a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

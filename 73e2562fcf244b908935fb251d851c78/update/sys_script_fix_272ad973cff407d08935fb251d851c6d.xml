@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_fix">
+    <sys_script_fix action="INSERT_OR_UPDATE">
+        <before>false</before>
+        <description>Flushes cache after install to activate cross-scope privileges</description>
+        <name>AIROP Post-Install Cache Flush</name>
+        <record_for_rollback>true</record_for_rollback>
+        <script><![CDATA[// AIROP Post-Install Fix Script
+// Flushes cache to activate cross-scope access privileges
+// Must run after install on any new instance
+
+gs.info('[AIROP] Post-install fix script running...');
+
+try {
+    var cache = new GlideCacheManager();
+    cache.flushAll();
+    gs.info('[AIROP] Cache flushed successfully - scope privileges now active');
+} catch(e) {
+    // Fallback method
+    gs.info('[AIROP] Trying alternate cache flush method...');
+    GlideCache.flushAll();
+    gs.info('[AIROP] Cache flushed via alternate method');
+}]]></script>
+        <sys_class_name>sys_script_fix</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-18 18:12:33</sys_created_on>
+        <sys_id>272ad973cff407d08935fb251d851c6d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>AIROP Post-Install Cache Flush</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_fix_272ad973cff407d08935fb251d851c6d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-18 18:12:33</sys_updated_on>
+        <unloadable>false</unloadable>
+    </sys_script_fix>
+</record_update>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[VA conversation volume and containment rate measure self-service effectiveness. Now Assist AI improves with more conversation data.]]></ai_justification>
+<check_name>VA Conversation Volume and Containment</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('sys_cs_conversation');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No VA conversations in last 90 days',
+            finding: 'No VA conversations found in the last 90 days. Conversation volume and containment cannot be assessed — drive VA adoption before enabling Now Assist.'
+        };
+    }
+
+    var gaContained = new GlideAggregate('sys_cs_conversation');
+    gaContained.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaContained.addQuery('state', 'complete');
+    gaContained.addQuery('agent_transfer_at', '');
+    gaContained.addAggregate('COUNT');
+    gaContained.query();
+    var contained = gaContained.next() ? parseInt(gaContained.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((contained / total) * 100);
+    var actualValue = total + ' conversations (last 90 days) | ' + pct + '% contained without agent transfer';
+
+    if (total >= 1000 && pct >= 40) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' conversations with ' + pct + '% containment rate (last 90 days). Now Assist VA has a solid self-service foundation to build on.'
+        };
+    } else if (total >= 200 || pct >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: total + ' conversations with ' + pct + '% containment (last 90 days). Targets: 1,000+ conversations, 40%+ containment. Drive VA adoption and improve topic fulfillment before Now Assist enablement.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Low VA usage (' + total + ' conversations, ' + pct + '% containment in last 90 days). Now Assist VA AI improvements require an established VA user base and conversation history to be effective.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>VIRTUAL_AGENT</module>
+<number>CHK0006131</number>
+<order>60</order>
+<remediation_guidance>Drive VA adoption through promotion and channel expansion. Track metrics via VA Analytics dashboard. Target: 1,000+ conversations and 60%+ containment rate for optimal Now Assist VA impact.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>8e03e33acfd903108935fb251d851c1c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_8e03e33acfd903108935fb251d851c1c</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[VA conversation volume and containment rate measure self-service effectiveness. Now Assist AI improves with more conversation data.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;VA Conversation Volume and Containment&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('sys_cs_conversation');
+    gaTotal.addQuery('sys_created_on', '&gt;=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No VA conversations in last 90 days',
+            finding: 'No VA conversations found in the last 90 days. Conversation volume and containment cannot be assessed — drive VA adoption before enabling Now Assist.'
+        };
+    }
+
+    var gaContained = new GlideAggregate('sys_cs_conversation');
+    gaContained.addQuery('sys_created_on', '&gt;=', cutoff.getValue());
+    gaContained.addQuery('state', 'complete');
+    gaContained.addQuery('agent_transfer_at', '');
+    gaContained.addAggregate('COUNT');
+    gaContained.query();
+    var contained = gaContained.next() ? parseInt(gaContained.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((contained / total) * 100);
+    var actualValue = total + ' conversations (last 90 days) | ' + pct + '% contained without agent transfer';
+
+    if (total &gt;= 1000 &amp;&amp; pct &gt;= 40) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' conversations with ' + pct + '% containment rate (last 90 days). Now Assist VA has a solid self-service foundation to build on.'
+        };
+    } else if (total &gt;= 200 || pct &gt;= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: total + ' conversations with ' + pct + '% containment (last 90 days). Targets: 1,000+ conversations, 40%+ containment. Drive VA adoption and improve topic fulfillment before Now Assist enablement.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Low VA usage (' + total + ' conversations, ' + pct + '% containment in last 90 days). Now Assist VA AI improvements require an established VA user base and conversation history to be effective.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;VIRTUAL_AGENT&lt;/module&gt;
+&lt;number&gt;CHK0006131&lt;/number&gt;
+&lt;order&gt;60&lt;/order&gt;
+&lt;remediation_guidance&gt;Drive VA adoption through promotion and channel expansion. Track metrics via VA Analytics dashboard. Target: 1,000+ conversations and 60%+ containment rate for optimal Now Assist VA impact.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;8e03e33acfd903108935fb251d851c1c&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1601873795</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:27</sys_created_on>
+        <sys_id>85b60547cf9947108935fb251d851c11</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa76a20000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:27</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>cdb6054797994710d7affd6455f5ac0f</update_guid>
+        <update_guid_history>cdb6054797994710d7affd6455f5ac0f:-1601873795</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">4d2fcdcfcfdd47108935fb251d851cfd</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:19</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>644bc3411f8b47c5871d8f8fa677fd91</sys_id>
+        <sys_metadata>8e03e33acfd903108935fb251d851c1c</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_8e03e33acfd903108935fb251d851c1c</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_8e03e33acfd903108935fb251d851c1c">85b60547cf9947108935fb251d851c11</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:19</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Active HR services (sn_hr_core_service) define the structured service catalog Now Assist HRSD uses for AI-guided employee lifecycle support including onboarding, offboarding, and lifecycle events. A well-populated HR service catalog is foundational for Now Assist routing and self-service.]]></ai_justification>
+        <check_name>HR Employee Journey Management</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    if (!gs.tableExists('sn_hr_core_service')) {
+        return { status: 'not_applicable', actualValue: 'sn_hr_core_service not found', finding: 'HR Service Delivery core is not installed. HR service check is not applicable.' };
+    }
+    var ga = new GlideAggregate('sn_hr_core_service');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+    var actualValue = count + ' active HR services';
+    if (count >= 10) {
+        return { status: 'ready', actualValue: actualValue, finding: count + ' active HR services configured. Now Assist HRSD has a well-structured service catalog for AI-guided employee lifecycle support.' };
+    } else if (count >= 3) {
+        return { status: 'needs_attention', actualValue: actualValue, finding: 'Only ' + count + ' active HR services (target: 10+). Now Assist HRSD AI-guided lifecycle support will have limited service coverage.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue, finding: 'Fewer than 3 active HR services configured. Now Assist HRSD requires a structured HR service catalog for AI-guided employee lifecycle management.' };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HRSD</module>
+        <number>CHK0000401</number>
+        <order>90</order>
+        <remediation_guidance>Configure HR services for key lifecycle events (onboarding, offboarding, leave, benefits, payroll) via sn_hr_core_service_list.do. Target: 10+ active HR services. Now Assist HRSD uses the service catalog for AI-guided employee lifecycle management.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>47f81dc7cfd587108935fb251d851c57</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>HR Employee Journey Management</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_47f81dc7cfd587108935fb251d851c57</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,1844 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_ITSM</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for ITSM module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_ITSM</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_ITSM = Class.create();
+AROPCheckLibrary_ITSM.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000315: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('kb_knowledge');
+    ga.addQuery('workflow_state', 'published');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' published active KB articles';
+
+    if (count >= 100) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' published KB articles. Sufficient content for Now Assist AI Search and knowledge-based deflection.'
+        };
+    } else if (count >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published KB articles (target: 100+). Now Assist AI Search deflection coverage will be limited — expand KB content for top incident categories.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published KB articles. Insufficient content for meaningful Now Assist AI Search and knowledge deflection.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000315: ' + e.message };
+        }
+    },
+    CHK0000316: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaPublished = new GlideAggregate('kb_knowledge');
+    gaPublished.addQuery('workflow_state', 'published');
+    gaPublished.addQuery('active', true);
+    gaPublished.addAggregate('COUNT');
+    gaPublished.query();
+    var published = gaPublished.next() ? parseInt(gaPublished.getAggregate('COUNT')) : 0;
+
+    if (published === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. KB staleness cannot be assessed.'
+        };
+    }
+
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-365);
+
+    var gaStale = new GlideAggregate('kb_knowledge');
+    gaStale.addQuery('workflow_state', 'published');
+    gaStale.addQuery('active', true);
+    gaStale.addQuery('sys_updated_on', '<', cutoff.getValue());
+    gaStale.addAggregate('COUNT');
+    gaStale.query();
+    var stale = gaStale.next() ? parseInt(gaStale.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((stale / published) * 100);
+    var actualValue = pct + '% stale (' + stale + ' of ' + published + ' articles over 12 months old)';
+
+    if (pct <= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of published KB articles are over 12 months old. KB content is current — Now Assist AI Search will return accurate, relevant results.'
+        };
+    } else if (pct <= 40) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: pct + '% of published KB articles are over 12 months old (target: ≤20%). Stale articles reduce Now Assist AI Search quality — establish a KB review cycle.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: pct + '% of published KB articles are over 12 months old. Majority of KB content is stale — Now Assist AI Search will return outdated information, degrading self-service quality.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000316: ' + e.message };
+        }
+    },
+    CHK0000317: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaRetired = new GlideAggregate('kb_knowledge');
+    gaRetired.addQuery('workflow_state', 'retired');
+    gaRetired.addAggregate('COUNT');
+    gaRetired.query();
+    var retired = gaRetired.next() ? parseInt(gaRetired.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    var pct = total > 0 ? Math.round((retired / total) * 100) : 0;
+    var actualValue = pct + '% retired (' + retired + ' of ' + total + ' articles)';
+
+    // Informational check — active retirement indicates good KB hygiene
+    return {
+        status: 'ready',
+        actualValue: actualValue,
+        finding: 'KB retirement rate: ' + pct + '% (' + retired + ' retired of ' + total + ' total). Active article retirement is a positive signal — it indicates KB governance is in place to keep Now Assist AI Search content current and accurate.'
+    };
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000317: ' + e.message };
+        }
+    },
+    CHK0000318: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaPublished = new GlideAggregate('kb_knowledge');
+    gaPublished.addQuery('workflow_state', 'published');
+    gaPublished.addQuery('active', true);
+    gaPublished.addAggregate('COUNT');
+    gaPublished.query();
+    var published = gaPublished.next() ? parseInt(gaPublished.getAggregate('COUNT')) : 0;
+
+    if (published === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. Categorization completeness cannot be assessed.'
+        };
+    }
+
+    var gaCat = new GlideAggregate('kb_knowledge');
+    gaCat.addQuery('workflow_state', 'published');
+    gaCat.addQuery('active', true);
+    gaCat.addQuery('kb_category', '!=', '');
+    gaCat.addAggregate('COUNT');
+    gaCat.query();
+    var withCat = gaCat.next() ? parseInt(gaCat.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withCat / published) * 100);
+    var actualValue = pct + '% categorized (' + withCat + ' of ' + published + ' articles have category)';
+
+    if (pct >= 95) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of published KB articles have a category. Now Assist AI Search can accurately scope and filter results by category.'
+        };
+    } else if (pct >= 80) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of published KB articles are categorized (target: 95%+). Uncategorized articles reduce Now Assist AI Search filtering accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of published KB articles have a category. Insufficient categorization — Now Assist AI Search cannot accurately scope results without category data.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000318: ' + e.message };
+        }
+    },
+    CHK0000319: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate("kb_knowledge");
+    gaTotal.addQuery("workflow_state", "published");
+    gaTotal.addQuery("active", true);
+    gaTotal.addAggregate("COUNT");
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable", actualValue: "No published KB articles found",
+            finding: "No published KB articles found. Language consistency cannot be assessed." };
+    }
+
+    // Count articles with language explicitly set to a non-English value.
+    // Articles with NULL/empty language field are treated as English --
+    // most orgs never set this field even for English content.
+    var gaNonEng = new GlideAggregate("kb_knowledge");
+    gaNonEng.addQuery("workflow_state", "published");
+    gaNonEng.addQuery("active", true);
+    gaNonEng.addNotNullQuery("language");
+    gaNonEng.addQuery("language", "NOT IN", "en,en_US,en_us,english,English");
+    gaNonEng.addAggregate("COUNT");
+    gaNonEng.query();
+    var nonEng = gaNonEng.next() ? parseInt(gaNonEng.getAggregate("COUNT")) : 0;
+
+    // Count articles with null language (treated as English)
+    var gaNull = new GlideAggregate("kb_knowledge");
+    gaNull.addQuery("workflow_state", "published");
+    gaNull.addQuery("active", true);
+    gaNull.addNullQuery("language");
+    gaNull.addAggregate("COUNT");
+    gaNull.query();
+    var nullLang = gaNull.next() ? parseInt(gaNull.getAggregate("COUNT")) : 0;
+
+    var pct = Math.round((nonEng / total) * 100);
+    var actualValue = pct + "% explicitly non-English articles (" + nonEng + " of " + total + ")" +
+        (nullLang > 0 ? " | " + nullLang + " with no language set (treated as English)" : "");
+
+    if (pct <= 10) {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Only " + pct + "% of published articles are explicitly non-English. Now Assist AI Search has primarily English content." };
+    } else if (pct <= 30) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: pct + "% of published articles are non-English (target: ≤10%). Confirm multilingual Now Assist language pack licensing for non-English content coverage." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: pct + "% of published articles are non-English. High non-English rate without confirmed multilingual licensing will result in poor Now Assist AI Search accuracy for those articles." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000319: ' + e.message };
+        }
+    },
+    CHK0000320: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. Empty text field check cannot be assessed.'
+        };
+    }
+
+    var gaEmpty = new GlideAggregate('kb_knowledge');
+    gaEmpty.addQuery('workflow_state', 'published');
+    gaEmpty.addQuery('active', true);
+    gaEmpty.addQuery('text', '');
+    gaEmpty.addAggregate('COUNT');
+    gaEmpty.query();
+    var empty = gaEmpty.next() ? parseInt(gaEmpty.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((empty / total) * 100);
+    var actualValue = empty + ' of ' + total + ' published articles have empty text body (' + pct + '%)';
+
+    if (empty === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'All published KB articles have body content. Now Assist AI Search has substantive content to index and surface as self-service answers.'
+        };
+    } else if (pct <= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: empty + ' published KB articles have empty body text (' + pct + '%). Empty articles degrade Now Assist AI Search quality — populate or retire these articles.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: empty + ' published KB articles (' + pct + '%) have no body content. Now Assist AI Search will return empty or useless results for these articles.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000320: ' + e.message };
+        }
+    },
+    CHK0000321: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    var gaLabeled = new GlideAggregate('label_entry');
+    gaLabeled.addQuery('table', 'kb_knowledge');
+    gaLabeled.addAggregate('COUNT');
+    gaLabeled.query();
+    var labelCount = gaLabeled.next() ? parseInt(gaLabeled.getAggregate('COUNT')) : 0;
+
+    var actualValue = labelCount + ' label entries across ' + total + ' published articles';
+
+    if (labelCount > 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: labelCount + ' KB article label entries found. Now Assist AI Search can filter results by label to scope results by audience and service context.'
+        };
+    } else {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'No KB article labels found. Labels allow Now Assist AI Search to filter results by audience and service context — without them AI Search returns unfiltered results to all users.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000321: ' + e.message };
+        }
+    },
+    CHK0000322: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. URL content check cannot be assessed.'
+        };
+    }
+
+    var gaURL = new GlideAggregate('kb_knowledge');
+    gaURL.addQuery('workflow_state', 'published');
+    gaURL.addQuery('active', true);
+    gaURL.addQuery('text', 'CONTAINS', 'https://');
+    gaURL.addAggregate('COUNT');
+    gaURL.query();
+    var withUrl = gaURL.next() ? parseInt(gaURL.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withUrl / total) * 100);
+    var actualValue = withUrl + ' of ' + total + ' published articles contain raw URLs (' + pct + '%)';
+
+    if (pct <= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of articles contain raw URLs. Now Assist AI Search has predominantly self-contained content that can be summarized without link dependencies.'
+        };
+    } else if (pct <= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: pct + '% of published articles contain raw URLs (target: ≤20%). Now Assist cannot follow hyperlinks — URL-dependent content will produce incomplete AI summaries.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: pct + '% of published articles rely on raw URLs. Now Assist AI Search cannot follow links — the majority of KB content will produce incomplete AI summaries and poor self-service answers.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000322: ' + e.message };
+        }
+    },
+    CHK0000323: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTables = new GlideAggregate('kb_knowledge');
+    gaTables.addQuery('workflow_state', 'published');
+    gaTables.addQuery('active', true);
+    gaTables.addQuery('text', 'CONTAINS', '<table');
+    gaTables.addAggregate('COUNT');
+    gaTables.query();
+    var tables = gaTables.next() ? parseInt(gaTables.getAggregate('COUNT')) : 0;
+
+    var gaImgs = new GlideAggregate('kb_knowledge');
+    gaImgs.addQuery('workflow_state', 'published');
+    gaImgs.addQuery('active', true);
+    gaImgs.addQuery('text', 'CONTAINS', '<img');
+    gaImgs.addAggregate('COUNT');
+    gaImgs.query();
+    var imgs = gaImgs.next() ? parseInt(gaImgs.getAggregate('COUNT')) : 0;
+
+    var total = tables + imgs;
+    var actualValue = 'Articles with HTML tables: ' + tables + ' | Articles with images: ' + imgs + ' | Total AI suitability issues: ' + total;
+
+    if (total === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'No AI suitability issues found. KB articles are structured for clean Now Assist AI summarization without HTML tables or images.'
+        };
+    } else if (total < 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: total + ' articles have AI suitability issues (HTML tables: ' + tables + ', images: ' + imgs + '). Now Assist flattens HTML tables and ignores images — convert to prose for better AI summarization quality.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: total + ' articles have AI suitability issues. High volume of table-heavy and image-dependent KB content will significantly degrade Now Assist AI summarization quality across the knowledge base.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000323: ' + e.message };
+        }
+    },
+    CHK0000324: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('incident');
+    gaTotal.addQuery('state', 'IN', '6,7');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed incidents in last 12 months',
+            finding: 'No closed incidents found in the last 12 months. Resolution note coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('incident');
+    gaMissing.addQuery('state', 'IN', '6,7');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('close_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed incidents have close_notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct >= 95) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed incidents have resolution notes. Now Assist ITSM has strong resolution context for AI case summarization and similar incident matching.'
+        };
+    } else if (pct >= 80) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have resolution notes (target: 95%). Now Assist ITSM summarization quality will be reduced for incidents missing resolution context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have resolution notes. Critical gap — Now Assist ITSM cannot generate meaningful case summaries without resolution context.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000324: ' + e.message };
+        }
+    },
+    CHK0000325: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var total = new GlideAggregate('incident');
+    total.addQuery('state', 7);
+    total.addQuery('closed_at', '>=', cutoff.getValue());
+    total.addAggregate('COUNT');
+    total.query();
+    var totalCount = total.next() ? parseInt(total.getAggregate('COUNT')) : 0;
+
+    if (totalCount === 0) {
+        return {
+            status: 'not_ready',
+            actualValue: 'No closed incidents found in last 12 months',
+            finding: 'No closed incident data available to assess classification signal for Predictive Intelligence training.'
+        };
+    }
+
+    var pathA = new GlideAggregate('incident');
+    pathA.addQuery('state', 7);
+    pathA.addQuery('closed_at', '>=', cutoff.getValue());
+    pathA.addQuery('category', '!=', '');
+    pathA.addQuery('category', '!=', 'Inquiry/Help');
+    pathA.addQuery('subcategory', '!=', '');
+    pathA.addAggregate('COUNT');
+    pathA.query();
+    var pathACount = pathA.next() ? parseInt(pathA.getAggregate('COUNT')) : 0;
+    var pathAPct = Math.round((pathACount / totalCount) * 100);
+
+    var pathB = new GlideAggregate('incident');
+    pathB.addQuery('state', 7);
+    pathB.addQuery('closed_at', '>=', cutoff.getValue());
+    pathB.addQuery('business_service', '!=', '');
+    pathB.addQuery('service_offering', '!=', '');
+    pathB.addQuery('cmdb_ci', '!=', '');
+    pathB.addAggregate('COUNT');
+    pathB.query();
+    var pathBCount = pathB.next() ? parseInt(pathB.getAggregate('COUNT')) : 0;
+    var pathBPct = Math.round((pathBCount / totalCount) * 100);
+
+    var actualValue = 'Total: ' + totalCount + ' | Category+Subcategory: ' + pathAPct + '% | Service+SO+CI: ' + pathBPct + '%';
+    var bestPct = Math.max(pathAPct, pathBPct);
+
+    if (bestPct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: 'Sufficient classification signal for Predictive Intelligence training. Best path at ' + bestPct + '%.' };
+    } else if (bestPct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Classification signal partial at ' + bestPct + '% (target: 80%). Predictive Intelligence routing accuracy will be reduced.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Insufficient classification signal. Category+Subcategory: ' + pathAPct + '%, Service+SO+CI: ' + pathBPct + '%. Both below 50% — Predictive Intelligence will produce unreliable routing recommendations.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000325: ' + e.message };
+        }
+    },
+    CHK0000326: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('incident');
+    gaTotal.addQuery('state', 'IN', '6,7');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed incidents in last 12 months',
+            finding: 'No closed incidents found in the last 12 months. Assignment group population cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('incident');
+    gaMissing.addQuery('state', 'IN', '6,7');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('assignment_group', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed incidents have assignment group (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct >= 95) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed incidents have an assignment group. Now Assist ITSM AI routing has strong historical assignment data for routing recommendations.'
+        };
+    } else if (pct >= 80) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have an assignment group (target: 95%). Now Assist AI routing recommendations will have gaps for unassigned incidents.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have an assignment group. Now Assist ITSM AI routing cannot learn effective assignment patterns without this data.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000326: ' + e.message };
+        }
+    },
+    CHK0000327: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('incident');
+    gaTotal.addQuery('state', 'IN', '6,7');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed incidents in last 12 months',
+            finding: 'No closed incidents found in the last 12 months. Close code consistency cannot be assessed.'
+        };
+    }
+
+    var gaWithCode = new GlideAggregate('incident');
+    gaWithCode.addQuery('state', 'IN', '6,7');
+    gaWithCode.addQuery('closed_at', '>=', cutoff.getValue());
+    gaWithCode.addQuery('close_code', '!=', '');
+    gaWithCode.addAggregate('COUNT');
+    gaWithCode.query();
+    var withCode = gaWithCode.next() ? parseInt(gaWithCode.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withCode / total) * 100);
+    var actualValue = pct + '% of closed incidents have close_code (last 12 months, ' + withCode + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed incidents have a close code. Now Assist ITSM has consistent closure classification for AI pattern analysis.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have a close code (target: 80%). Inconsistent closure classification reduces Now Assist AI pattern accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have a close code. Now Assist ITSM cannot distinguish resolution patterns without consistent close code data.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000327: ' + e.message };
+        }
+    },
+    CHK0000328: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var ga = new GlideAggregate('incident');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var total = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' incidents in last 12 months (manual language spot-check recommended)';
+
+    return {
+        status: 'ready',
+        actualValue: actualValue,
+        finding: total + ' incidents in the last 12 months. Conduct a manual language spot-check of short_description and close_notes fields. If significant non-English volume is present, confirm multilingual Now Assist language pack configuration with your account team.'
+    };
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000328: ' + e.message };
+        }
+    },
+    CHK0000329: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script');
+    ga.addQuery('collection', 'IN', 'incident,task');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom active Business Rules on incident/task';
+
+    if (count < 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low Business Rule customization on incident/task (' + count + ' custom BRs). Now Assist and AI Agent operations are unlikely to encounter conflicts.'
+        };
+    } else if (count < 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom Business Rules on incident/task. Moderate customization — test Now Assist and AI Agents in sub-production to identify conflicts before go-live.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: count + ' custom Business Rules on incident/task. High customization density creates significant risk of Now Assist and AI Agent conflicts — review and reduce before enablement.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000329: ' + e.message };
+        }
+    },
+    CHK0000330: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_ui_action');
+    ga.addQuery('table', 'IN', 'incident,task');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom active UI Actions on incident/task';
+
+    if (count < 25) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low UI Action customization on incident/task (' + count + ' custom actions). Now Assist contextual actions are unlikely to conflict with existing UI customizations.'
+        };
+    } else if (count < 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom UI Actions on incident/task. Test Now Assist agent assist panel with all custom actions active to identify conflicts.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: count + ' custom UI Actions on incident/task. High UI Action density may conflict with Now Assist contextual actions — review before enablement.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000330: ' + e.message };
+        }
+    },
+    CHK0000331: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script_client');
+    ga.addQuery('table', 'IN', 'incident,task');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom active Client Scripts on incident/task';
+
+    if (count < 30) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low client script customization on incident/task (' + count + ' scripts). Now Assist panel rendering is unlikely to be affected by existing client-side customizations.'
+        };
+    } else if (count < 60) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom client scripts on incident/task. Scripts running on form load or field change may interfere with Now Assist panel rendering — test in sub-production.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: count + ' custom client scripts on incident/task. High client script density creates significant risk of Now Assist panel rendering conflicts.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000331: ' + e.message };
+        }
+    },
+    CHK0000332: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_dictionary');
+    ga.addQuery('name', 'incident');
+    ga.addQuery('element', 'STARTSWITH', 'u_');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom u_ fields on incident table';
+
+    if (count < 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' custom fields on incident. Low customization — Now Assist AI prompts can reference incident data without significant custom field complexity.'
+        };
+    } else if (count < 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom fields on incident (target: <20). Review which are actively used and include relevant ones in Now Assist prompt configuration for AI context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: count + ' custom fields on incident. High custom field density increases Now Assist prompt complexity and may require significant configuration to include relevant fields in AI context.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000332: ' + e.message };
+        }
+    },
+    CHK0000333: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_dictionary_override');
+    ga.addQuery('name', 'incident');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' field overrides on incident table';
+
+    if (count === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'No OOB field overrides on incident. Now Assist field references will match standard field labels and behaviors without customization conflicts.'
+        };
+    } else if (count < 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' OOB field overrides on incident. Review renamed or mandatory-changed fields — ensure labels visible to agents match what Now Assist references in AI suggestions.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: count + ' OOB field overrides on incident. High override count may cause Now Assist to reference fields by names that no longer match the agent UI — document all overrides for the Now Assist configuration team.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000333: ' + e.message };
+        }
+    },
+    CHK0000334: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var vaResult = checkPlugin("com.glide.cs.chatbot", "com.glide.cs.chatbot");
+    // Functional fallback: sys_cs_topic table existence
+    var pluginActive = vaResult.found;
+    if (!pluginActive) {
+        var testGr = new GlideRecord("sys_cs_topic");
+        testGr.setLimit(1);
+        testGr.query();
+        pluginActive = testGr.isValid();
+    }
+    var prop = gs.getProperty("glide.cs.enabled", "false");
+    var actualValue = "Plugin active: " + pluginActive + " | glide.cs.enabled: " + prop;
+    if (pluginActive && prop === "true") {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Virtual Agent is active and glide.cs.enabled=true. Now Assist conversational AI prerequisites satisfied." };
+    } else if (pluginActive) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Virtual Agent is active but glide.cs.enabled is not set to true. Set glide.cs.enabled=true in sys_properties." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Virtual Agent (com.glide.cs.chatbot) is not active. Now Assist conversational AI requires Virtual Agent." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000334: ' + e.message };
+        }
+    },
+    CHK0000335: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_cs_topic');
+    ga.addQuery('active', true);
+    ga.addQuery('published', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' published active VA topics';
+
+    if (count >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' published VA topics. Now Assist has broad topic coverage for AI-enhanced ITSM self-service.'
+        };
+    } else if (count >= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics (target: 50+). Limited topic coverage restricts Now Assist AI-assisted self-service scope.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics. Insufficient topic coverage for meaningful Now Assist ITSM self-service — publish topics for high-volume incident categories first.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000335: ' + e.message };
+        }
+    },
+    CHK0000336: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // catalog_item_analytics tracks VA/Now Assist compatibility per catalog item
+    // conversational_render_type values:
+    //   'conversation' = inline chat (conversational)
+    //   'window'       = portal link (non-conversational)
+    //   'popup-seismic'= popup (non-conversational)
+    var testGr = new GlideRecord('catalog_item_analytics');
+    testGr.setLimit(1);
+    testGr.query();
+    if (!testGr.isValid()) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'catalog_item_analytics table not found',
+            finding: 'Conversational catalog analytics table not available on this instance. Now Assist Conversational Catalog may not be installed.'
+        };
+    }
+
+    var gaTotal = new GlideAggregate('catalog_item_analytics');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No catalog items found in catalog_item_analytics',
+            finding: 'No catalog items tracked in conversational analytics. Enable Now Assist Conversational Catalog and allow catalog usage data to populate.'
+        };
+    }
+
+    var gaConv = new GlideAggregate('catalog_item_analytics');
+    gaConv.addQuery('conversational_render_type', 'conversation');
+    gaConv.addAggregate('COUNT');
+    gaConv.query();
+    var conversational = gaConv.next() ? parseInt(gaConv.getAggregate('COUNT')) : 0;
+
+    var nonConv = total - conversational;
+    var pct = Math.round((conversational / total) * 100);
+    var actualValue = pct + '% conversational (' + conversational + ' of ' + total + ' catalog items render inline in chat)';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of catalog items render conversationally in chat. Now Assist guided fulfillment has broad catalog coverage for AI-assisted employee intake.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of catalog items are conversational (target: 80%+). ' + nonConv + ' items redirect to portal instead of inline chat — Now Assist guided fulfillment scope is limited.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of catalog items are conversational. Majority of catalog items cannot use Now Assist inline guided fulfillment — convert high-volume items to conversational format.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000336: ' + e.message };
+        }
+    },
+    CHK0000337: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_cs_channel');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active VA channels';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active VA channels. Now Assist conversational AI reaches employees across multiple deployment surfaces.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active VA channel(s) (target: 3+). Now Assist conversational AI reach is limited — deploy across Employee Center, Microsoft Teams, and mobile for maximum self-service coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active VA channels configured. Now Assist conversational AI has no deployment surface — users cannot access VA self-service.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000337: ' + e.message };
+        }
+    },
+    CHK0000338: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Filter for platform upgrades only (glide- prefix excludes app installs)
+    var gr = new GlideRecord('sys_upgrade_history');
+    gr.addQuery('to_version', 'STARTSWITH', 'glide-');
+    gr.orderByDesc('sys_created_on');
+    gr.setLimit(1);
+    gr.query();
+
+    if (!gr.next()) {
+        return {
+            status: 'needs_attention',
+            actualValue: 'No platform upgrade history found',
+            finding: 'No platform upgrade history found. Cannot determine instance release currency for Now Assist compatibility.'
+        };
+    }
+
+    var version = gr.getValue('to_version') || '';
+    var vLower = version.toLowerCase();
+    var actualValue = 'Version: ' + version;
+
+    var isCurrentGen = vLower.indexOf('zurich') > -1 || vLower.indexOf('yokohama') > -1 ||
+                       vLower.indexOf('2025') > -1 || vLower.indexOf('2026') > -1;
+    var isPreviousGen = vLower.indexOf('xanadu') > -1 || vLower.indexOf('washington') > -1 ||
+                        vLower.indexOf('vancouver') > -1;
+
+    if (isCurrentGen) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Instance is on a current-generation release (' + version.split('__')[0] + '). Full Now Assist ITSM and AI Agent capabilities are available.'
+        };
+    } else if (isPreviousGen) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Instance is on a previous-generation release (' + version.split('__')[0] + '). Some Now Assist ITSM features may be unavailable. Plan upgrade to Zurich or later.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Instance may be on an older release (' + version.split('__')[0] + '). Now Assist ITSM requires Xanadu or newer — upgrade is required before AI capabilities can be fully enabled.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000338: ' + e.message };
+        }
+    },
+    CHK0000339: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("sn_itsm_gen_ai", "sn_itsm_gen_ai");
+    if (result.found) {
+        return {
+            status: "ready",
+            actualValue: "Now Assist for ITSM (" + "sn_itsm_gen_ai" + ") installed | version: " + result.version + " | source: " + result.table,
+            finding: "Now Assist for ITSM is installed. AI summarization, resolution suggestions, and agent assist capabilities are available."
+        };
+    } else {
+        return {
+            status: "not_ready",
+            actualValue: "Now Assist for ITSM (sn_itsm_gen_ai) not found in sys_store_app or sys_plugins",
+            finding: "Now Assist for ITSM (sn_itsm_gen_ai) not found. Confirm ITSM Now Assist SKU entitlement with your ServiceNow account team and install via Application Manager."
+        };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000339: ' + e.message };
+        }
+    },
+    CHK0000340: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    // Check core first
+    var core = checkPlugin("now_assist_core", "now_assist_core");
+    // Count all now_assist store apps
+    var totalNA = 0;
+    try {
+        var naGA = new GlideAggregate("sys_store_app");
+        naGA.addQuery("scope", "CONTAINS", "now_assist");
+        naGA.addAggregate("COUNT");
+        naGA.query();
+        totalNA = naGA.next() ? parseInt(naGA.getAggregate("COUNT")) || 0 : 0;
+    } catch(e) {}
+    var actualValue = "now_assist_core: " + (core.found ? "active (v" + core.version + ")" : "inactive") +
+                      " | " + totalNA + " total Now Assist apps installed";
+    if (core.found && totalNA >= 2) {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Now Assist Core is active with " + totalNA + " Now Assist app(s) installed. Plugin activation prerequisite satisfied." };
+    } else if (core.found) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Now Assist Core is active but only " + totalNA + " Now Assist app(s) found. Ensure module-specific Now Assist apps are also installed." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Now Assist Core (now_assist_core) not found in sys_store_app or sys_plugins. No Now Assist AI features will work without it." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000340: ' + e.message };
+        }
+    },
+    CHK0000341: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var ga = new GlideAggregate('change_request');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var total = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' change requests created in last 12 months';
+
+    if (total >= 500) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' change requests in the last 12 months. Sufficient history for Now Assist change risk assessment AI learning.'
+        };
+    } else if (total >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' change requests in the last 12 months (target: 500+). Now Assist change risk assessment AI will have limited pattern coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' change requests in the last 12 months. Insufficient change history for meaningful Now Assist change risk assessment AI learning.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000341: ' + e.message };
+        }
+    },
+    CHK0000342: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('change_request');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No change requests in last 12 months',
+            finding: 'No change requests found in the last 12 months. Change data completeness cannot be assessed.'
+        };
+    }
+
+    var gaMissingDesc = new GlideAggregate('change_request');
+    gaMissingDesc.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaMissingDesc.addQuery('short_description', '');
+    gaMissingDesc.addAggregate('COUNT');
+    gaMissingDesc.query();
+    var missingDesc = gaMissingDesc.next() ? parseInt(gaMissingDesc.getAggregate('COUNT')) : 0;
+
+    var descPct = Math.round((missingDesc / total) * 100);
+    var actualValue = 'Missing description: ' + descPct + '% (' + missingDesc + ' of ' + total + ' changes in last 12 months)';
+
+    if (descPct <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + descPct + '% of recent change requests are missing descriptions. Now Assist change summarization has strong text content for AI risk assessment.'
+        };
+    } else if (descPct <= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: descPct + '% of recent change requests are missing descriptions (target: ≤5%). Now Assist change risk assessment will have gaps for undescribed changes.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: descPct + '% of recent change requests are missing descriptions. Now Assist change summarization reads short_description for AI risk assessment — critical data gap.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000342: ' + e.message };
+        }
+    },
+    CHK0000343: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('change_request');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No change requests in last 12 months',
+            finding: 'No change requests found in the last 12 months. CI association rate cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('change_request');
+    gaMissing.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaMissing.addQuery('cmdb_ci', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var withCI = total - missing;
+    var pct = Math.round((withCI / total) * 100);
+    var actualValue = pct + '% of change requests have CI associated (last 12 months, ' + withCI + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of recent change requests are linked to a CI. Now Assist can calculate infrastructure blast radius for AI change risk assessment.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of change requests have a CI linked (target: 80%). Now Assist change risk assessment will have incomplete blast radius analysis for unlinked changes.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of change requests have a CI linked. Now Assist cannot calculate infrastructure blast radius without CI association — change risk AI assessment will be severely limited.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000343: ' + e.message };
+        }
+    },
+    CHK0000344: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('chg_model');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active change models configured';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active change models. Now Assist AI Agent has well-defined rules for scoping risk reasoning and routing approvals across change types.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active change model(s) (target: 3+). Now Assist AI Agent change handling will have limited differentiation across change types.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active change models. Now Assist AI Agent uses change models to scope risk reasoning and route approvals — without them all changes are treated identically.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000344: ' + e.message };
+        }
+    },
+    CHK0000345: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    // Count total closed/resolved problems
+    // OOB problem closed states: 3 = Closed/Resolved, 4 = Closed
+    // Some instances use additional values -- we use 3,4 as the broadest OOB closed set
+    var totalGr = new GlideAggregate("problem");
+    totalGr.addQuery("state", "IN", "3,4");
+    totalGr.addAggregate("COUNT");
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable",
+            actualValue: "No closed problem records found (state IN 3,4)",
+            finding: "No closed problem records found. Incident-to-Problem linkage cannot be assessed." };
+    }
+
+    // Count distinct problems that have at least one incident linked
+    // via incident.problem_id -- the OOB linkage mechanism
+    var linkedProblems = 0;
+    try {
+        var linkedGr = new GlideAggregate("incident");
+        linkedGr.addQuery("problem_id", "!=", "");
+        linkedGr.addAggregate("COUNT", "problem_id");
+        linkedGr.groupBy("problem_id");
+        linkedGr.query();
+        while (linkedGr.next()) { linkedProblems++; }
+    } catch(e) { linkedProblems = 0; }
+
+    var pct = Math.round((linkedProblems / total) * 100);
+    var actualValue = linkedProblems + " of " + total + " problems have linked incidents via incident.problem_id (" + pct + "% linkage coverage)";
+
+    if (pct >= 50) {
+        return { status: "ready", actualValue: actualValue,
+            finding: pct + "% of problems have linked incidents. Now Assist problem summarization has adequate incident context for root cause pattern analysis." };
+    } else if (pct >= 20) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Only " + pct + "% of problems are linked to incidents (target: 50%+). Now Assist problem analysis will lack context for unlinked records. Ensure the Problem field on Incident records is populated when incidents are escalated." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Only " + pct + "% of problems have linked incidents. Now Assist cannot surface root cause patterns without incident context on problem records. Link incidents to problems via incident.problem_id." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000345: ' + e.message };
+        }
+    },
+    CHK0000346: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate("problem");
+    totalGr.addQuery("state", "IN", "3,4");
+    totalGr.addAggregate("COUNT");
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable",
+            actualValue: "No closed/resolved problem records found (state IN 3,4)",
+            finding: "No qualifying closed problem records found. RCA field population cannot be assessed." };
+    }
+
+    // Use addNullQuery -- correct API for IS EMPTY on GlideAggregate.
+    // addQuery(field, "") treats empty string as literal value and returns 0
+    // for rich text (HTML) fields like cause_notes and fix_notes.
+    var missingCause = 0;
+    try {
+        var rcaGA1 = new GlideAggregate("problem");
+        rcaGA1.addQuery("state", "IN", "3,4");
+        rcaGA1.addNullQuery("cause_notes");
+        rcaGA1.addAggregate("COUNT");
+        rcaGA1.query();
+        missingCause = rcaGA1.next() ? parseInt(rcaGA1.getAggregate("COUNT")) || 0 : 0;
+    } catch(e1) {}
+
+    var missingFix = 0;
+    try {
+        var rcaGA2 = new GlideAggregate("problem");
+        rcaGA2.addQuery("state", "IN", "3,4");
+        rcaGA2.addNullQuery("fix_notes");
+        rcaGA2.addAggregate("COUNT");
+        rcaGA2.query();
+        missingFix = rcaGA2.next() ? parseInt(rcaGA2.getAggregate("COUNT")) || 0 : 0;
+    } catch(e2) {}
+
+    var missingWorkaround = 0;
+    try {
+        var rcaGA3 = new GlideAggregate("problem");
+        rcaGA3.addQuery("state", "IN", "3,4");
+        rcaGA3.addNullQuery("work_around");
+        rcaGA3.addAggregate("COUNT");
+        rcaGA3.query();
+        missingWorkaround = rcaGA3.next() ? parseInt(rcaGA3.getAggregate("COUNT")) || 0 : 0;
+    } catch(e3) {}
+
+    var causePct    = Math.round(((total - missingCause)    / total) * 100);
+    var fixPct      = Math.round(((total - missingFix)      / total) * 100);
+    var workarndPct = Math.round(((total - missingWorkaround) / total) * 100);
+    // Score only on cause_notes and fix_notes -- workaround is informational
+    var worstPct = Math.min(causePct, fixPct);
+
+    var actualValue = total + " closed/resolved problems | " +
+        "Cause Notes: " + causePct + "% populated | " +
+        "Fix Notes: " + fixPct + "% populated | " +
+        "Workaround: " + workarndPct + "% (informational only)";
+
+    if (worstPct >= 80) {
+        return { status: "ready", actualValue: actualValue,
+            finding: "RCA fields well populated. Cause Notes: " + causePct + "%, Fix Notes: " + fixPct + "%. Strong signal for Now Assist problem summarization and KB article generation." };
+    } else if (worstPct >= 50) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Partial RCA population (Cause: " + causePct + "%, Fix: " + fixPct + "%, target: 80%+). Now Assist will rely on unstructured work notes for gaps -- enforce RCA field population at problem close." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "RCA critically underpopulated (Cause: " + causePct + "%, Fix: " + fixPct + "%). Now Assist problem summarization lacks structured resolution context -- most AI summaries will use unstructured work notes only." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000346: ' + e.message };
+        }
+    },
+    CHK0000347: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate("problem");
+    totalGr.addQuery("state", "IN", "3,4");
+    totalGr.addAggregate("COUNT");
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable",
+            actualValue: "No closed/resolved problem records found (state IN 3,4)",
+            finding: "No qualifying closed problem records. KEDB usage cannot be assessed." };
+    }
+
+    // KEDB dual-mechanism:
+    // Mechanism 1: primary_known_error_article IS NOT EMPTY
+    // (populated by "Create Known Error article" UI action on problem form)
+    var keLinked = {};
+    var keWithKEA = 0;
+    try {
+        var ke1 = new GlideRecord("problem");
+        ke1.addQuery("state", "IN", "3,4");
+        ke1.addNotNullQuery("primary_known_error_article");
+        ke1.query();
+        while (ke1.next()) {
+            keLinked[ke1.getUniqueValue()] = true;
+            keWithKEA++;
+        }
+    } catch(e1) {}
+
+    // Mechanism 2: m2m_kb_task (Attached Knowledge tab on problem)
+    var keWithAttached = 0;
+    try {
+        var m2mGR = new GlideAggregate("m2m_kb_task");
+        m2mGR.addAggregate("COUNT");
+        m2mGR.groupBy("task");
+        m2mGR.query();
+        while (m2mGR.next()) {
+            var taskId = m2mGR.getValue("task");
+            if (!keLinked[taskId]) {
+                // Verify it is a closed/resolved problem
+                var pCheck = new GlideRecord("problem");
+                pCheck.addQuery("sys_id", taskId);
+                pCheck.addQuery("state", "IN", "3,4");
+                pCheck.setLimit(1);
+                pCheck.query();
+                if (pCheck.next()) {
+                    keLinked[taskId] = true;
+                    keWithAttached++;
+                }
+            }
+        }
+    } catch(e2) {}
+
+    var knownErrors = Object.keys(keLinked).length;
+    var pct = Math.round((knownErrors / total) * 100);
+    var actualValue = knownErrors + " of " + total + " closed problems linked to knowledge (" + pct + "%) | " +
+        keWithKEA + " via primary_known_error_article | " +
+        keWithAttached + " via Attached Knowledge tab only (m2m_kb_task)";
+
+    if (knownErrors >= 10) {
+        return { status: "ready", actualValue: actualValue,
+            finding: knownErrors + " problems are linked to knowledge. Now Assist can surface these as AI resolution suggestions on related incidents. Continue building the KEDB for high-frequency incident patterns." };
+    } else if (knownErrors >= 1) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Only " + knownErrors + " problems linked to knowledge (target: 10+). Now Assist KEDB resolution suggestions have limited coverage. " +
+            "Two mechanisms: (1) \"Create Known Error article\" UI action populates primary_known_error_article; (2) Attached Knowledge tab (m2m_kb_task)." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "KEDB not in active use. Now Assist cannot surface known error resolution suggestions -- a key incident deflection capability. " +
+            "Link KB articles to closed problems via the \"Create Known Error article\" UI action or the Attached Knowledge tab." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000347: ' + e.message };
+        }
+    },
+    CHK0000348: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    function getMIRate(priority) {
+        var totalGr = new GlideAggregate('incident');
+        totalGr.addQuery('priority', priority);
+        totalGr.addQuery('state', '!=', -5);
+        totalGr.addAggregate('COUNT');
+        totalGr.query();
+        var total = totalGr.next() ? parseInt(totalGr.getAggregate('COUNT')) : 0;
+        if (total === 0) return { total: 0, populated: 0, pct: 0 };
+
+        var popGr = new GlideAggregate('incident');
+        popGr.addQuery('priority', priority);
+        popGr.addQuery('state', '!=', -5);
+        popGr.addQuery('major_incident_state', '!=', '');
+        popGr.addAggregate('COUNT');
+        popGr.query();
+        var populated = popGr.next() ? parseInt(popGr.getAggregate('COUNT')) : 0;
+
+        return { total: total, populated: populated, pct: Math.round((populated / total) * 100) };
+    }
+
+    var p1 = getMIRate(1);
+    var p2 = getMIRate(2);
+
+    var actualValue = 'P1: ' + p1.populated + '/' + p1.total + ' (' + p1.pct + '%) | P2: ' + p2.populated + '/' + p2.total + ' (' + p2.pct + '%)';
+
+    var p1Status = p1.total === 0 ? 'not_applicable' : p1.pct >= 80 ? 'ready' : p1.pct >= 50 ? 'needs_attention' : 'not_ready';
+    var p2Status = p2.total === 0 ? 'not_applicable' : p2.pct >= 30 ? 'ready' : p2.pct >= 10 ? 'needs_attention' : 'not_ready';
+
+    var statusRank = { 'not_ready': 0, 'needs_attention': 1, 'ready': 2, 'not_applicable': 3 };
+    var overallStatus = statusRank[p1Status] <= statusRank[p2Status] ? p1Status : p2Status;
+
+    return {
+        status: overallStatus,
+        actualValue: actualValue,
+        finding: 'P1 Major Incident State: ' + p1.pct + '% populated (' + p1.populated + ' of ' + p1.total + '). P2: ' + p2.pct + '% (' + p2.populated + ' of ' + p2.total + '). Now Assist uses major_incident_state to apply MI-specific summarization templates.'
+    };
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000348: ' + e.message };
+        }
+    },
+    CHK0000349: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // P1 incidents total
+    var gaTotal = new GlideAggregate('incident');
+    gaTotal.addQuery('priority', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No P1 incidents found',
+            finding: 'No P1 incidents found. Major incident communication quality cannot be assessed.'
+        };
+    }
+
+    // Count distinct P1 incidents that have work notes via sys_journal_field
+    // work_notes are stored as journal entries, not a field on incident directly
+    var p1Incidents = {};
+    var grInc = new GlideRecord('incident');
+    grInc.addQuery('priority', 1);
+    grInc.query();
+    while (grInc.next()) {
+        p1Incidents[grInc.getUniqueValue()] = true;
+    }
+
+    var p1SysIds = Object.keys(p1Incidents);
+    var withNotes = 0;
+
+    if (p1SysIds.length > 0) {
+        // Sample check — for large P1 populations check in batches
+        var batchSize = Math.min(p1SysIds.length, 500);
+        var gaJournal = new GlideAggregate('sys_journal_field');
+        gaJournal.addQuery('name', 'incident');
+        gaJournal.addQuery('element', 'work_notes');
+        gaJournal.addQuery('document_id', 'IN', p1SysIds.slice(0, batchSize).join(','));
+        gaJournal.addAggregate('COUNT', 'document_id');
+        gaJournal.groupBy('document_id');
+        gaJournal.query();
+        while (gaJournal.next()) {
+            withNotes++;
+        }
+    }
+
+    var pct = total > 0 ? Math.round((withNotes / total) * 100) : 0;
+    var actualValue = pct + '% of P1 incidents have work notes (' + withNotes + ' of ' + total + ')';
+
+    if (pct >= 70) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of P1 incidents have work notes. Now Assist Major Incident summaries and stakeholder briefings have sufficient communication history to generate from.'
+        };
+    } else if (pct >= 40) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents have work notes (target: 70%). Now Assist Major Incident AI summaries will have limited communication context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents have work notes. Now Assist Major Incident summaries are generated from work note content — insufficient notes means poor AI summary quality.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000349: ' + e.message };
+        }
+    },
+    CHK0000350: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate('incident');
+    totalGr.addQuery('priority', 1);
+    totalGr.addQuery('state', 'IN', '6,7');
+    totalGr.addAggregate('COUNT');
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No resolved/closed P1 incidents found',
+            finding: 'No resolved P1 incidents found. PIR linkage cannot be assessed.' };
+    }
+
+    var linkedGr = new GlideAggregate('incident');
+    linkedGr.addQuery('priority', 1);
+    linkedGr.addQuery('state', 'IN', '6,7');
+    linkedGr.addQuery('problem_id', '!=', '');
+    linkedGr.addAggregate('COUNT');
+    linkedGr.query();
+    var linked = linkedGr.next() ? parseInt(linkedGr.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((linked / total) * 100);
+    var actualValue = linked + ' of ' + total + ' resolved P1 incidents linked to a Problem record (' + pct + '%)';
+
+    if (pct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of P1 incidents linked to a problem record. Now Assist can surface recurring P1 patterns and PIR-driven recommendations.' };
+    } else if (pct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents linked to a problem (target: 80%). PIR recommendations will have incomplete data.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents are linked to a problem record. Now Assist cannot surface recurring major incident patterns or PIR insights.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000350: ' + e.message };
+        }
+    },
+    CHK0000351: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate('sys_user_group');
+    totalGr.addQuery('active', true);
+    totalGr.addQuery('type', 'itil');
+    totalGr.addAggregate('COUNT');
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active ITSM groups found',
+            finding: 'No active ITSM assignment groups found. Group membership cannot be assessed.' };
+    }
+
+    var withMembers = 0;
+    var groupGr = new GlideRecord('sys_user_group');
+    groupGr.addQuery('active', true);
+    groupGr.addQuery('type', 'itil');
+    groupGr.query();
+    while (groupGr.next()) {
+        var memGr = new GlideRecord('sys_user_grmember');
+        memGr.addQuery('group', groupGr.getUniqueValue());
+        memGr.setLimit(1);
+        memGr.query();
+        if (memGr.next()) withMembers++;
+    }
+
+    var withManagerGr = new GlideAggregate('sys_user_group');
+    withManagerGr.addQuery('active', true);
+    withManagerGr.addQuery('type', 'itil');
+    withManagerGr.addQuery('manager', '!=', '');
+    withManagerGr.addAggregate('COUNT');
+    withManagerGr.query();
+    var withManager = withManagerGr.next() ? parseInt(withManagerGr.getAggregate('COUNT')) : 0;
+
+    var memberPct = Math.round((withMembers / total) * 100);
+    var managerPct = Math.round((withManager / total) * 100);
+    var worstPct = Math.min(memberPct, managerPct);
+
+    var actualValue = 'Total ITSM groups: ' + total + ' | With members: ' + memberPct + '% | With manager: ' + managerPct + '%';
+    var cloneNote = 'NOTE: If running on a non-production clone, sys_user data is typically stripped — verify on production before treating as a blocker. ';
+
+    if (worstPct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: cloneNote + 'Assignment groups are well configured. AI Agent routing has valid group membership and manager data.' };
+    } else if (worstPct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: cloneNote + 'Group membership (' + memberPct + '%) or manager assignment (' + managerPct + '%) below target. AI Agent routing may fail for some groups.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: cloneNote + 'Group membership (' + memberPct + '%) and/or manager (' + managerPct + '%) critically low. AI Agent routing will not function correctly without populated groups.' };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000351: ' + e.message };
+        }
+    },
+    CHK0000352: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Count active Flow Designer flows (all) — AI Agents use FD exclusively
+    var gaFlows = new GlideAggregate('sys_hub_flow');
+    gaFlows.addQuery('active', true);
+    gaFlows.addAggregate('COUNT');
+    gaFlows.query();
+    var flows = gaFlows.next() ? parseInt(gaFlows.getAggregate('COUNT')) : 0;
+
+    // Count active legacy Workflow Engine processes on incident/change
+    var gaLegacy = new GlideAggregate('wf_workflow');
+    gaLegacy.addQuery('active', true);
+    gaLegacy.addQuery('table', 'IN', 'incident,change_request');
+    gaLegacy.addAggregate('COUNT');
+    gaLegacy.query();
+    var legacy = gaLegacy.next() ? parseInt(gaLegacy.getAggregate('COUNT')) : 0;
+
+    var actualValue = flows + ' active Flow Designer flows | ' + legacy + ' legacy Workflow Engine processes on incident/change';
+
+    if (flows > 0 && legacy === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: flows + ' active Flow Designer flows with no legacy Workflow Engine processes on incident/change. AI Agents have a clean Flow Designer foundation for ITSM orchestration.'
+        };
+    } else if (flows > 0 && legacy > 0) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: flows + ' Flow Designer flows active but ' + legacy + ' legacy Workflow Engine process(es) still exist on incident/change. Migrate legacy workflows to Flow Designer — AI Agents orchestrate exclusively through Flow Designer.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active Flow Designer flows found. AI Agents exclusively orchestrate ITSM automation through Flow Designer — without flows, AI Agent automation cannot execute on incident or change.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000352: ' + e.message };
+        }
+    },
+    CHK0000353: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaBR = new GlideAggregate('sys_script');
+    gaBR.addQuery('collection', 'task');
+    gaBR.addQuery('active', true);
+    gaBR.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaBR.addAggregate('COUNT');
+    gaBR.query();
+    var brs = gaBR.next() ? parseInt(gaBR.getAggregate('COUNT')) : 0;
+
+    var gaACL = new GlideAggregate('sys_security_acl');
+    gaACL.addQuery('name', 'task');
+    gaACL.addAggregate('COUNT');
+    gaACL.query();
+    var acls = gaACL.next() ? parseInt(gaACL.getAggregate('COUNT')) : 0;
+
+    var risk = brs + acls;
+    var actualValue = brs + ' custom BRs on task | ' + acls + ' ACLs on task | Combined risk score: ' + risk;
+
+    if (risk <= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low Agentic AI customization risk on task table (score: ' + risk + '). AI Agent read/write operations are unlikely to encounter conflicts.'
+        };
+    } else if (risk <= 25) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Moderate Agentic AI customization risk on task table (score: ' + risk + '). Test AI Agent actions in sub-production to identify Business Rule or ACL conflicts before go-live.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High Agentic AI customization risk on task table (score: ' + risk + '). Extensive customization creates significant risk of AI Agent conflicts on read/write operations — review and reduce before AI Agent enablement.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000353: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_ITSM'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:02:10</sys_created_on>
+        <sys_id>93724e60cfc5c3548935fb251d851ca1</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>AROPCheckLibrary_ITSM</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_93724e60cfc5c3548935fb251d851ca1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

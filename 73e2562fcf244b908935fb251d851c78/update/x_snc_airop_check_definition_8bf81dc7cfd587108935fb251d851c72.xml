@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Sufficient CSM case history enables Now Assist to learn customer patterns and power AI similar case suggestions.]]></ai_justification>
+        <check_name>CSM Case Volume and History</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var ga = new GlideAggregate('sn_customerservice_case');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var total = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' CSM cases created in last 12 months';
+
+    if (total >= 500) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' CSM cases in the last 12 months. Sufficient history for Now Assist CSM AI summarization and pattern learning.'
+        };
+    } else if (total >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' CSM cases in the last 12 months (target: 500+). Now Assist CSM AI learning will have limited pattern coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' CSM cases in the last 12 months. Insufficient case history for meaningful Now Assist CSM AI summarization and similar case matching.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>CSM</module>
+        <number>CHK0000415</number>
+        <order>30</order>
+        <remediation_guidance>Allow CSM case volume to accumulate. Focus on data quality: descriptions, account linkage, and resolution notes. Target: 500+ cases in the trailing 12 months for meaningful Now Assist CSM AI learning.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>8bf81dc7cfd587108935fb251d851c72</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>CSM Case Volume and History</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_8bf81dc7cfd587108935fb251d851c72</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

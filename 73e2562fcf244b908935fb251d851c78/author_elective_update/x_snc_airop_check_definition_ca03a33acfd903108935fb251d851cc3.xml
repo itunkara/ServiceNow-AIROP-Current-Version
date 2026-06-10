@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Agent Workspace provides the UI where Now Assist TSOM alert summaries and AI recommendations surface to operators.]]></ai_justification>
+<check_name>TSOM Agent Workspace Configuration</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("com.glide.agent_workspace", "com.glide.agent_workspace");
+    // Functional fallback: check sys_scope
+    if (!result.found) {
+        var gr = new GlideRecord("sys_scope");
+        gr.addQuery("scope", "CONTAINS", "agent_workspace");
+        gr.addQuery("active", true);
+        gr.setLimit(1);
+        gr.query();
+        if (gr.next()) { result.found = true; result.table = "sys_scope"; }
+    }
+    if (result.found) {
+        return { status: "ready",
+            actualValue: "Agent Workspace is active | source: " + result.table,
+            finding: "Agent Workspace active -- Now Assist TSOM AI insights visible to operators." };
+    } else {
+        return { status: "needs_attention",
+            actualValue: "Agent Workspace not found",
+            finding: "Agent Workspace not active. Now Assist TSOM alert summaries and AI recommendations require Agent Workspace." };
+    }
+})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>AIOPS</module>
+<number>CHK0006077</number>
+<order>100</order>
+<remediation_guidance>Activate Agent Workspace. Configure TSOM-specific views. Now Assist TSOM AI insights require Agent Workspace.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>ca03a33acfd903108935fb251d851cc3</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_ca03a33acfd903108935fb251d851cc3</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Agent Workspace provides the UI where Now Assist TSOM alert summaries and AI recommendations surface to operators.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;TSOM Agent Workspace Configuration&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("com.glide.agent_workspace", "com.glide.agent_workspace");
+    // Functional fallback: check sys_scope
+    if (!result.found) {
+        var gr = new GlideRecord("sys_scope");
+        gr.addQuery("scope", "CONTAINS", "agent_workspace");
+        gr.addQuery("active", true);
+        gr.setLimit(1);
+        gr.query();
+        if (gr.next()) { result.found = true; result.table = "sys_scope"; }
+    }
+    if (result.found) {
+        return { status: "ready",
+            actualValue: "Agent Workspace is active | source: " + result.table,
+            finding: "Agent Workspace active -- Now Assist TSOM AI insights visible to operators." };
+    } else {
+        return { status: "needs_attention",
+            actualValue: "Agent Workspace not found",
+            finding: "Agent Workspace not active. Now Assist TSOM alert summaries and AI recommendations require Agent Workspace." };
+    }
+})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;AIOPS&lt;/module&gt;
+&lt;number&gt;CHK0006077&lt;/number&gt;
+&lt;order&gt;100&lt;/order&gt;
+&lt;remediation_guidance&gt;Activate Agent Workspace. Configure TSOM-specific views. Now Assist TSOM AI insights require Agent Workspace.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;ca03a33acfd903108935fb251d851cc3&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1167005589</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:27</sys_created_on>
+        <sys_id>8db6c147cf9947108935fb251d851cd9</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa75750000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:27</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>c5b6c147d899471020db7611d5c617d8</update_guid>
+        <update_guid_history>c5b6c147d899471020db7611d5c617d8:1167005589</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">5d2f8103cf1187108935fb251d851cdb</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:21</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>0282338c1823471f815413967b0ee271</sys_id>
+        <sys_metadata>ca03a33acfd903108935fb251d851cc3</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_ca03a33acfd903108935fb251d851cc3</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_ca03a33acfd903108935fb251d851cc3">8db6c147cf9947108935fb251d851cd9</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:21</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

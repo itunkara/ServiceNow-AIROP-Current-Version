@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[AI Agents use notification actions to communicate with users and stakeholders. Misconfigured email settings prevent AI Agent notification actions from completing successfully.]]></ai_justification>
+        <check_name>Email Notification Configuration</check_name>
+        <check_script><![CDATA[(function(){
+var gr=new GlideRecord("sys_email_account");
+gr.addQuery("active",true);
+gr.addQuery("type","smtp-sender");
+gr.query();
+var n=gr.getRowCount();
+return{status:n>=1?"ready":"needs_attention",actualValue:n+" active SMTP email accounts",finding:n<1?"No active SMTP email accounts configured. AI Agents cannot send notifications without outbound email configuration.":""+n+" active SMTP accounts configured -- AI Agent notifications can be delivered."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>PLATFORM</module>
+        <number>CHK0000489</number>
+        <order>100</order>
+        <remediation_guidance>Verify SMTP configuration via sys_email_account_list.do. Test outbound email delivery. Configure email templates for AI Agent-triggered notifications. Email is required for AI Agent stakeholder communication workflows.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>c3f85dc7cfd587108935fb251d851c31</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Email Notification Configuration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_c3f85dc7cfd587108935fb251d851c31</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

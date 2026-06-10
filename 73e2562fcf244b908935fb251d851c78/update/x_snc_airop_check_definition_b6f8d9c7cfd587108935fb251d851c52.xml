@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Client scripts that run on incident load or change events can interfere with Now Assist form interactions. This check identifies customizations that may need adjustment before Now Assist agent assist is enabled.]]></ai_justification>
+        <check_name>Client Scripts on Incident / Task</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script_client');
+    ga.addQuery('table', 'IN', 'incident,task');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom active Client Scripts on incident/task';
+
+    if (count < 30) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low client script customization on incident/task (' + count + ' scripts). Now Assist panel rendering is unlikely to be affected by existing client-side customizations.'
+        };
+    } else if (count < 60) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom client scripts on incident/task. Scripts running on form load or field change may interfere with Now Assist panel rendering — test in sub-production.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: count + ' custom client scripts on incident/task. High client script density creates significant risk of Now Assist panel rendering conflicts.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000331</number>
+        <order>170</order>
+        <remediation_guidance>Review custom client scripts on incident and task. Scripts that run on form load or field change may interfere with Now Assist panel rendering. Test in sub-production before Now Assist enablement. Target: &lt;30 custom active client scripts.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>b6f8d9c7cfd587108935fb251d851c52</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Client Scripts on Incident / Task</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_b6f8d9c7cfd587108935fb251d851c52</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

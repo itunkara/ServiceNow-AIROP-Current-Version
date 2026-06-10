@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist problem summarization aggregates incident patterns to identify root cause trends. With 0 structured incident-problem relationships, the AI has no linkage data to reason from.]]></ai_justification>
+        <check_name>Incident-to-Problem Linkage Rate</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Count total closed/resolved problems
+    // OOB problem closed states: 3 = Closed/Resolved, 4 = Closed
+    // Some instances use additional values -- we use 3,4 as the broadest OOB closed set
+    var totalGr = new GlideAggregate("problem");
+    totalGr.addQuery("state", "IN", "3,4");
+    totalGr.addAggregate("COUNT");
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable",
+            actualValue: "No closed problem records found (state IN 3,4)",
+            finding: "No closed problem records found. Incident-to-Problem linkage cannot be assessed." };
+    }
+
+    // Count distinct problems that have at least one incident linked
+    // via incident.problem_id -- the OOB linkage mechanism
+    var linkedProblems = 0;
+    try {
+        var linkedGr = new GlideAggregate("incident");
+        linkedGr.addQuery("problem_id", "!=", "");
+        linkedGr.addAggregate("COUNT", "problem_id");
+        linkedGr.groupBy("problem_id");
+        linkedGr.query();
+        while (linkedGr.next()) { linkedProblems++; }
+    } catch(e) { linkedProblems = 0; }
+
+    var pct = Math.round((linkedProblems / total) * 100);
+    var actualValue = linkedProblems + " of " + total + " problems have linked incidents via incident.problem_id (" + pct + "% linkage coverage)";
+
+    if (pct >= 50) {
+        return { status: "ready", actualValue: actualValue,
+            finding: pct + "% of problems have linked incidents. Now Assist problem summarization has adequate incident context for root cause pattern analysis." };
+    } else if (pct >= 20) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Only " + pct + "% of problems are linked to incidents (target: 50%+). Now Assist problem analysis will lack context for unlinked records. Ensure the Problem field on Incident records is populated when incidents are escalated." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Only " + pct + "% of problems have linked incidents. Now Assist cannot surface root cause patterns without incident context on problem records. Link incidents to problems via incident.problem_id." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000345</number>
+        <order>310</order>
+        <remediation_guidance>Ensure the Problem field on Incident records is populated when incidents are escalated to problems. Use the OOB "Create Problem" UI action or enforce via assignment workflow. The link is stored on the incident.problem_id field — do not rely on custom relationship tables.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>faf8d9c7cfd587108935fb251d851c6d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Incident-to-Problem Linkage Rate</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_faf8d9c7cfd587108935fb251d851c6d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

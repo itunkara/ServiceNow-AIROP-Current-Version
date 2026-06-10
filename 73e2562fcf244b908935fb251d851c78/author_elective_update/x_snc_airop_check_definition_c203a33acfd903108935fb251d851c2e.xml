@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[AI Agents orchestrate ITSM automation exclusively through Flow Designer subflows. High Flow Designer adoption means the full AI Agent collection can orchestrate without legacy compatibility issues.]]></ai_justification>
+<check_name>Flow Designer Adoption on Incident and Change</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Count active Flow Designer flows (all) — AI Agents use FD exclusively
+    var gaFlows = new GlideAggregate('sys_hub_flow');
+    gaFlows.addQuery('active', true);
+    gaFlows.addAggregate('COUNT');
+    gaFlows.query();
+    var flows = gaFlows.next() ? parseInt(gaFlows.getAggregate('COUNT')) : 0;
+
+    // Count active legacy Workflow Engine processes on incident/change
+    var gaLegacy = new GlideAggregate('wf_workflow');
+    gaLegacy.addQuery('active', true);
+    gaLegacy.addQuery('table', 'IN', 'incident,change_request');
+    gaLegacy.addAggregate('COUNT');
+    gaLegacy.query();
+    var legacy = gaLegacy.next() ? parseInt(gaLegacy.getAggregate('COUNT')) : 0;
+
+    var actualValue = flows + ' active Flow Designer flows | ' + legacy + ' legacy Workflow Engine processes on incident/change';
+
+    if (flows > 0 && legacy === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: flows + ' active Flow Designer flows with no legacy Workflow Engine processes on incident/change. AI Agents have a clean Flow Designer foundation for ITSM orchestration.'
+        };
+    } else if (flows > 0 && legacy > 0) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: flows + ' Flow Designer flows active but ' + legacy + ' legacy Workflow Engine process(es) still exist on incident/change. Migrate legacy workflows to Flow Designer — AI Agents orchestrate exclusively through Flow Designer.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active Flow Designer flows found. AI Agents exclusively orchestrate ITSM automation through Flow Designer — without flows, AI Agent automation cannot execute on incident or change.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>ITSM</module>
+<number>CHK0005977</number>
+<order>380</order>
+<remediation_guidance>Create Flow Designer flows for key ITSM processes. Migrate legacy Workflow Engine processes on incident and change to Flow Designer subflows using the Workflow Migration tool. AI Agents orchestrate ITSM automation exclusively through Flow Designer.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>c203a33acfd903108935fb251d851c2e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_c203a33acfd903108935fb251d851c2e</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[AI Agents orchestrate ITSM automation exclusively through Flow Designer subflows. High Flow Designer adoption means the full AI Agent collection can orchestrate without legacy compatibility issues.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Flow Designer Adoption on Incident and Change&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    // Count active Flow Designer flows (all) — AI Agents use FD exclusively
+    var gaFlows = new GlideAggregate('sys_hub_flow');
+    gaFlows.addQuery('active', true);
+    gaFlows.addAggregate('COUNT');
+    gaFlows.query();
+    var flows = gaFlows.next() ? parseInt(gaFlows.getAggregate('COUNT')) : 0;
+
+    // Count active legacy Workflow Engine processes on incident/change
+    var gaLegacy = new GlideAggregate('wf_workflow');
+    gaLegacy.addQuery('active', true);
+    gaLegacy.addQuery('table', 'IN', 'incident,change_request');
+    gaLegacy.addAggregate('COUNT');
+    gaLegacy.query();
+    var legacy = gaLegacy.next() ? parseInt(gaLegacy.getAggregate('COUNT')) : 0;
+
+    var actualValue = flows + ' active Flow Designer flows | ' + legacy + ' legacy Workflow Engine processes on incident/change';
+
+    if (flows &gt; 0 &amp;&amp; legacy === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: flows + ' active Flow Designer flows with no legacy Workflow Engine processes on incident/change. AI Agents have a clean Flow Designer foundation for ITSM orchestration.'
+        };
+    } else if (flows &gt; 0 &amp;&amp; legacy &gt; 0) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: flows + ' Flow Designer flows active but ' + legacy + ' legacy Workflow Engine process(es) still exist on incident/change. Migrate legacy workflows to Flow Designer — AI Agents orchestrate exclusively through Flow Designer.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active Flow Designer flows found. AI Agents exclusively orchestrate ITSM automation through Flow Designer — without flows, AI Agent automation cannot execute on incident or change.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;ITSM&lt;/module&gt;
+&lt;number&gt;CHK0005977&lt;/number&gt;
+&lt;order&gt;380&lt;/order&gt;
+&lt;remediation_guidance&gt;Create Flow Designer flows for key ITSM processes. Migrate legacy Workflow Engine processes on incident and change to Flow Designer subflows using the Workflow Migration tool. AI Agents orchestrate ITSM automation exclusively through Flow Designer.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;c203a33acfd903108935fb251d851c2e&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1158974626</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:21</sys_created_on>
+        <sys_id>13a60d07cf9947108935fb251d851ca3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa5c900000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:21</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>5ba60d07fa9947102a5b9172fb0441a1</update_guid>
+        <update_guid_history>5ba60d07fa9947102a5b9172fb0441a1:-1158974626</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">192f4103cf1187108935fb251d851c40</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:20</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>ded98e0f011446da8a8422f5dcd45ce9</sys_id>
+        <sys_metadata>c203a33acfd903108935fb251d851c2e</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_c203a33acfd903108935fb251d851c2e</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_c203a33acfd903108935fb251d851c2e">13a60d07cf9947108935fb251d851ca3</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:20</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

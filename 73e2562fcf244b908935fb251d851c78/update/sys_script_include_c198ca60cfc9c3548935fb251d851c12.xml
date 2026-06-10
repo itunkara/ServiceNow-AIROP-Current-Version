@@ -1,0 +1,822 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_ITOM</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for ITOM module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_ITOM</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_ITOM = Class.create();
+AROPCheckLibrary_ITOM.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000354: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("com.snc.service_operations_workspace", "com.snc.service_operations_workspace");
+    // Functional fallback: check sys_scope
+    if (!result.found) {
+        var gr = new GlideRecord("sys_scope");
+        gr.addQuery("scope", "sn_sow_itom");
+        gr.addQuery("active", true);
+        gr.setLimit(1);
+        gr.query();
+        if (gr.next()) {
+            result.found = true;
+            result.table = "sys_scope";
+        }
+    }
+    if (result.found) {
+        return { status: "ready",
+            actualValue: "Service Operations Workspace is active | source: " + result.table,
+            finding: "Service Operations Workspace is active. Now Assist ITOM AI alert summaries and recommendations are visible to the operations team." };
+    } else {
+        return { status: "not_ready",
+            actualValue: "Service Operations Workspace not found in sys_store_app, sys_plugins, or sys_scope",
+            finding: "Service Operations Workspace is not active. Now Assist ITOM AI insights are not visible to operators without SOW." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000354: ' + e.message };
+        }
+    },
+    CHK0000355: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    // Probe sys_choice for the backend value of the Completed state
+    var discCompletedValue = "";
+    try {
+        var choiceGR = new GlideRecord("sys_choice");
+        choiceGR.addQuery("name", "discovery_status");
+        choiceGR.addQuery("element", "state");
+        choiceGR.addQuery("label", "CONTAINS", "omplet");
+        choiceGR.setLimit(1);
+        choiceGR.query();
+        if (choiceGR.next()) { discCompletedValue = choiceGR.getValue("value") || ""; }
+    } catch(e) {}
+
+    var testGr = new GlideRecord("discovery_status");
+    testGr.setLimit(1);
+    testGr.query();
+    if (!testGr.isValid()) {
+        return { status: "not_ready", actualValue: "discovery_status table not found",
+            finding: "Discovery plugin may not be installed on this instance. Now Assist ITOM has no infrastructure data to reason over." };
+    }
+
+    var gr = new GlideRecord("discovery_status");
+    if (discCompletedValue !== "") {
+        gr.addQuery("state", discCompletedValue);
+    } else {
+        gr.addQuery("state", "IN", "Complete,Completed");
+    }
+    gr.orderByDesc("sys_updated_on");
+    gr.setLimit(1);
+    gr.query();
+
+    if (!gr.next()) {
+        // Fallback: surface most recent run of any state
+        var anyGR = new GlideRecord("discovery_status");
+        anyGR.orderByDesc("sys_updated_on");
+        anyGR.setLimit(1);
+        anyGR.query();
+        if (anyGR.next()) {
+            var anyState = anyGR.getDisplayValue("state");
+            var anyDate  = anyGR.getDisplayValue("sys_updated_on");
+            return { status: "not_ready",
+                actualValue: "No completed discovery runs found. Most recent run state: " + anyState + " (" + anyDate + ")",
+                finding: "No completed discovery runs found. Check if runs are completing or stuck in Active/Starting state via discovery_status_list.do." };
+        }
+        return { status: "not_ready", actualValue: "No discovery runs found",
+            finding: "No discovery runs found. Discovery must be configured and run before Now Assist ITOM AI capabilities can function." };
+    }
+
+    var lastRun = new GlideDateTime(gr.getValue("sys_updated_on"));
+    var now = new GlideDateTime();
+    var days = Math.floor((now.getNumericValue() - lastRun.getNumericValue()) / 86400000);
+    var actualValue = "Last completed discovery: " + days + " days ago (" + gr.getDisplayValue("sys_updated_on") + ")";
+
+    if (days <= 7) {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Discovery completed " + days + " day(s) ago. Now Assist ITOM is reasoning over current infrastructure data." };
+    } else if (days <= 30) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Last discovery was " + days + " days ago (target: within 7 days). Now Assist ITOM may be reasoning over stale infrastructure data." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Last discovery was " + days + " days ago. Stale infrastructure data significantly degrades Now Assist ITOM AI impact analysis and alert correlation accuracy." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000355: ' + e.message };
+        }
+    },
+    CHK0000356: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('discovery_range');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var ranges = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = ranges + ' IP ranges defined for discovery';
+
+    if (ranges >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: ranges + ' IP ranges configured. Discovery has broad infrastructure coverage for Now Assist ITOM context building.'
+        };
+    } else if (ranges >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + ranges + ' IP range(s) defined (target: 3+). Discovery coverage gaps create CMDB blind spots that Now Assist ITOM cannot reason about during incident response.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No IP ranges defined for discovery. Now Assist ITOM has no infrastructure scope to discover — CMDB will lack the CI data required for AI impact analysis.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000356: ' + e.message };
+        }
+    },
+    CHK0000357: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('cmdb_ci');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active CIs found',
+            finding: 'No active CIs found in CMDB. Discovery source distribution cannot be assessed.'
+        };
+    }
+
+    // OOB manual entry values — "Manual Entry" is the standard display value
+    var gaManual = new GlideAggregate('cmdb_ci');
+    gaManual.addQuery('install_status', 1);
+    gaManual.addQuery('discovery_source', 'IN', 'Manual Entry,manual');
+    gaManual.addAggregate('COUNT');
+    gaManual.query();
+    var manual = gaManual.next() ? parseInt(gaManual.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((manual / total) * 100);
+    var actualValue = pct + '% of active CIs are manually entered (' + manual + ' of ' + total + ')';
+
+    if (pct <= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of CIs are manually entered. Discovery-sourced CI data provides reliable, current context for Now Assist ITOM AI analysis.'
+        };
+    } else if (pct <= 30) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: pct + '% of active CIs are manually entered (target: ≤10%). Manual CIs become stale quickly and reduce Now Assist ITOM context reliability.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: pct + '% of active CIs are manually entered. High manual CI rate means Now Assist ITOM is reasoning over data that is likely stale — AI impact analysis and alert correlation accuracy will be significantly degraded.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000357: ' + e.message };
+        }
+    },
+    CHK0000358: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('discovery_status');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No discovery runs in last 90 days',
+            finding: 'No discovery runs found in the last 90 days. Discovery error rate cannot be assessed — configure and run discovery first.'
+        };
+    }
+
+    var gaErrors = new GlideAggregate('discovery_status');
+    gaErrors.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaErrors.addQuery('state', 'IN', 'Error,Failed');
+    gaErrors.addAggregate('COUNT');
+    gaErrors.query();
+    var errors = gaErrors.next() ? parseInt(gaErrors.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((errors / total) * 100);
+    var actualValue = pct + '% of discovery runs errored in last 90 days (' + errors + ' of ' + total + ')';
+
+    if (pct <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Discovery error rate is ' + pct + '% (last 90 days). Low error rate means Now Assist ITOM has reliable, current CI data to work with.'
+        };
+    } else if (pct <= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Discovery error rate is ' + pct + '% (last 90 days, target: ≤5%). Recurring errors leave CI gaps that reduce Now Assist ITOM context accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Discovery error rate is ' + pct + '% (last 90 days). High error rate means large portions of infrastructure are not being discovered — Now Assist ITOM AI analysis will have significant blind spots.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000358: ' + e.message };
+        }
+    },
+    CHK0000359: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("discovery_credentials");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table discovery_credentials not found", finding: "Discovery Credentials table (discovery_credentials) is not available. Verify the Discovery plugin is active." };
+    }
+    var ga = new GlideAggregate("discovery_credentials");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active discovery credentials configured";
+    if (count >= 5) {
+        return { status: "ready", actualValue: actualValue, finding: count + " active discovery credentials. Now Assist ITOM has broad authenticated access to infrastructure for current CI data." };
+    } else if (count >= 1) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " active discovery credential(s) (target: 5+). Missing credentials mean some CI classes are not being discovered — Now Assist ITOM will have partial infrastructure context." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "No active discovery credentials configured. Without credentials, discovery cannot authenticate to infrastructure targets — Now Assist ITOM will have no reliable CI data." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000359: ' + e.message };
+        }
+    },
+    CHK0000360: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-30);
+
+    var ga = new GlideAggregate('em_alert');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' alerts in last 30 days';
+
+    if (count === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: actualValue,
+            finding: 'No alerts in the last 30 days. Alert volume and noise ratio cannot be assessed — Event Management may not be in use.'
+        };
+    } else if (count < 10000) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' alerts in the last 30 days. Alert volume is within a manageable range for Now Assist ITOM event correlation accuracy.'
+        };
+    } else if (count < 50000) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' alerts in the last 30 days. High alert volume may degrade Now Assist ITOM event correlation accuracy — review alert tuning.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: count + ' alerts in the last 30 days. Extreme alert noise will overwhelm Now Assist ITOM event correlation and significantly degrade AI grouping accuracy.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000360: ' + e.message };
+        }
+    },
+    CHK0000361: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-30);
+
+    var gaTotal = new GlideAggregate('em_alert');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No alerts in last 30 days',
+            finding: 'No alerts found in the last 30 days. Auto-close rate cannot be assessed — Event Management may not be in use.'
+        };
+    }
+
+    var gaClosed = new GlideAggregate('em_alert');
+    gaClosed.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaClosed.addQuery('state', 'Closed');
+    gaClosed.addAggregate('COUNT');
+    gaClosed.query();
+    var closed = gaClosed.next() ? parseInt(gaClosed.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((closed / total) * 100);
+    var actualValue = total + ' alerts in last 30 days | ' + closed + ' closed (' + pct + '%)';
+
+    if (pct >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of recent alerts are closed. Healthy auto-close rate indicates clean CLEAR event processing — Now Assist ITOM event correlation training signal is not polluted by stale alerts.'
+        };
+    } else if (pct >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of recent alerts are closed (target: 50%+). Low auto-close rate indicates noisy alerts that degrade Now Assist ITOM event correlation training signal.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of recent alerts are closed. Very low auto-close rate means Now Assist ITOM is learning from a noisy, unresolved alert corpus — AI correlation accuracy will be significantly degraded.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000361: ' + e.message };
+        }
+    },
+    CHK0000362: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('em_alert_correlation_rule');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active alert correlation rules';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active correlation rules. Now Assist ITOM has the foundation for AI-assisted event grouping across key infrastructure types.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active correlation rule(s) (target: 5+). Limited correlation coverage reduces the scope of Now Assist ITOM AI-assisted event grouping.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active alert correlation rules. Correlation rules are a prerequisite for Now Assist ITOM AI-assisted event grouping — without them all alerts are treated as isolated events.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000362: ' + e.message };
+        }
+    },
+    CHK0000363: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('em_alert');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No alerts in last 90 days',
+            finding: 'No alerts found in the last 90 days. Alert-to-incident conversion rate cannot be assessed.'
+        };
+    }
+
+    var gaLinked = new GlideAggregate('em_alert');
+    gaLinked.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaLinked.addQuery('incident', '!=', '');
+    gaLinked.addAggregate('COUNT');
+    gaLinked.query();
+    var withInc = gaLinked.next() ? parseInt(gaLinked.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withInc / total) * 100);
+    var actualValue = pct + '% of alerts generated incidents in last 90 days (' + withInc + ' of ' + total + ')';
+
+    if (pct >= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% alert-to-incident conversion rate (last 90 days). Now Assist ITOM has sufficient historical alert-incident linkage for AI-suggested remediation learning.'
+        };
+    } else if (pct >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% alert-to-incident conversion (last 90 days, target: 10%+). Now Assist ITOM AI remediation suggestions will have limited historical data to learn from.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Zero alert-to-incident conversion in the last 90 days. Now Assist ITOM cannot surface AI-suggested remediation without historical alert-incident linkage.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000363: ' + e.message };
+        }
+    },
+    CHK0000364: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('cmdb_ci_query_based_service');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' Dynamic CI Groups configured';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' Dynamic CI Groups configured. Now Assist ITOM AI Agent targeting has well-defined scope boundaries for automated actions.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' Dynamic CI Group(s) configured (target: 5+). Limited groups narrow the scope of Now Assist ITOM AI Agent targeting.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No Dynamic CI Groups configured. Now Assist ITOM AI Agents require Dynamic CI Groups to define scope boundaries for automated discovery probes and remediation actions.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000364: ' + e.message };
+        }
+    },
+    CHK0000365: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('cmdb_ci_service');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    var gaMapped = new GlideAggregate('cmdb_ci_service');
+    gaMapped.addQuery('active', true);
+    gaMapped.addQuery('has_map', true);
+    gaMapped.addAggregate('COUNT');
+    gaMapped.query();
+    var mapped = gaMapped.next() ? parseInt(gaMapped.getAggregate('COUNT')) : 0;
+
+    var actualValue = mapped + ' business services with complete maps (of ' + total + ' total active services)';
+
+    if (mapped >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: mapped + ' business services have service maps. Now Assist ITOM has service context for AI impact analysis during incident response.'
+        };
+    } else if (mapped >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + mapped + ' business service(s) have maps (target: 5+). Now Assist ITOM impact analysis will be limited to mapped services only.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No business services have service maps. Now Assist ITOM cannot perform AI impact analysis without service maps — it cannot determine which services are affected by infrastructure events.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000365: ' + e.message };
+        }
+    },
+    CHK0000366: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sa_pattern');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active service mapping discovery patterns';
+
+    if (count >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active service mapping patterns. Now Assist ITOM has comprehensive topology coverage for AI impact traversal across infrastructure types.'
+        };
+    } else if (count >= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active service mapping patterns (target: 50+). Limited patterns mean Now Assist ITOM topology-based impact analysis will have gaps for uncovered infrastructure types.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Fewer than 5 active service mapping patterns. Now Assist ITOM topology-based impact analysis requires comprehensive pattern coverage to traverse CI relationships accurately.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000366: ' + e.message };
+        }
+    },
+    CHK0000367: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('svc_ci_assoc');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' service-to-CI associations defined';
+
+    if (count >= 100) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' service-to-CI associations. Now Assist ITOM can accurately determine which services are affected by CI-level incidents.'
+        };
+    } else if (count >= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' service-to-CI associations (target: 100+). Now Assist ITOM impact analysis will be limited to services with defined CI associations.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Fewer than 10 service-to-CI associations. Without these, Now Assist ITOM cannot determine which services are affected by CI events during incident response.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000367: ' + e.message };
+        }
+    },
+    CHK0000368: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("samp_sw_license_metric");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table samp_sw_license_metric not found", finding: "License Metric table is not available. Verify the SAM plugin is active." };
+    }
+    var matched = {};
+    function collectMatches(keyword) {
+        var gr = new GlideRecord("samp_sw_license_metric");
+        gr.addQuery("name", "CONTAINS", keyword);
+        gr.query();
+        while (gr.next()) { matched[gr.getUniqueValue()] = true; }
+    }
+    collectMatches("itom");
+    collectMatches("ITOM");
+    var count = Object.keys(matched).length;
+    var actualValue = count + " ITOM license metric records found";
+    if (count > 0) {
+        return { status: "ready", actualValue: actualValue, finding: count + " ITOM license metric record(s) found. ITOM entitlement appears active — manual confirmation with account team recommended." };
+    } else {
+        return { status: "needs_attention", actualValue: actualValue, finding: "No ITOM license metric records found. Manual entitlement confirmation recommended — without the correct ITOM SKU, Now Assist ITOM capabilities will not activate regardless of plugin installation or data quality." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000368: ' + e.message };
+        }
+    },
+    CHK0000369: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("sn_itom_gen_ai", "sn_itom_gen_ai");
+    if (result.found) {
+        return {
+            status: "ready",
+            actualValue: "Now Assist for ITOM (" + "sn_itom_gen_ai" + ") installed | version: " + result.version + " | source: " + result.table,
+            finding: "Now Assist for ITOM is installed. AI-assisted event correlation, alert grouping, and impact analysis are available."
+        };
+    } else {
+        return {
+            status: "not_ready",
+            actualValue: "Now Assist for ITOM (sn_itom_gen_ai) not found in sys_store_app or sys_plugins",
+            finding: "Now Assist for ITOM (sn_itom_gen_ai) not found. AI-assisted event correlation and impact analysis are unavailable."
+        };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000369: ' + e.message };
+        }
+    },
+    CHK0000370: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('cmn_schedule_maintenance');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var schedules = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = schedules + ' active maintenance schedules defined';
+
+    if (schedules >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: schedules + ' active maintenance schedules. Planned downtime is controlled — Now Assist ITOM event correlation training signal is protected from false-positive alert pollution.'
+        };
+    } else if (schedules >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + schedules + ' active maintenance schedule(s) (target: 5+). Unscheduled maintenance events will generate false-positive alerts that degrade Now Assist ITOM AI correlation accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active maintenance schedules defined. Unscheduled maintenance generates false-positive alerts that pollute the Now Assist ITOM event correlation training corpus.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000370: ' + e.message };
+        }
+    },
+    CHK0000371: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('ecc_agent');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No MID Servers found',
+            finding: 'No MID Servers found on this instance. If this is a cloud-only deployment with no on-premise infrastructure, this check is not applicable. Otherwise, MID Servers are required for discovery and AI Agent-triggered remediation.'
+        };
+    }
+
+    var gaHealthy = new GlideAggregate('ecc_agent');
+    gaHealthy.addQuery('status', 'Up');
+    gaHealthy.addQuery('validated', true);
+    gaHealthy.addAggregate('COUNT');
+    gaHealthy.query();
+    var healthy = gaHealthy.next() ? parseInt(gaHealthy.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' total MID Servers | ' + healthy + ' up and validated';
+
+    if (healthy >= 1) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: healthy + ' of ' + total + ' MID Servers are up and validated. Now Assist ITOM AI Agent-triggered discovery probes and remediation workflows can execute.'
+        };
+    } else {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: total + ' MID Server(s) found but none are up and validated. Now Assist ITOM AI Agent actions requiring on-premise access will fail until at least one MID Server is healthy.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000371: ' + e.message };
+        }
+    },
+    CHK0000372: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('em_alert');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No alerts in last 90 days',
+            finding: 'No alerts found in the last 90 days. Alert grouping and CI linkage cannot be assessed — Event Management may not be in use.'
+        };
+    }
+
+    var gaGrouped = new GlideAggregate('em_alert');
+    gaGrouped.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaGrouped.addQuery('parent', '!=', '');
+    gaGrouped.addAggregate('COUNT');
+    gaGrouped.query();
+    var grouped = gaGrouped.next() ? parseInt(gaGrouped.getAggregate('COUNT')) : 0;
+
+    var gaCI = new GlideAggregate('em_alert');
+    gaCI.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaCI.addQuery('cmdb_ci', '!=', '');
+    gaCI.addAggregate('COUNT');
+    gaCI.query();
+    var withCI = gaCI.next() ? parseInt(gaCI.getAggregate('COUNT')) : 0;
+
+    var groupPct = Math.round((grouped / total) * 100);
+    var ciPct = Math.round((withCI / total) * 100);
+
+    var actualValue = total + ' alerts (last 90 days) | ' + grouped + ' grouped (' + groupPct + '%) | ' + withCI + ' with CI linked (' + ciPct + '%)';
+
+    if (groupPct >= 30 && ciPct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: groupPct + '% of alerts grouped and ' + ciPct + '% linked to CIs (last 90 days). Now Assist ITOM has strong event correlation and CI context for AI-assisted pattern learning.'
+        };
+    } else if (groupPct >= 10 || ciPct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Alert grouping at ' + groupPct + '% and CI linkage at ' + ciPct + '% (targets: 30% grouping, 80% CI linkage). Now Assist ITOM correlation accuracy will be reduced — configure correlation rules and ensure CI discovery is current.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Alert grouping at ' + groupPct + '% and CI linkage at ' + ciPct + '% (last 90 days). Now Assist ITOM AI event correlation cannot learn meaningful patterns without grouped alerts linked to CIs.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000372: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_ITOM'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:28:46</sys_created_on>
+        <sys_id>c198ca60cfc9c3548935fb251d851c12</sys_id>
+        <sys_mod_count>13</sys_mod_count>
+        <sys_name>AROPCheckLibrary_ITOM</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_c198ca60cfc9c3548935fb251d851c12</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

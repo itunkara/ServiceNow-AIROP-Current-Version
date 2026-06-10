@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[An empty KEDB means Now Assist cannot surface known error workarounds as AI resolution suggestions -- one of the highest-value AI deflection capabilities is completely inactive.]]></ai_justification>
+<check_name>Known Error Database (KEDB) Usage</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate("problem");
+    totalGr.addQuery("state", "IN", "3,4");
+    totalGr.addAggregate("COUNT");
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable",
+            actualValue: "No closed/resolved problem records found (state IN 3,4)",
+            finding: "No qualifying closed problem records. KEDB usage cannot be assessed." };
+    }
+
+    // KEDB dual-mechanism:
+    // Mechanism 1: primary_known_error_article IS NOT EMPTY
+    // (populated by "Create Known Error article" UI action on problem form)
+    var keLinked = {};
+    var keWithKEA = 0;
+    try {
+        var ke1 = new GlideRecord("problem");
+        ke1.addQuery("state", "IN", "3,4");
+        ke1.addNotNullQuery("primary_known_error_article");
+        ke1.query();
+        while (ke1.next()) {
+            keLinked[ke1.getUniqueValue()] = true;
+            keWithKEA++;
+        }
+    } catch(e1) {}
+
+    // Mechanism 2: m2m_kb_task (Attached Knowledge tab on problem)
+    var keWithAttached = 0;
+    try {
+        var m2mGR = new GlideAggregate("m2m_kb_task");
+        m2mGR.addAggregate("COUNT");
+        m2mGR.groupBy("task");
+        m2mGR.query();
+        while (m2mGR.next()) {
+            var taskId = m2mGR.getValue("task");
+            if (!keLinked[taskId]) {
+                // Verify it is a closed/resolved problem
+                var pCheck = new GlideRecord("problem");
+                pCheck.addQuery("sys_id", taskId);
+                pCheck.addQuery("state", "IN", "3,4");
+                pCheck.setLimit(1);
+                pCheck.query();
+                if (pCheck.next()) {
+                    keLinked[taskId] = true;
+                    keWithAttached++;
+                }
+            }
+        }
+    } catch(e2) {}
+
+    var knownErrors = Object.keys(keLinked).length;
+    var pct = Math.round((knownErrors / total) * 100);
+    var actualValue = knownErrors + " of " + total + " closed problems linked to knowledge (" + pct + "%) | " +
+        keWithKEA + " via primary_known_error_article | " +
+        keWithAttached + " via Attached Knowledge tab only (m2m_kb_task)";
+
+    if (knownErrors >= 10) {
+        return { status: "ready", actualValue: actualValue,
+            finding: knownErrors + " problems are linked to knowledge. Now Assist can surface these as AI resolution suggestions on related incidents. Continue building the KEDB for high-frequency incident patterns." };
+    } else if (knownErrors >= 1) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Only " + knownErrors + " problems linked to knowledge (target: 10+). Now Assist KEDB resolution suggestions have limited coverage. " +
+            "Two mechanisms: (1) \"Create Known Error article\" UI action populates primary_known_error_article; (2) Attached Knowledge tab (m2m_kb_task)." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "KEDB not in active use. Now Assist cannot surface known error resolution suggestions -- a key incident deflection capability. " +
+            "Link KB articles to closed problems via the \"Create Known Error article\" UI action or the Attached Knowledge tab." };
+    }
+})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>ITSM</module>
+<number>CHK0005972</number>
+<order>330</order>
+<remediation_guidance>Use the OOB "Create Known Error" UI action on resolved problems to link a Knowledge Base article. This populates the kb_knowledge field (Primary Known Error article). Do not rely on the legacy known_error boolean field — it is deprecated in modern ServiceNow instances and not used by Now Assist.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>ca03a33acfd903108935fb251d851c2b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_ca03a33acfd903108935fb251d851c2b</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[An empty KEDB means Now Assist cannot surface known error workarounds as AI resolution suggestions -- one of the highest-value AI deflection capabilities is completely inactive.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Known Error Database (KEDB) Usage&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate("problem");
+    totalGr.addQuery("state", "IN", "3,4");
+    totalGr.addAggregate("COUNT");
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable",
+            actualValue: "No closed/resolved problem records found (state IN 3,4)",
+            finding: "No qualifying closed problem records. KEDB usage cannot be assessed." };
+    }
+
+    // KEDB dual-mechanism:
+    // Mechanism 1: primary_known_error_article IS NOT EMPTY
+    // (populated by "Create Known Error article" UI action on problem form)
+    var keLinked = {};
+    var keWithKEA = 0;
+    try {
+        var ke1 = new GlideRecord("problem");
+        ke1.addQuery("state", "IN", "3,4");
+        ke1.addNotNullQuery("primary_known_error_article");
+        ke1.query();
+        while (ke1.next()) {
+            keLinked[ke1.getUniqueValue()] = true;
+            keWithKEA++;
+        }
+    } catch(e1) {}
+
+    // Mechanism 2: m2m_kb_task (Attached Knowledge tab on problem)
+    var keWithAttached = 0;
+    try {
+        var m2mGR = new GlideAggregate("m2m_kb_task");
+        m2mGR.addAggregate("COUNT");
+        m2mGR.groupBy("task");
+        m2mGR.query();
+        while (m2mGR.next()) {
+            var taskId = m2mGR.getValue("task");
+            if (!keLinked[taskId]) {
+                // Verify it is a closed/resolved problem
+                var pCheck = new GlideRecord("problem");
+                pCheck.addQuery("sys_id", taskId);
+                pCheck.addQuery("state", "IN", "3,4");
+                pCheck.setLimit(1);
+                pCheck.query();
+                if (pCheck.next()) {
+                    keLinked[taskId] = true;
+                    keWithAttached++;
+                }
+            }
+        }
+    } catch(e2) {}
+
+    var knownErrors = Object.keys(keLinked).length;
+    var pct = Math.round((knownErrors / total) * 100);
+    var actualValue = knownErrors + " of " + total + " closed problems linked to knowledge (" + pct + "%) | " +
+        keWithKEA + " via primary_known_error_article | " +
+        keWithAttached + " via Attached Knowledge tab only (m2m_kb_task)";
+
+    if (knownErrors &gt;= 10) {
+        return { status: "ready", actualValue: actualValue,
+            finding: knownErrors + " problems are linked to knowledge. Now Assist can surface these as AI resolution suggestions on related incidents. Continue building the KEDB for high-frequency incident patterns." };
+    } else if (knownErrors &gt;= 1) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Only " + knownErrors + " problems linked to knowledge (target: 10+). Now Assist KEDB resolution suggestions have limited coverage. " +
+            "Two mechanisms: (1) \"Create Known Error article\" UI action populates primary_known_error_article; (2) Attached Knowledge tab (m2m_kb_task)." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "KEDB not in active use. Now Assist cannot surface known error resolution suggestions -- a key incident deflection capability. " +
+            "Link KB articles to closed problems via the \"Create Known Error article\" UI action or the Attached Knowledge tab." };
+    }
+})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;ITSM&lt;/module&gt;
+&lt;number&gt;CHK0005972&lt;/number&gt;
+&lt;order&gt;330&lt;/order&gt;
+&lt;remediation_guidance&gt;Use the OOB "Create Known Error" UI action on resolved problems to link a Knowledge Base article. This populates the kb_knowledge field (Primary Known Error article). Do not rely on the legacy known_error boolean field — it is deprecated in modern ServiceNow instances and not used by Now Assist.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;ca03a33acfd903108935fb251d851c2b&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-843079214</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:23</sys_created_on>
+        <sys_id>40b6cd07cf9947108935fb251d851c74</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa66bb0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:23</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>88b6cd07da9947109750400b97bb1472</update_guid>
+        <update_guid_history>88b6cd07da9947109750400b97bb1472:-843079214</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">dd2f8103cf1187108935fb251d851cad</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:21</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>73078928381243808935f2753d99ca79</sys_id>
+        <sys_metadata>ca03a33acfd903108935fb251d851c2b</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_ca03a33acfd903108935fb251d851c2b</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_ca03a33acfd903108935fb251d851c2b">40b6cd07cf9947108935fb251d851c74</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:21</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

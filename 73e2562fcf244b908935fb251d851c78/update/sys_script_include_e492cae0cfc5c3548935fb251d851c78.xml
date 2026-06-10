@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_SPM</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for SPM module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_SPM</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_SPM = Class.create();
+AROPCheckLibrary_SPM.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000467: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("sn_spm_gen_ai", "sn_spm_gen_ai");
+    if (result.found) {
+        return {
+            status: "ready",
+            actualValue: "Now Assist for SPM (" + "sn_spm_gen_ai" + ") installed | version: " + result.version + " | source: " + result.table,
+            finding: "Now Assist for SPM is installed. AI-assisted demand scoring and portfolio optimization are available."
+        };
+    } else {
+        return {
+            status: "not_ready",
+            actualValue: "Now Assist for SPM (sn_spm_gen_ai) not found in sys_store_app or sys_plugins",
+            finding: "Now Assist for SPM (sn_spm_gen_ai) not found. AI-assisted demand scoring and portfolio optimization are unavailable."
+        };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000467: ' + e.message };
+        }
+    },
+    CHK0000468: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('dmn_demand');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var total = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' active demand records';
+
+    if (total >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' active demands — sufficient history for Now Assist SPM AI portfolio optimization and resource allocation recommendations.'
+        };
+    } else if (total >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' active demands (target: 50+). Now Assist SPM AI prioritization will have limited portfolio coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' active demands. Now Assist SPM requires sufficient demand history for AI prioritization and resource allocation recommendations.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000468: ' + e.message };
+        }
+    },
+    CHK0000469: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('pm_project');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active projects found',
+            finding: 'No active projects on this instance. Portfolio data quality cannot be assessed.'
+        };
+    }
+
+    var gaWithBV = new GlideAggregate('pm_project');
+    gaWithBV.addQuery('active', true);
+    gaWithBV.addQuery('business_value', '>', 0);
+    gaWithBV.addAggregate('COUNT');
+    gaWithBV.query();
+    var withBV = gaWithBV.next() ? parseInt(gaWithBV.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withBV / total) * 100);
+    var actualValue = pct + '% of active projects have business value (' + withBV + '/' + total + ')';
+
+    if (pct >= 70) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of active projects have business value scores. Now Assist SPM can perform AI-driven portfolio prioritization.'
+        };
+    } else if (pct >= 40) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active projects have business value scores (target: 70%). Now Assist SPM portfolio prioritization will have gaps for unscored projects.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: (total - withBV) + ' active projects missing business value scores (' + pct + '% populated). Now Assist SPM cannot perform meaningful AI portfolio prioritization without this data.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000469: ' + e.message };
+        }
+    },
+    CHK0000470: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('resource_plan');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active resource plans';
+
+    if (count >= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active resource plans — Now Assist SPM has sufficient resource data for AI-driven capacity planning recommendations.'
+        };
+    } else if (count >= 3) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active resource plans (target: 10+). Now Assist SPM capacity planning recommendations will have limited coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active resource plans. Now Assist SPM needs resource data for AI-driven capacity planning recommendations.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000470: ' + e.message };
+        }
+    },
+    CHK0000471: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // im_idea_core is the OOB base table for ideas in SPM — extends task
+    // covers all idea configurations regardless of which SPM module is active
+    var ga = new GlideAggregate('im_idea_core');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active idea records';
+
+    if (count >= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active ideas — Now Assist SPM has sufficient pipeline data for AI demand scoring and prioritization.'
+        };
+    } else if (count >= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active ideas (target: 20+). Now Assist SPM AI demand scoring will have limited innovation pipeline coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active ideas. Now Assist SPM uses ideas for AI-driven demand scoring — low idea volume limits innovation pipeline AI analysis.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000471: ' + e.message };
+        }
+    },
+    CHK0000472: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('pm_project');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active projects found',
+            finding: 'No active projects on this instance. Financial tracking cannot be assessed.'
+        };
+    }
+
+    var gaWithCost = new GlideAggregate('pm_project');
+    gaWithCost.addQuery('active', true);
+    gaWithCost.addQuery('planned_cost', '>', 0);
+    gaWithCost.addAggregate('COUNT');
+    gaWithCost.query();
+    var withCost = gaWithCost.next() ? parseInt(gaWithCost.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withCost / total) * 100);
+    var actualValue = pct + '% of active projects have planned cost (' + withCost + '/' + total + ')';
+
+    if (pct >= 70) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of active projects have planned cost data. Now Assist SPM can provide AI-driven financial optimization and budget variance analysis.'
+        };
+    } else if (pct >= 40) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active projects have planned cost (target: 70%). Now Assist SPM budget variance analysis will have gaps for unfunded projects.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: (total - withCost) + ' active projects missing planned cost data (' + pct + '% populated). Now Assist SPM cannot perform meaningful AI budget variance or ROI analysis without financial data.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000472: ' + e.message };
+        }
+    },
+    CHK0000473: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("enterprise_strategy");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table enterprise_strategy not found", finding: "Enterprise Strategy table is not available. Verify the Strategic Portfolio Management plugin is active." };
+    }
+    var ga = new GlideAggregate("enterprise_strategy");
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " enterprise strategic objectives";
+    if (count >= 3) {
+        return { status: "ready", actualValue: actualValue, finding: count + " enterprise strategic objectives — Now Assist SPM can score portfolio decisions against strategic priorities using AI." };
+    } else if (count >= 1) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " strategic objective(s) defined (target: 3+). Now Assist SPM portfolio alignment recommendations will have a narrow strategic frame." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "No strategic objectives defined. Now Assist SPM requires strategic context for AI portfolio alignment recommendations." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000473: ' + e.message };
+        }
+    },
+    CHK0000474: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("pm_milestone");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table pm_milestone not found", finding: "Project Milestone table (pm_milestone) is not available. Verify the Project Management plugin is active." };
+    }
+    var gaTotal = new GlideAggregate("pm_milestone");
+    gaTotal.addQuery("active", true);
+    gaTotal.addAggregate("COUNT");
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0;
+    if (total === 0) {
+        return { status: "not_applicable", actualValue: "No active milestones found", finding: "No active milestones on this instance. Milestone tracking cannot be assessed." };
+    }
+    var today = new GlideDate();
+    today.setValue(gs.nowDateTime());
+    var todayStr = today.getValue();
+    var gaLate = new GlideAggregate("pm_milestone");
+    gaLate.addQuery("active", true);
+    gaLate.addQuery("end_date", "<", todayStr);
+    gaLate.addQuery("percent_complete", "<", 100);
+    gaLate.addAggregate("COUNT");
+    gaLate.query();
+    var lateCount = gaLate.next() ? parseInt(gaLate.getAggregate("COUNT")) : 0;
+    var latePct = Math.round((lateCount / total) * 100);
+    var actualValue = total + " active milestones | " + lateCount + " overdue (" + latePct + "%)";
+    if (total >= 20 && latePct <= 10) {
+        return { status: "ready", actualValue: actualValue, finding: total + " active milestones with only " + latePct + "% overdue. Now Assist SPM has healthy schedule data for AI delivery prediction and risk identification." };
+    } else if (latePct <= 25) {
+        return { status: "needs_attention", actualValue: actualValue, finding: lateCount + " overdue milestones (" + latePct + "% of active). Now Assist SPM schedule risk predictions will reflect existing delivery delays." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: lateCount + " overdue milestones (" + latePct + "% of active). High overdue rate indicates schedule data quality issues that will reduce Now Assist SPM AI delivery prediction accuracy." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000474: ' + e.message };
+        }
+    },
+    CHK0000475: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // pm_project.state is INTEGER: 3=Closed Complete, 4=Closed Incomplete
+    // pm_project.state INTEGER: 3=Closed Complete, 4=Closed Incomplete, 7=Closed Skipped
+    var gaTotal = new GlideAggregate('pm_project');
+    gaTotal.addQuery('state', 'IN', '3,4,7');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed projects found',
+            finding: 'No closed projects found on this instance. Benefits realization tracking cannot be assessed.'
+        };
+    }
+
+    var gaWithBenefit = new GlideAggregate('pm_project');
+    gaWithBenefit.addQuery('state', 'IN', '3,4,7');
+    gaWithBenefit.addQuery('actual_benefit', '>', 0);
+    gaWithBenefit.addAggregate('COUNT');
+    gaWithBenefit.query();
+    var withBenefit = gaWithBenefit.next() ? parseInt(gaWithBenefit.getAggregate('COUNT')) : 0;
+
+    var actualValue = withBenefit + ' of ' + total + ' closed projects with benefits tracked';
+
+    if (withBenefit >= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: withBenefit + ' closed projects with benefits data. Now Assist SPM can validate AI portfolio recommendations with historical ROI.'
+        };
+    } else if (withBenefit >= 3) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + withBenefit + ' closed projects have benefits tracked (target: 10+). Now Assist SPM historical ROI validation will have limited data.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + withBenefit + ' closed projects have benefits data. Now Assist SPM validates AI portfolio recommendations with historical ROI — insufficient data limits AI accuracy.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000475: ' + e.message };
+        }
+    },
+    CHK0000476: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var matched = {};
+
+    function collectMatches(keyword) {
+        var gr = new GlideRecord('pa_indicators');
+        gr.addQuery('active', true);
+        gr.addQuery('name', 'CONTAINS', keyword);
+        gr.query();
+        while (gr.next()) {
+            matched[gr.getUniqueValue()] = true;
+        }
+    }
+
+    collectMatches('project');
+    collectMatches('portfolio');
+    collectMatches('demand');
+
+    var count = Object.keys(matched).length;
+    var actualValue = count + ' active SPM PA indicators';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active SPM PA indicators — Now Assist SPM can provide trend-based portfolio AI insights.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active SPM PA indicator(s) (target: 3+). Now Assist SPM trend-based insights will be limited — point-in-time analysis only for uncovered metrics.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active SPM PA indicators found. Now Assist SPM uses PA trend data for predictive portfolio insights — without PA data AI can only provide point-in-time analysis.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000476: ' + e.message };
+        }
+    },
+    CHK0000477: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script');
+    ga.addQuery('collection', 'IN', 'pm_project,dmn_demand,resource_plan,pm_milestone');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom Business Rules on SPM tables';
+
+    if (count <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low SPM customization risk (' + count + ' custom BRs). Now Assist SPM AI workflow automation is unlikely to encounter conflicts.'
+        };
+    } else if (count <= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom BRs on SPM tables. Moderate customization risk — test Now Assist SPM in sub-production before enabling in production.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High SPM customization risk: ' + count + ' custom BRs on core SPM tables. Now Assist SPM AI workflow automation may conflict with existing customizations.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000477: ' + e.message };
+        }
+    },
+    CHK0000478: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // rm_story = user stories (OOB SPM agile table)
+    // rm_scrum_task = tasks within stories — not the right grain for this check
+    var gaStories = new GlideAggregate('rm_story');
+    gaStories.addQuery('active', true);
+    gaStories.addAggregate('COUNT');
+    gaStories.query();
+    var stories = gaStories.next() ? parseInt(gaStories.getAggregate('COUNT')) : 0;
+
+    var gaSprints = new GlideAggregate('rm_sprint');
+    gaSprints.addQuery('active', true);
+    gaSprints.addAggregate('COUNT');
+    gaSprints.query();
+    var sprints = gaSprints.next() ? parseInt(gaSprints.getAggregate('COUNT')) : 0;
+
+    var actualValue = stories + ' active stories | ' + sprints + ' active sprints';
+
+    if (stories >= 50 && sprints >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: stories + ' active stories and ' + sprints + ' active sprints. Now Assist SPM has sufficient agile data for AI velocity prediction and capacity planning.'
+        };
+    } else if (stories >= 20 || sprints >= 2) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Partial agile data (' + stories + ' stories, ' + sprints + ' sprints). Targets: 50+ stories, 5+ sprints. Now Assist SPM velocity prediction will have reduced accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Insufficient agile data (' + stories + ' stories, ' + sprints + ' sprints). Now Assist SPM uses velocity data for AI capacity planning — insufficient data for meaningful recommendations.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000478: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_SPM'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:02:31</sys_created_on>
+        <sys_id>e492cae0cfc5c3548935fb251d851c78</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>AROPCheckLibrary_SPM</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_e492cae0cfc5c3548935fb251d851c78</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

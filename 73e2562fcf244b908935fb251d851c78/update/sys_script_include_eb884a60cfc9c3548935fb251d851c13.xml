@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_PLATFORM</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for PLATFORM module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_PLATFORM</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_PLATFORM = Class.create();
+AROPCheckLibrary_PLATFORM.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000479: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    // Check sys_store_app by scope first
+    var saGR = new GlideRecord("sys_store_app");
+    saGR.addQuery("scope", "now_assist_core");
+    saGR.setLimit(1);
+    saGR.query();
+    if (saGR.next()) {
+        return { status: "ready", actualValue: "Now Assist Core found in sys_store_app (scope: now_assist_core) v" + saGR.getValue("version"), finding: "Now Assist Core is installed. Platform-wide AI features are available." };
+    }
+    // Fallback: sys_plugins by name (plugin_id is null for store apps)
+    var spGR = new GlideRecord("sys_plugins");
+    spGR.addQuery("name", "Now Assist Core");
+    spGR.addQuery("active", true);
+    spGR.setLimit(1);
+    spGR.query();
+    if (spGR.next()) {
+        return { status: "ready", actualValue: "Now Assist Core found in sys_plugins (name match) v" + spGR.getValue("version"), finding: "Now Assist Core is installed. Platform-wide AI features are available." };
+    }
+    return { status: "blocker", actualValue: "Now Assist Core not found in sys_store_app (scope: now_assist_core) or sys_plugins.", finding: "Now Assist Core not installed. Required for all Now Assist and AI Agent features across all modules." };
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000479: ' + e.message };
+        }
+    },
+    CHK0000480: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var core = checkPlugin("now_assist_core", "now_assist_core");
+
+    // Functional fallback: check sys_scope if not found in store/plugins
+    if (!core.found) {
+        var gr = new GlideRecord("sys_scope");
+        gr.addQuery("scope", "now_assist_core");
+        gr.addQuery("active", true);
+        gr.setLimit(1);
+        gr.query();
+        if (gr.next()) {
+            core.found = true;
+            core.table = "sys_scope";
+        }
+    }
+
+    // Count all now_assist store apps for context
+    var totalNA = 0;
+    try {
+        var naGA = new GlideAggregate("sys_store_app");
+        naGA.addQuery("scope", "CONTAINS", "now_assist");
+        naGA.addAggregate("COUNT");
+        naGA.query();
+        totalNA = naGA.next() ? parseInt(naGA.getAggregate("COUNT")) || 0 : 0;
+    } catch(e) {}
+
+    var actualValue = "now_assist_core: " + (core.found ? "active (source: " + core.table + ")" : "inactive") +
+                      " | " + totalNA + " total Now Assist apps installed";
+
+    if (core.found) {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Now Assist Core is active (" + totalNA + " Now Assist app(s) total). Core prerequisite gate satisfied -- module-specific Now Assist capabilities can be enabled." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Now Assist Core (now_assist_core) is not active. Now Assist Core must be installed and active before any AI capability can function." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000480: ' + e.message };
+        }
+    },
+    CHK0000481: function() {
+        try {
+            return (function(){
+var gr=new GlideRecord("sys_plugins");
+gr.addEncodedQuery("name LIKEIntegration Hub^active=true");
+gr.query();
+var n=gr.getRowCount();
+return{status:n>=1?"ready":"needs_attention",actualValue:n+" Integration Hub plugins active",finding:n<1?"Integration Hub is not active. AI Agents cannot perform external system automation without active Integration Hub spokes.":"Integration Hub is active -- AI Agents can leverage spokes for external automation."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000481: ' + e.message };
+        }
+    },
+    CHK0000482: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_hub_flow');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active Flow Designer flows';
+
+    if (count >= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active Flow Designer flows. AI Agents have a strong orchestration foundation — Flow Designer is the exclusive execution layer for AI Agent automation.'
+        };
+    } else if (count >= 3) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active Flow Designer flows (target: 10+). Limited flow coverage restricts AI Agent operational scope — migrate legacy Workflow Engine processes to Flow Designer.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active Flow Designer flows. AI Agents exclusively orchestrate through Flow Designer — without flows, AI Agent automation cannot execute.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000482: ' + e.message };
+        }
+    },
+    CHK0000483: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Use functional evidence — ml_solution table existing and being valid
+    // means PI is installed regardless of scope naming conventions
+    var testGr = new GlideRecord('ml_solution');
+    testGr.setLimit(1);
+    testGr.query();
+    var piActive = testGr.isValid();
+
+    if (piActive) {
+        return {
+            status: 'ready',
+            actualValue: 'Predictive Intelligence is active',
+            finding: 'Predictive Intelligence is active. AI-driven routing, similarity matching, and classification recommendations are available for Now Assist.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: 'Predictive Intelligence not found or inactive',
+            finding: 'Predictive Intelligence is not active. PI powers Now Assist similarity matching, classification, and AI-driven routing — all of these capabilities are unavailable without PI.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000483: ' + e.message };
+        }
+    },
+    CHK0000484: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('ml_solution');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active PI solutions found',
+            finding: 'No active Predictive Intelligence solutions found. Create and train PI solutions for incident categorization, routing, and similarity before enabling Now Assist.'
+        };
+    }
+
+    var gaTrained = new GlideAggregate('ml_solution');
+    gaTrained.addQuery('active', true);
+    gaTrained.addQuery('state', 'trained');
+    gaTrained.addAggregate('COUNT');
+    gaTrained.query();
+    var trained = gaTrained.next() ? parseInt(gaTrained.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((trained / total) * 100);
+    var actualValue = trained + ' of ' + total + ' active PI solutions trained (' + pct + '%)';
+
+    if (trained >= total) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'All ' + trained + ' active PI solutions are trained. Now Assist routing and classification recommendations have full AI model coverage.'
+        };
+    } else if (trained >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: (total - trained) + ' of ' + total + ' active PI solutions are untrained. Untrained solutions produce zero AI recommendations — Now Assist routing and classification will have gaps.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'None of the ' + total + ' active PI solutions are trained. Now Assist routing and classification rely entirely on trained PI models — currently zero AI recommendations can be generated.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000484: ' + e.message };
+        }
+    },
+    CHK0000485: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('pa_indicators');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active PA indicators';
+
+    if (count >= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active PA indicators. Now Assist has sufficient historical trend baseline for predictive scoring and anomaly detection.'
+        };
+    } else if (count >= 3) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active PA indicators (target: 10+). Limited PA coverage reduces Now Assist trend analysis depth — configure indicators for key ITSM metrics.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active PA indicators. Insufficient historical trend baseline — Now Assist predictive scoring and anomaly detection will default to point-in-time analysis only.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000485: ' + e.message };
+        }
+    },
+    CHK0000486: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Find the most recent platform upgrade (filter for glide- prefix = platform release)
+    var gr = new GlideRecord('sys_upgrade_history');
+    gr.addQuery('to_version', 'STARTSWITH', 'glide-');
+    gr.orderByDesc('sys_created_on');
+    gr.setLimit(1);
+    gr.query();
+
+    if (!gr.next()) {
+        return {
+            status: 'needs_attention',
+            actualValue: 'No platform upgrade history found',
+            finding: 'No platform upgrade history found. Cannot determine instance release currency for Now Assist compatibility.'
+        };
+    }
+
+    var version = gr.getValue('to_version') || '';
+    var vLower = version.toLowerCase();
+    var actualValue = 'Version: ' + version;
+
+    // Now Assist full capability: Zurich and newer
+    // Now Assist partial: Xanadu, Washington, Vancouver
+    // Now Assist not supported: Utah and older
+    var isCurrentGen = vLower.indexOf('zurich') > -1 || vLower.indexOf('yokohama') > -1 ||
+                       vLower.indexOf('2025') > -1 || vLower.indexOf('2026') > -1;
+    var isPreviousGen = vLower.indexOf('xanadu') > -1 || vLower.indexOf('washington') > -1 ||
+                        vLower.indexOf('vancouver') > -1;
+
+    if (isCurrentGen) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Instance is on a current-generation release (' + version.split('__')[0] + '). Full Now Assist and AI Agent capabilities are available.'
+        };
+    } else if (isPreviousGen) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Instance is on a previous-generation release (' + version.split('__')[0] + '). Some Now Assist features may be unavailable. Plan upgrade to Zurich or later for full AI capability.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Instance may be on an older release (' + version.split('__')[0] + '). Now Assist requires Xanadu or newer — upgrade is required before AI capabilities can be fully enabled.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000486: ' + e.message };
+        }
+    },
+    CHK0000487: function() {
+        try {
+            return (function(){
+var gr=new GlideRecord("ecc_agent");
+gr.addQuery("status","Up");
+gr.query();
+var up=gr.getRowCount();
+var gr2=new GlideRecord("ecc_agent");
+gr2.query();
+var total=gr2.getRowCount();
+return{status:up>=1?"ready":"needs_attention",actualValue:total+" MID Servers | "+up+" Up",finding:up<1?"No MID Servers are Up. AI Agent-triggered discovery probes and on-premise integrations will fail without available MID Servers.":""+up+" MID Servers are Up and available for AI Agent execution."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000487: ' + e.message };
+        }
+    },
+    CHK0000488: function() {
+        try {
+            return (function(){
+var gr=new GlideRecord("sys_update_set");
+gr.addQuery("state","in progress");
+gr.query();
+var inProgress=gr.getRowCount();
+return{status:inProgress>=1?"ready":"needs_attention",actualValue:inProgress+" update sets in progress",finding:inProgress<1?"No update sets currently in progress. All customizations should be tracked in update sets to prevent conflicts with Now Assist configurations during upgrades.":""+inProgress+" update sets in progress -- customization tracking is active."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000488: ' + e.message };
+        }
+    },
+    CHK0000489: function() {
+        try {
+            return (function(){
+var gr=new GlideRecord("sys_email_account");
+gr.addQuery("active",true);
+gr.addQuery("type","smtp-sender");
+gr.query();
+var n=gr.getRowCount();
+return{status:n>=1?"ready":"needs_attention",actualValue:n+" active SMTP email accounts",finding:n<1?"No active SMTP email accounts configured. AI Agents cannot send notifications without outbound email configuration.":""+n+" active SMTP accounts configured -- AI Agent notifications can be delivered."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000489: ' + e.message };
+        }
+    },
+    CHK0000490: function() {
+        try {
+            return (function(){
+var gr=new GlideRecord("sys_security_acl");
+gr.addEncodedQuery("nameINincident,task,change_request,cmdb_ci");
+gr.query();
+var n=gr.getRowCount();
+return{status:n>=10?"ready":"needs_attention",actualValue:n+" ACLs on core AI tables",finding:n<10?"Only "+n+" ACLs found on core AI tables (incident, task, change_request, cmdb_ci). Proper ACL coverage is required before production AI Agent enablement.":""+n+" ACLs protect core AI tables -- access control coverage is adequate."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000490: ' + e.message };
+        }
+    },
+    CHK0000491: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sp_portal');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active Service Portal(s)';
+
+    if (count >= 1) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active Service Portal(s) configured. Now Assist AI Search and Virtual Agent can deliver self-service AI features to end users.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active Service Portals configured. Now Assist AI Search and Virtual Agent require an active portal to deliver self-service AI features to end users.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000491: ' + e.message };
+        }
+    },
+    CHK0000492: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("samp_sw_license_metric");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table samp_sw_license_metric not found", finding: "License Metric table is not available. Verify the SAM plugin is active." };
+    }
+    var matched = {};
+    function collectMatches(keyword) {
+        var gr = new GlideRecord("samp_sw_license_metric");
+        gr.addQuery("name", "CONTAINS", keyword);
+        gr.query();
+        while (gr.next()) { matched[gr.getUniqueValue()] = true; }
+    }
+    collectMatches("now_assist");
+    collectMatches("NowAssist");
+    collectMatches("now assist");
+    var count = Object.keys(matched).length;
+    var actualValue = count + " Now Assist license metric record(s) found";
+    if (count > 0) {
+        return { status: "ready", actualValue: actualValue, finding: count + " Now Assist license metric record(s) found. Confirm specific module entitlements (ITSM, ITOM, HRSD, CSM, etc.) with your ServiceNow account team." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "No Now Assist license metric records found. Now Assist is entitlement-gated — confirm SKU entitlement with your ServiceNow account team before beginning configuration." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000492: ' + e.message };
+        }
+    },
+    CHK0000493: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaActive = new GlideAggregate('sysauto_script');
+    gaActive.addQuery('active', true);
+    gaActive.addAggregate('COUNT');
+    gaActive.query();
+    var active = gaActive.next() ? parseInt(gaActive.getAggregate('COUNT')) : 0;
+
+    var gaErrored = new GlideAggregate('sys_trigger');
+    gaErrored.addQuery('state', 'error');
+    gaErrored.addAggregate('COUNT');
+    gaErrored.query();
+    var errored = gaErrored.next() ? parseInt(gaErrored.getAggregate('COUNT')) : 0;
+
+    var actualValue = active + ' active scheduled jobs | ' + errored + ' in error state';
+
+    if (errored === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'All scheduled jobs are healthy. Background data quality processes (CMDB Health, PI Training, Discovery) are running successfully — Now Assist AI has current data to work with.'
+        };
+    } else if (errored <= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: errored + ' scheduled job(s) are in error state. Failed jobs may silently degrade CMDB health scores, PI model training, and other data quality processes that Now Assist depends on.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: errored + ' scheduled jobs are in error state. High error rate indicates systemic scheduled job failures — background data quality processes that Now Assist depends on are likely degraded.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000493: ' + e.message };
+        }
+    },
+    CHK0000494: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Check sys_scope for data classification plugin
+    var gr = new GlideRecord('sys_scope');
+    gr.addQuery('scope', 'CONTAINS', 'data_classification');
+    gr.addQuery('active', true);
+    gr.setLimit(1);
+    gr.query();
+    var active = gr.next();
+
+    // Fallback: check via plugin name
+    if (!active) {
+        var ga = new GlideAggregate('sys_plugins');
+        ga.addQuery('name', 'CONTAINS', 'Data Classification');
+        ga.addQuery('active', true);
+        ga.addAggregate('COUNT');
+        ga.query();
+        active = ga.next() && parseInt(ga.getAggregate('COUNT')) >= 1;
+    }
+
+    if (active) {
+        return {
+            status: 'ready',
+            actualValue: 'Data Classification is active',
+            finding: 'Data Classification is active. Sensitive data controls are in place — Now Assist will respect classification labels when generating AI summaries and search results.'
+        };
+    } else {
+        return {
+            status: 'needs_attention',
+            actualValue: 'Data Classification not found or inactive',
+            finding: 'Data Classification is not active. In regulated environments, data classification is required to prevent Now Assist from including PII/PCI/PHI in AI prompts and generated summaries. Assess whether this is required for your compliance posture.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000494: ' + e.message };
+        }
+    },
+    CHK0000495: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_scope_privilege');
+    ga.addQuery('target_scope.name', 'sn_now_assist');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' cross-scope access grants to sn_now_assist';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' cross-scope access grants configured for Now Assist. Now Assist can read custom table data needed for accurate AI context and recommendations.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' cross-scope access grant(s) to Now Assist (target: 5+). Missing grants may prevent Now Assist from reading custom table data needed for accurate AI context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No cross-scope access grants to Now Assist scope. Now Assist cannot read custom table data without cross-scope access — AI context will be limited to OOB tables only.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000495: ' + e.message };
+        }
+    },
+    CHK0000496: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_user_has_role');
+    ga.addQuery('role.name', 'sn_now_assist.admin');
+    ga.addQuery('inherited', false);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' user(s) with sn_now_assist.admin role';
+
+    if (count >= 1) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' user(s) have the sn_now_assist.admin role. Now Assist configuration access is in place — administrators can configure prompts and AI interaction settings.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No users have the sn_now_assist.admin role. This role is required to configure Now Assist prompts and AI interaction settings — without it no Now Assist setup work can proceed.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000496: ' + e.message };
+        }
+    },
+    CHK0000497: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var ga = new GlideAggregate('sys_cs_conversation');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' VA/Now Assist conversation records in last 90 days';
+
+    if (count >= 1000) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' conversation records in the last 90 days. Now Assist has sufficient interaction history for conversational learning and response relevance improvement.'
+        };
+    } else if (count >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' conversation records in the last 90 days (target: 1,000+). Allow VA and Now Assist interactions to accumulate before expecting optimal AI response quality.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' conversation records in the last 90 days. Insufficient interaction history — Now Assist conversational AI has minimal data to learn from. Drive VA and Now Assist adoption first.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000497: ' + e.message };
+        }
+    },
+    CHK0000498: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaBR = new GlideAggregate('sys_script');
+    gaBR.addQuery('collection', 'IN', 'incident,task,change_request');
+    gaBR.addQuery('active', true);
+    gaBR.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaBR.addAggregate('COUNT');
+    gaBR.query();
+    var brCount = gaBR.next() ? parseInt(gaBR.getAggregate('COUNT')) : 0;
+
+    var gaCS = new GlideAggregate('sys_script_client');
+    gaCS.addQuery('table', 'IN', 'incident,task,change_request');
+    gaCS.addQuery('active', true);
+    gaCS.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaCS.addAggregate('COUNT');
+    gaCS.query();
+    var csCount = gaCS.next() ? parseInt(gaCS.getAggregate('COUNT')) : 0;
+
+    var risk = brCount + csCount;
+    var actualValue = 'Risk score: ' + risk + ' (' + brCount + ' BRs + ' + csCount + ' client scripts on core AI tables)';
+
+    if (risk <= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Customization risk score is ' + risk + ' — within acceptable range for Now Assist and AI Agent enablement.'
+        };
+    } else if (risk <= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Customization risk score is ' + risk + ' (target: ≤50). High customization density on core AI tables creates conflict risk with Now Assist and AI Agent operations — review before enablement.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Customization risk score is ' + risk + '. Very high customization density on incident, task, and change_request creates significant risk of Now Assist and AI Agent conflicts — remediate before enablement.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000498: ' + e.message };
+        }
+    },
+    CHK0000499: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("ais_search_profile");
+    if (!t.isValid()) {
+        return { status: "not_applicable", actualValue: "AI Search profile table not found", finding: "AI Search (ais_search_profile) is not installed on this instance. AI Search may not be part of the current entitlement or configuration." };
+    }
+    var ga = new GlideAggregate("ais_search_profile");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active AI Search profile(s)";
+    if (count >= 1) return { status: "ready", actualValue: actualValue, finding: count + " active AI Search profile(s) configured. Now Assist AI Search is set up to return results to end users." };
+    return { status: "value_blocker", actualValue: actualValue, finding: "No active AI Search profiles configured. Now Assist AI Search requires at least one active search profile with indexed sources — without it AI Search returns no results to end users." };
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000499: ' + e.message };
+        }
+    },
+    CHK0000500: function() {
+        try {
+            return ((function() {
+    var ecPro = new GlideRecord("sys_store_app");
+    ecPro.addQuery("scope", "sn_hr_le");
+    ecPro.setLimit(1);
+    ecPro.query();
+    if (ecPro.next()) {
+        return { status: "ready", actualValue: "Employee Center Pro (sn_hr_le) is active", finding: "Employee Center Pro is active. AI-powered employee self-service experiences including Now Assist knowledge search and HR case deflection are available." };
+    }
+    var ec = new GlideRecord("sys_store_app");
+    ec.addQuery("scope", "sn_hr_sp");
+    ec.setLimit(1);
+    ec.query();
+    if (ec.next()) {
+        return { status: "needs_attention", actualValue: "Employee Center (sn_hr_sp) is active but Employee Center Pro is not", finding: "Employee Center is active but Employee Center Pro is not. Now Assist AI features require Employee Center Pro for full AI-powered employee self-service capabilities." };
+    }
+    return { status: "not_ready", actualValue: "Neither Employee Center nor Employee Center Pro is active", finding: "Neither Employee Center nor Employee Center Pro is active. AI-powered employee self-service experiences are unavailable without Employee Center." };
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000500: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_PLATFORM'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:28:40</sys_created_on>
+        <sys_id>eb884a60cfc9c3548935fb251d851c13</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>AROPCheckLibrary_PLATFORM</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_eb884a60cfc9c3548935fb251d851c13</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

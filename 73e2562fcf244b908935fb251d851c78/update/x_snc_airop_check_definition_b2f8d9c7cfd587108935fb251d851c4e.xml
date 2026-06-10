@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Self-service issue configurations enable employees to use AI-guided workflows to resolve their own device issues before contacting the service desk. Without these, a key DEX AI deflection capability is completely unavailable.]]></ai_justification>
+        <check_name>Close Code Consistency</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('incident');
+    gaTotal.addQuery('state', 'IN', '6,7');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed incidents in last 12 months',
+            finding: 'No closed incidents found in the last 12 months. Close code consistency cannot be assessed.'
+        };
+    }
+
+    var gaWithCode = new GlideAggregate('incident');
+    gaWithCode.addQuery('state', 'IN', '6,7');
+    gaWithCode.addQuery('closed_at', '>=', cutoff.getValue());
+    gaWithCode.addQuery('close_code', '!=', '');
+    gaWithCode.addAggregate('COUNT');
+    gaWithCode.query();
+    var withCode = gaWithCode.next() ? parseInt(gaWithCode.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withCode / total) * 100);
+    var actualValue = pct + '% of closed incidents have close_code (last 12 months, ' + withCode + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed incidents have a close code. Now Assist ITSM has consistent closure classification for AI pattern analysis.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have a close code (target: 80%). Inconsistent closure classification reduces Now Assist AI pattern accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed incidents have a close code. Now Assist ITSM cannot distinguish resolution patterns without consistent close code data.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000327</number>
+        <order>130</order>
+        <remediation_guidance>Standardize close codes and enforce selection via UI policy at incident closure. Target: 80%+ of closed incidents with close code in the trailing 12 months.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>b2f8d9c7cfd587108935fb251d851c4e</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Close Code Consistency</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_b2f8d9c7cfd587108935fb251d851c4e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

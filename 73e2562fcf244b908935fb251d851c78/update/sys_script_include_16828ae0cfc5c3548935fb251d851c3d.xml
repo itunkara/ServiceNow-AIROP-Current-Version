@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_FIELD_SERVICE</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for FIELD_SERVICE module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_FIELD_SERVICE</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_FIELD_SERVICE = Class.create();
+AROPCheckLibrary_FIELD_SERVICE.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000428: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("sn_fsm_gen_ai", "sn_fsm_gen_ai");
+    if (result.found) {
+        return {
+            status: "ready",
+            actualValue: "Now Assist for FSM (" + "sn_fsm_gen_ai" + ") installed | version: " + result.version + " | source: " + result.table,
+            finding: "Now Assist for Field Service Management is installed. AI-assisted work order summarization and technician recommendations are available."
+        };
+    } else {
+        return {
+            status: "not_ready",
+            actualValue: "Now Assist for FSM (sn_fsm_gen_ai) not found in sys_store_app or sys_plugins",
+            finding: "Now Assist for Field Service Management (sn_fsm_gen_ai) not found. All Now Assist FSM AI capabilities are unavailable."
+        };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000428: ' + e.message };
+        }
+    },
+    CHK0000429: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var ga = new GlideAggregate('wm_order');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var total = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' work orders created in last 12 months';
+
+    if (total >= 500) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' work orders in the last 12 months. Sufficient history for Now Assist FSM AI pattern learning and scheduling optimization.'
+        };
+    } else if (total >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' work orders in the last 12 months (target: 500+). Now Assist FSM AI scheduling and pattern recommendations will have limited historical coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' work orders in the last 12 months. Insufficient work order history for Now Assist FSM AI pattern learning and scheduling optimization.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000429: ' + e.message };
+        }
+    },
+    CHK0000430: function() {
+        try {
+            return (function() {
+    var skillTable = new GlideRecord("cmn_skill");
+    if (!skillTable.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table cmn_skill not found", finding: "Skills table (cmn_skill) is not available on this instance. Verify the Skills plugin is active." };
+    }
+    var gaSkills = new GlideAggregate("cmn_skill");
+    gaSkills.addQuery("active", true);
+    gaSkills.addAggregate("COUNT");
+    gaSkills.query();
+    var skills = gaSkills.next() ? parseInt(gaSkills.getAggregate("COUNT")) : 0;
+    var agentSkills = 0;
+    var userSkillTable = new GlideRecord("sys_user_has_skill");
+    if (userSkillTable.isValid()) {
+        var gaAssigned = new GlideAggregate("sys_user_has_skill");
+        gaAssigned.addAggregate("COUNT");
+        gaAssigned.query();
+        agentSkills = gaAssigned.next() ? parseInt(gaAssigned.getAggregate("COUNT")) : 0;
+    }
+    var actualValue = skills + " skill definitions | " + agentSkills + " agent skill assignments";
+    if (skills >= 10 && agentSkills >= 20) {
+        return { status: "ready", actualValue: actualValue, finding: skills + " skills with " + agentSkills + " agent assignments. Now Assist FSM has comprehensive skills data for competency-matched AI dispatch." };
+    } else if (skills >= 3 || agentSkills >= 5) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Partial skills configuration (" + skills + " skills, " + agentSkills + " assignments). Targets: 10+ skills, 20+ assignments. Now Assist FSM skill-based AI dispatch will have limited matching accuracy." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Insufficient skills configuration (" + skills + " skills, " + agentSkills + " assignments). Now Assist FSM cannot perform competency-matched AI dispatch without defined skills and agent assignments." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000430: ' + e.message };
+        }
+    },
+    CHK0000431: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("wm_territory");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table wm_territory not found", finding: "FSM Territory table (wm_territory) is not available. Verify the Field Service Management plugin is active." };
+    }
+    var ga = new GlideAggregate("wm_territory");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active field service territories";
+    if (count >= 5) {
+        return { status: "ready", actualValue: actualValue, finding: count + " active territories. Now Assist FSM can optimize scheduling within defined geographic coverage areas." };
+    } else if (count >= 1) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " active territory(ies) (target: 5+). Now Assist FSM geographic scheduling optimization will have limited coverage differentiation." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "No active territories configured. Now Assist FSM cannot account for geographic zones in AI scheduling." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000431: ' + e.message };
+        }
+    },
+    CHK0000432: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // wm_order.state is INTEGER: 3=Closed Complete, 4=Closed Incomplete
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('wm_order');
+    gaTotal.addQuery('state', 'IN', '3,4');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed work orders in last 12 months',
+            finding: 'No closed work orders found in the last 12 months. Resolution note coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('wm_order');
+    gaMissing.addQuery('state', 'IN', '3,4');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('close_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed work orders have resolution notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed work orders have resolution notes. Now Assist FSM has strong resolution context for AI knowledge suggestions and similar work order matching.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed work orders have resolution notes (target: 80%). Now Assist FSM AI knowledge suggestions will have reduced accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: missing + ' closed work orders missing resolution notes (' + pct + '% populated). Critical gap — Now Assist FSM cannot generate meaningful knowledge suggestions without resolution context.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000432: ' + e.message };
+        }
+    },
+    CHK0000433: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('wm_order');
+    gaTotal.addQuery('state', 'IN', '3,4');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed work orders in last 12 months',
+            finding: 'No closed work orders found in the last 12 months. Location data coverage cannot be assessed.'
+        };
+    }
+
+    var gaWithLoc = new GlideAggregate('wm_order');
+    gaWithLoc.addQuery('state', 'IN', '3,4');
+    gaWithLoc.addQuery('closed_at', '>=', cutoff.getValue());
+    gaWithLoc.addQuery('location', '!=', '');
+    gaWithLoc.addAggregate('COUNT');
+    gaWithLoc.query();
+    var withLoc = gaWithLoc.next() ? parseInt(gaWithLoc.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withLoc / total) * 100);
+    var actualValue = pct + '% of closed work orders have location (last 12 months, ' + withLoc + '/' + total + ')';
+
+    if (pct >= 90) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of work orders have location data. Now Assist FSM can optimize travel time and geographic dispatch using AI.'
+        };
+    } else if (pct >= 70) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of work orders have location data (target: 90%). Now Assist FSM travel time optimization will be incomplete for work orders without location.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of work orders have location data. Now Assist FSM travel time optimization and geographic AI dispatch are not possible without location on work orders.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000433: ' + e.message };
+        }
+    },
+    CHK0000434: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('wm_order');
+    gaTotal.addQuery('state', 'IN', '3,4');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed work orders in last 12 months',
+            finding: 'No closed work orders found in the last 12 months. Asset linkage cannot be assessed.'
+        };
+    }
+
+    var gaWithAsset = new GlideAggregate('wm_order');
+    gaWithAsset.addQuery('state', 'IN', '3,4');
+    gaWithAsset.addQuery('closed_at', '>=', cutoff.getValue());
+    gaWithAsset.addQuery('asset', '!=', '');
+    gaWithAsset.addAggregate('COUNT');
+    gaWithAsset.query();
+    var withAsset = gaWithAsset.next() ? parseInt(gaWithAsset.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withAsset / total) * 100);
+    var actualValue = pct + '% of closed work orders have asset linked (last 12 months, ' + withAsset + '/' + total + ')';
+
+    if (pct >= 70) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of work orders are linked to assets. Now Assist FSM can provide asset-informed AI troubleshooting recommendations based on maintenance history.'
+        };
+    } else if (pct >= 40) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of work orders have an asset linked (target: 70%). Now Assist FSM asset-informed AI recommendations will have limited coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of work orders have an asset linked. Now Assist FSM cannot provide asset-specific AI troubleshooting without asset linkage.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000434: ' + e.message };
+        }
+    },
+    CHK0000435: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gr = new GlideRecord('sys_scope');
+    gr.addQuery('scope', 'sn_fsm_disp_wrkspc');
+    gr.addQuery('active', true);
+    gr.setLimit(1);
+    gr.query();
+    var active = gr.next();
+
+    if (active) {
+        return {
+            status: 'ready',
+            actualValue: 'FSM Configurable Dispatcher Workspace (sn_fsm_disp_wrkspc) is active',
+            finding: 'FSM Dispatcher Workspace is active. Now Assist FSM AI scheduling recommendations and dispatch suggestions are visible to dispatchers.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: 'FSM Dispatcher Workspace (sn_fsm_disp_wrkspc) not found or inactive',
+            finding: 'FSM Dispatcher Workspace is not active. Now Assist FSM AI scheduling recommendations are not visible to dispatchers without the Dispatcher Workspace.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000435: ' + e.message };
+        }
+    },
+    CHK0000436: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // alm_stockroom is the OOB stockroom/inventory table for FSM parts
+    var ga = new GlideAggregate('alm_stockroom');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active stockroom/inventory locations';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active stockroom locations. Now Assist FSM can optimize scheduling based on parts availability across inventory locations.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active stockroom location(s) (target: 5+). Now Assist FSM parts-based scheduling optimization will have limited inventory coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active stockroom locations configured. Now Assist FSM cannot optimize dispatch based on parts availability without inventory data.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000436: ' + e.message };
+        }
+    },
+    CHK0000437: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sla');
+    ga.addQuery('table', 'CONTAINS', 'wm_order');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active FSM SLA definitions';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active FSM SLAs. Now Assist FSM can prioritize dispatch using AI-driven SLA breach risk analysis.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active FSM SLA(s) (target: 3+). Now Assist FSM SLA-based AI prioritization will have limited differentiation across work order types.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active FSM SLAs defined. Now Assist FSM cannot differentiate work order urgency for AI dispatch prioritization without SLA definitions.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000437: ' + e.message };
+        }
+    },
+    CHK0000438: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('kb_knowledge');
+    ga.addQuery('workflow_state', 'published');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' published active KB articles';
+
+    if (count >= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' published KB articles. Now Assist FSM can suggest AI-recommended resolution procedures from the knowledge base.'
+        };
+    } else if (count >= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published KB articles (target: 20+). Now Assist FSM KB-based AI resolution suggestions will have limited coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published KB articles. Insufficient KB content for Now Assist FSM to provide meaningful AI-recommended resolution procedures.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000438: ' + e.message };
+        }
+    },
+    CHK0000439: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Query sys_user_has_role for FSM agent roles — more reliable than
+    // querying sys_user.roles display field which is derived/unreliable
+    var matched = {};
+
+    function collectByRole(roleName) {
+        var gr = new GlideRecord('sys_user_has_role');
+        gr.addQuery('role.name', roleName);
+        gr.addQuery('user.active', true);
+        gr.addQuery('state', 'active');
+        gr.query();
+        while (gr.next()) {
+            matched[gr.getValue('user')] = true;
+        }
+    }
+
+    collectByRole('fsm_agent');
+    collectByRole('wm_agent');
+
+    var agents = Object.keys(matched).length;
+    var actualValue = agents + ' active field service agents configured';
+
+    if (agents >= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: agents + ' active field agents configured. Now Assist FSM AI capabilities can be delivered to the field workforce via the mobile app.'
+        };
+    } else if (agents >= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + agents + ' active field agents (target: 10+). Ensure all field agents are configured and using the FSM mobile app for Now Assist AI delivery.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + agents + ' active field agents configured. Now Assist FSM AI capabilities cannot be meaningfully delivered without a sufficient field agent user base.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000439: ' + e.message };
+        }
+    },
+    CHK0000440: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("wm_schedule_window");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table wm_schedule_window not found", finding: "FSM Scheduling Window table (wm_schedule_window) is not available. Verify the Field Service Management plugin is active." };
+    }
+    var ga = new GlideAggregate("wm_schedule_window");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active scheduling windows";
+    if (count >= 5) {
+        return { status: "ready", actualValue: actualValue, finding: count + " active scheduling windows. Now Assist FSM can optimize AI dispatch within defined time constraints and availability windows." };
+    } else if (count >= 1) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " active scheduling window(s) (target: 5+). Now Assist FSM scheduling optimization will have limited time constraint coverage." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "No active scheduling windows configured. Now Assist FSM cannot account for agent availability constraints in AI dispatch optimization." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000440: ' + e.message };
+        }
+    },
+    CHK0000441: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // 24-month window for PM data — PM cycles are typically quarterly/annual
+    // so 12 months may be too narrow to capture full PM history
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-2);
+
+    var ga = new GlideAggregate('wm_order');
+    ga.addQuery('type', 'preventive');
+    ga.addQuery('state', 'closed');
+    ga.addQuery('closed_at', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' closed preventive maintenance work orders (last 24 months)';
+
+    if (count >= 100) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' preventive maintenance records in the last 24 months. Now Assist FSM has sufficient PM history for AI predictive maintenance recommendations.'
+        };
+    } else if (count >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' preventive maintenance records in the last 24 months (target: 100+). Now Assist FSM predictive maintenance AI will have limited historical coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' preventive maintenance records in the last 24 months. Insufficient PM history for Now Assist FSM to provide meaningful predictive maintenance AI recommendations.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000441: ' + e.message };
+        }
+    },
+    CHK0000442: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script');
+    ga.addQuery('collection', 'IN', 'wm_order,wm_task');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom Business Rules on FSM tables (wm_order, wm_task)';
+
+    if (count <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low FSM customization risk (' + count + ' custom BRs). Now Assist FSM AI dispatch and scheduling actions are unlikely to encounter conflicts.'
+        };
+    } else if (count <= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom BRs on FSM tables. Moderate customization risk — test Now Assist FSM in sub-production before enabling in production.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High FSM customization risk: ' + count + ' custom BRs on core FSM tables. Extensive customization increases the risk of conflicts with Now Assist FSM AI dispatch and scheduling actions.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000442: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_FIELD_SERVICE'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:02:22</sys_created_on>
+        <sys_id>16828ae0cfc5c3548935fb251d851c3d</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>AROPCheckLibrary_FIELD_SERVICE</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_16828ae0cfc5c3548935fb251d851c3d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

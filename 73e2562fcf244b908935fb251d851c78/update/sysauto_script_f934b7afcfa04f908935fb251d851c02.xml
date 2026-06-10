@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysauto_script">
+    <sysauto_script action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <business_calendar/>
+        <condition/>
+        <conditional>false</conditional>
+        <entered_time>1970-01-01 06:00:00</entered_time>
+        <max_drift/>
+        <name>AIROP Scheduled Assessment</name>
+        <offset/>
+        <offset_type>0</offset_type>
+        <run_as display_value="AIROP Service Account">73843d08cff8cbd08935fb251d851c79</run_as>
+        <run_as_tz/>
+        <run_dayofmonth>1</run_dayofmonth>
+        <run_dayofweek>1</run_dayofweek>
+        <run_period>1970-01-02 00:00:00</run_period>
+        <run_start>2026-05-06 00:29:24</run_start>
+        <run_time>1970-01-01 11:00:00</run_time>
+        <run_type>daily</run_type>
+        <script><![CDATA[// AIROP Scheduled Assessment
+// Checks for a running assessment record and executes checks
+try {
+    gs.info('[AIROP] Scheduled job fired: ' + new GlideDateTime());
+
+    // Check if there is already a running record (triggered by UI)
+    var runningGr = new GlideRecord('x_snc_airop_assessment_run');
+    runningGr.addQuery('status', 'running');
+    runningGr.orderByDesc('run_date');
+    runningGr.setLimit(1);
+    runningGr.query();
+
+    if (!runningGr.next()) {
+        gs.info('[AIROP] No running record found - nothing to do.');
+        return;
+    }
+
+    var runId = runningGr.getUniqueValue();
+    gs.info('[AIROP] Picked up running record: ' + runId + ' | ' + runningGr.getValue('name'));
+
+    // Populate modules_scanned if not already set
+    if (!runningGr.getValue('modules_scanned')) {
+        var pMap = {
+            'ITSM':            'x_snc_airop.run_itsm',
+            'ITOM':            'x_snc_airop.run_itom',
+            'CMDB':            'x_snc_airop.run_cmdb',
+            'HRSD':            'x_snc_airop.run_hrsd',
+                        'CSM':             'x_snc_airop.run_csm',
+            'FIELD_SERVICE':   'x_snc_airop.run_field_service',
+            'AIOPS':           'x_snc_airop.module.AIOPS.enabled',
+            'GRC':             'x_snc_airop.run_grc',
+            'SPM':             'x_snc_airop.run_spm',
+                        'PLATFORM':        'x_snc_airop.run_platform',
+                        'VIRTUAL_AGENT':   'x_snc_airop.run_virtual_agent',
+            'DEX':             'x_snc_airop.module.DEX.enabled',
+            'SECOPS':          'x_snc_airop.module.SECOPS.enabled',
+            'HS':          'x_snc_airop.module.HS.enabled',
+            'OTSM':          'x_snc_airop.module.OTSM.enabled',
+            'CREATOR':          'x_snc_airop.module.CREATOR.enabled',
+            'SPO':          'x_snc_airop.module.SPO.enabled',
+            'TPRM':          'x_snc_airop.module.TPRM.enabled',
+            'LSD':          'x_snc_airop.module.LSD.enabled',
+            'WSD':          'x_snc_airop.module.WSD.enabled',
+            'HAM':          'x_snc_airop.module.HAM.enabled',
+            'SAM':          'x_snc_airop.module.SAM.enabled'
+        };
+        var enabled = [];
+        for (var mod in pMap) {
+            if (gs.getProperty(pMap[mod], 'false') === 'true') enabled.push(mod);
+        }
+        runningGr.setValue('modules_scanned', enabled.join(', '));
+        runningGr.update();
+        gs.info('[AIROP] modules_scanned set to: ' + enabled.join(', '));
+    }
+
+    // Execute the runner
+    var runner = new AROPRunner();
+    runner.executeWithRunId(runId);
+
+} catch(e) {
+    gs.error('[AIROP] Scheduled job error: ' + e.message);
+    gs.error('[AIROP] Stack: ' + e.stack);
+}]]></script>
+        <sys_class_name>sysauto_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 00:29:24</sys_created_on>
+        <sys_id>f934b7afcfa04f908935fb251d851c02</sys_id>
+        <sys_mod_count>13</sys_mod_count>
+        <sys_name>AIROP Scheduled Assessment</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sysauto_script_f934b7afcfa04f908935fb251d851c02</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-29 06:22:52</sys_updated_on>
+        <time_zone>America/New_York</time_zone>
+        <upgrade_safe>false</upgrade_safe>
+    </sysauto_script>
+</record_update>

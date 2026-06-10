@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Groups with no members create silent AI Agent routing failures -- work is assigned correctly but never actioned. Groups with no manager cannot escalate automatically.]]></ai_justification>
+        <check_name>Assignment Group Membership and Manager Population</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate('sys_user_group');
+    totalGr.addQuery('active', true);
+    totalGr.addQuery('type', 'itil');
+    totalGr.addAggregate('COUNT');
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active ITSM groups found',
+            finding: 'No active ITSM assignment groups found. Group membership cannot be assessed.' };
+    }
+
+    var withMembers = 0;
+    var groupGr = new GlideRecord('sys_user_group');
+    groupGr.addQuery('active', true);
+    groupGr.addQuery('type', 'itil');
+    groupGr.query();
+    while (groupGr.next()) {
+        var memGr = new GlideRecord('sys_user_grmember');
+        memGr.addQuery('group', groupGr.getUniqueValue());
+        memGr.setLimit(1);
+        memGr.query();
+        if (memGr.next()) withMembers++;
+    }
+
+    var withManagerGr = new GlideAggregate('sys_user_group');
+    withManagerGr.addQuery('active', true);
+    withManagerGr.addQuery('type', 'itil');
+    withManagerGr.addQuery('manager', '!=', '');
+    withManagerGr.addAggregate('COUNT');
+    withManagerGr.query();
+    var withManager = withManagerGr.next() ? parseInt(withManagerGr.getAggregate('COUNT')) : 0;
+
+    var memberPct = Math.round((withMembers / total) * 100);
+    var managerPct = Math.round((withManager / total) * 100);
+    var worstPct = Math.min(memberPct, managerPct);
+
+    var actualValue = 'Total ITSM groups: ' + total + ' | With members: ' + memberPct + '% | With manager: ' + managerPct + '%';
+    var cloneNote = 'NOTE: If running on a non-production clone, sys_user data is typically stripped — verify on production before treating as a blocker. ';
+
+    if (worstPct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: cloneNote + 'Assignment groups are well configured. AI Agent routing has valid group membership and manager data.' };
+    } else if (worstPct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: cloneNote + 'Group membership (' + memberPct + '%) or manager assignment (' + managerPct + '%) below target. AI Agent routing may fail for some groups.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: cloneNote + 'Group membership (' + memberPct + '%) and/or manager (' + managerPct + '%) critically low. AI Agent routing will not function correctly without populated groups.' };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000351</number>
+        <order>370</order>
+        <remediation_guidance>Populate group membership and manager fields on active ITSM groups via sys_user_group_list.do. Use import sets to bulk-assign from HR data. Groups with no members create silent AI Agent routing failures -- work is assigned but never actioned.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>7ef8d9c7cfd587108935fb251d851ca5</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Assignment Group Membership and Manager Population</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_7ef8d9c7cfd587108935fb251d851ca5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

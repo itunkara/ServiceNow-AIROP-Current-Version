@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Financial data enables Now Assist HAM to generate AI total cost of ownership analysis and financially-informed refresh recommendations. Without cost data, AI refresh recommendations lack the financial dimension needed to prioritize investments.]]></ai_justification>
+<check_name>Financial Data Population</check_name>
+<check_script><![CDATA[(function() { var gaTotal = new GlideAggregate("alm_hardware"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No hardware asset records found", finding: "No hardware asset records. Financial data cannot be assessed." }; } var gaFinancial = new GlideAggregate("alm_hardware"); gaFinancial.addQuery("cost", ">", "0"); gaFinancial.addAggregate("COUNT"); gaFinancial.query(); var withCost = gaFinancial.next() ? parseInt(gaFinancial.getAggregate("COUNT")) : 0; var pct = Math.round((withCost / total) * 100); var actualValue = pct + "% of hardware assets have cost data (" + withCost + "/" + total + ")"; if (pct >= 75) { return { status: "ready", actualValue: actualValue, finding: pct + "% of hardware assets have cost data. Now Assist HAM can generate AI-powered total cost of ownership analysis and financially-informed refresh recommendations." }; } else if (pct >= 40) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of assets have cost data (target: 75%+). Now Assist HAM AI financial analysis will have incomplete coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of assets have cost data. Now Assist HAM cannot generate AI total cost of ownership analysis without financial data." }; } })]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>HAM</module>
+<number>CHK0006238</number>
+<order>600</order>
+<remediation_guidance>Populate purchase cost on hardware asset records. Import financial data from procurement systems or ERP. Cost data is required for Now Assist HAM to generate AI-powered TCO analysis and financially-informed refresh prioritization.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:06:00</sys_created_on>
+<sys_id>1e03e33acfd903108935fb251d851cce</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:06:00</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_1e03e33acfd903108935fb251d851cce</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Financial data enables Now Assist HAM to generate AI total cost of ownership analysis and financially-informed refresh recommendations. Without cost data, AI refresh recommendations lack the financial dimension needed to prioritize investments.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Financial Data Population&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function() { var gaTotal = new GlideAggregate("alm_hardware"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No hardware asset records found", finding: "No hardware asset records. Financial data cannot be assessed." }; } var gaFinancial = new GlideAggregate("alm_hardware"); gaFinancial.addQuery("cost", "&gt;", "0"); gaFinancial.addAggregate("COUNT"); gaFinancial.query(); var withCost = gaFinancial.next() ? parseInt(gaFinancial.getAggregate("COUNT")) : 0; var pct = Math.round((withCost / total) * 100); var actualValue = pct + "% of hardware assets have cost data (" + withCost + "/" + total + ")"; if (pct &gt;= 75) { return { status: "ready", actualValue: actualValue, finding: pct + "% of hardware assets have cost data. Now Assist HAM can generate AI-powered total cost of ownership analysis and financially-informed refresh recommendations." }; } else if (pct &gt;= 40) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of assets have cost data (target: 75%+). Now Assist HAM AI financial analysis will have incomplete coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of assets have cost data. Now Assist HAM cannot generate AI total cost of ownership analysis without financial data." }; } })]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;HAM&lt;/module&gt;
+&lt;number&gt;CHK0006238&lt;/number&gt;
+&lt;order&gt;600&lt;/order&gt;
+&lt;remediation_guidance&gt;Populate purchase cost on hardware asset records. Import financial data from procurement systems or ERP. Cost data is required for Now Assist HAM to generate AI-powered TCO analysis and financially-informed refresh prioritization.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:06:00&lt;/sys_created_on&gt;
+&lt;sys_id&gt;1e03e33acfd903108935fb251d851cce&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:06:00&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>204562700</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:20</sys_created_on>
+        <sys_id>9fa60d07cf9947108935fb251d851c9c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa5c420000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:20</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>d7a60d07a89947108c967c74ae7be29b</update_guid>
+        <update_guid_history>d7a60d07a89947108c967c74ae7be29b:204562700</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">a31f45cfcfdd47108935fb251d851c92</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:13</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>b969ead272af46d680925c3fa04d1319</sys_id>
+        <sys_metadata>1e03e33acfd903108935fb251d851cce</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_1e03e33acfd903108935fb251d851cce</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_1e03e33acfd903108935fb251d851cce">9fa60d07cf9947108935fb251d851c9c</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:13</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

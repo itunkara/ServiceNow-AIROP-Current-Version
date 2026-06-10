@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl/>
+        <http_method>POST</http_method>
+        <name>Trigger Assessment</name>
+        <operation_script><![CDATA[// REST Resource: POST /api/x_snc_airop/assessment/trigger
+// Paste this into Trigger Assessment resource script
+
+(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+    try {
+        // Block if already running
+        var running = new GlideRecord('x_snc_airop_assessment_run');
+        running.addQuery('status', 'running');
+        running.setLimit(1);
+        running.query();
+        if (running.next()) {
+            response.setStatus(409);
+            response.setBody({
+                status:   'RUNNING',
+                run_id:   running.getUniqueValue(),
+                run_name: running.getDisplayValue('name')
+            });
+            return;
+        }
+
+        // Build enabled modules list
+        var pMap = {
+            'ITSM':            'x_snc_airop.run_itsm',
+            'ITOM':            'x_snc_airop.run_itom',
+            'CMDB':            'x_snc_airop.run_cmdb',
+            'HRSD':            'x_snc_airop.run_hrsd',
+            'CSM':             'x_snc_airop.run_csm',
+            'FIELD_SERVICE':   'x_snc_airop.run_field_service',
+            'AIOPS':           'x_snc_airop.module.AIOPS.enabled',
+            'GRC':             'x_snc_airop.run_grc',
+            'SPM':             'x_snc_airop.run_spm',
+            'PLATFORM':        'x_snc_airop.run_platform',
+            'VIRTUAL_AGENT':   'x_snc_airop.run_virtual_agent',
+            'DEX':             'x_snc_airop.module.DEX.enabled',
+            'SECOPS':          'x_snc_airop.module.SECOPS.enabled',
+            'HS':          'x_snc_airop.module.HS.enabled',
+            'OTSM':          'x_snc_airop.module.OTSM.enabled',
+            'CREATOR':          'x_snc_airop.module.CREATOR.enabled',
+            'SPO':          'x_snc_airop.module.SPO.enabled',
+            'TPRM':          'x_snc_airop.module.TPRM.enabled',
+            'LSD':          'x_snc_airop.module.LSD.enabled',
+            'WSD':          'x_snc_airop.module.WSD.enabled',
+            'HAM':          'x_snc_airop.module.HAM.enabled',
+            'SAM':          'x_snc_airop.module.SAM.enabled'
+        };
+        var enabled = [];
+        for (var mod in pMap) {
+            if (gs.getProperty(pMap[mod], 'false') === 'true') enabled.push(mod);
+        }
+
+        // Create run record with modules_scanned populated
+        var run = new GlideRecord('x_snc_airop_assessment_run');
+        run.setValue('name',            'AIROP Run - ' + new GlideDateTime());
+        run.setValue('status',          'running');
+        run.setValue('run_date',        new GlideDateTime());
+        run.setValue('modules_scanned', enabled.join(', '));
+        var runId = run.insert();
+
+        if (!runId) {
+            response.setStatus(500);
+            response.setBody({ status: 'ERROR', message: 'Failed to create run record.' });
+            return;
+        }
+
+        // Execute assessment inline
+        try {
+            var runner = new AROPRunner();
+            runner.executeWithRunId(runId);
+        } catch(runErr) {
+            // Mark as failed and surface the error
+            var failRun = new GlideRecord('x_snc_airop_assessment_run');
+            failRun.get(runId);
+            failRun.setValue('status', 'failed');
+            failRun.setValue('notes', 'Runner error: ' + runErr.toString());
+            failRun.update();
+
+            response.setStatus(200);
+            response.setBody({ status: 'OK', run_id: runId, warning: 'Runner failed: ' + runErr.toString() });
+            return;
+        }
+
+        response.setStatus(200);
+        response.setBody({ status: 'OK', run_id: runId });
+
+    } catch(e) {
+        response.setStatus(500);
+        response.setBody({ status: 'ERROR', message: e.toString() });
+    }
+
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_snc_airop/assessment/trigger</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/trigger</relative_path>
+        <request_example/>
+        <requires_acl_authorization>false</requires_acl_authorization>
+        <requires_authentication>false</requires_authentication>
+        <requires_snc_internal_role>false</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 11:19:05</sys_created_on>
+        <sys_id>be488a73cfac83d08935fb251d851c25</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Trigger Assessment</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_ws_operation_be488a73cfac83d08935fb251d851c25</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-29 06:22:53</sys_updated_on>
+        <web_service_definition display_value="AIROP Assessment API">e00802ffcf6c83d08935fb251d851c43</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>

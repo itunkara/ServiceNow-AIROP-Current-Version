@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[GRC policies and controls are the data foundation Now Assist GRC uses for AI-assisted compliance assessment and control testing recommendations.]]></ai_justification>
+        <check_name>Policy and Control Population</check_name>
+        <check_script><![CDATA[(function() {
+    var policyTable = new GlideRecord("sn_compliance_policy");
+    if (!policyTable.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table sn_compliance_policy not found", finding: "Compliance Policy table (sn_compliance_policy) is not available. Verify the Policy and Compliance plugin is active." };
+    }
+    var gaPolicy = new GlideAggregate("sn_compliance_policy");
+    gaPolicy.addQuery("active", true);
+    gaPolicy.addAggregate("COUNT");
+    gaPolicy.query();
+    var policies = gaPolicy.next() ? parseInt(gaPolicy.getAggregate("COUNT")) : 0;
+    var controls = 0;
+    var controlTable = new GlideRecord("sn_compliance_control");
+    if (controlTable.isValid()) {
+        var gaControl = new GlideAggregate("sn_compliance_control");
+        gaControl.addQuery("active", true);
+        gaControl.addAggregate("COUNT");
+        gaControl.query();
+        controls = gaControl.next() ? parseInt(gaControl.getAggregate("COUNT")) : 0;
+    }
+    var actualValue = policies + " active policies | " + controls + " active controls";
+    if (policies >= 10 && controls >= 50) {
+        return { status: "ready", actualValue: actualValue, finding: "Good GRC data foundation — Now Assist can perform AI-assisted compliance assessment across " + policies + " policies and " + controls + " controls." };
+    } else if (policies >= 5 || controls >= 20) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Partial GRC data (" + policies + " policies, " + controls + " controls). Now Assist GRC AI assessment will have limited coverage. Target: 10+ policies, 50+ controls." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Insufficient GRC data (" + policies + " policies, " + controls + " controls). Now Assist GRC AI assessment requires a comprehensive policy and control foundation." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>GRC</module>
+        <number>CHK0000456</number>
+        <order>20</order>
+        <remediation_guidance>Populate policies aligned to key frameworks (SOC2, ISO27001, NIST). Map controls to policies. Target: 10+ active policies, 50+ active controls.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>4ff81dc7cfd587108935fb251d851ce8</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Policy and Control Population</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_4ff81dc7cfd587108935fb251d851ce8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[VA catalog integration enables Now Assist to guide employees through service requests within conversations. Without catalog integration, AI cannot complete fulfillment.]]></ai_justification>
+<check_name>VA Catalog Integration</check_name>
+<check_script><![CDATA[(function(){var gr=new GlideRecord("sys_cs_topic");gr.addQuery("active",true);gr.addQuery("published",true);gr.addEncodedQuery("descriptionLIKEcatalog^ORdescriptionLIKErequest");gr.query();var catTopics=gr.getRowCount();return{status:catTopics>=10?"ready":"needs_attention",actualValue:catTopics+" catalog-connected VA topics",finding:catTopics<10?"Only "+catTopics+" catalog-connected VA topics. Now Assist AI-guided fulfillment requires catalog integration for service request completion.":catTopics+" catalog-connected topics -- Now Assist can guide employees through AI-assisted service fulfillment."};})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>VIRTUAL_AGENT</module>
+<number>CHK0006136</number>
+<order>110</order>
+<remediation_guidance>Connect VA topics to catalog items via Catalog task topic blocks. Test end-to-end catalog fulfillment in VA.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>8603e33acfd903108935fb251d851c1f</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_8603e33acfd903108935fb251d851c1f</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[VA catalog integration enables Now Assist to guide employees through service requests within conversations. Without catalog integration, AI cannot complete fulfillment.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;VA Catalog Integration&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(){var gr=new GlideRecord("sys_cs_topic");gr.addQuery("active",true);gr.addQuery("published",true);gr.addEncodedQuery("descriptionLIKEcatalog^ORdescriptionLIKErequest");gr.query();var catTopics=gr.getRowCount();return{status:catTopics&gt;=10?"ready":"needs_attention",actualValue:catTopics+" catalog-connected VA topics",finding:catTopics&lt;10?"Only "+catTopics+" catalog-connected VA topics. Now Assist AI-guided fulfillment requires catalog integration for service request completion.":catTopics+" catalog-connected topics -- Now Assist can guide employees through AI-assisted service fulfillment."};})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;VIRTUAL_AGENT&lt;/module&gt;
+&lt;number&gt;CHK0006136&lt;/number&gt;
+&lt;order&gt;110&lt;/order&gt;
+&lt;remediation_guidance&gt;Connect VA topics to catalog items via Catalog task topic blocks. Test end-to-end catalog fulfillment in VA.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;8603e33acfd903108935fb251d851c1f&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-2056191108</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:27</sys_created_on>
+        <sys_id>0db6c147cf9947108935fb251d851cfb</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa764b0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:27</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>45b6c147dc9947102bf3de305f8693fa</update_guid>
+        <update_guid_history>45b6c147dc9947102bf3de305f8693fa:-2056191108</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">f42f8dcfcfdd47108935fb251d851c19</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:18</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>2c97fca230c144cb8b652b1324c76e11</sys_id>
+        <sys_metadata>8603e33acfd903108935fb251d851c1f</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_8603e33acfd903108935fb251d851c1f</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_8603e33acfd903108935fb251d851c1f">0db6c147cf9947108935fb251d851cfb</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:18</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

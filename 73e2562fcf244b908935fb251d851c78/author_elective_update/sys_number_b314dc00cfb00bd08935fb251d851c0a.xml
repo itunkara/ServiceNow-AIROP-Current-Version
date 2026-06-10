@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_number">
+    <sys_number action="DELETE">
+        <category display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</category>
+        <maximum_digits>7</maximum_digits>
+        <number>5000</number>
+        <prefix>CHK</prefix>
+        <sys_class_name>sys_number</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 21:30:17</sys_created_on>
+        <sys_id>b314dc00cfb00bd08935fb251d851c0a</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>CHK</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_number_b314dc00cfb00bd08935fb251d851c0a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-02 13:40:53</sys_updated_on>
+    </sys_number>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_number_b314dc00cfb00bd08935fb251d851c0a</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_number"><sys_number action="INSERT_OR_UPDATE"><category display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</category><maximum_digits>7</maximum_digits><number>5000</number><prefix>CHK</prefix><sys_class_name>sys_number</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-05-06 21:30:17</sys_created_on><sys_id>b314dc00cfb00bd08935fb251d851c0a</sys_id><sys_mod_count>3</sys_mod_count><sys_name>CHK</sys_name><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_number_b314dc00cfb00bd08935fb251d851c0a</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-06-02 13:40:53</sys_updated_on></sys_number></record_update>]]></payload>
+        <payload_hash>1952048112</payload_hash>
+        <record_name>CHK</record_name>
+        <reverted_from/>
+        <source>37e29a6bcf644b908935fb251d851c7a</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-02 13:40:54</sys_created_on>
+        <sys_id>f64ca1a4cf15c3dc8935fb251d851cd6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19e8890d6be0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-02 13:40:54</sys_updated_on>
+        <type>Number</type>
+        <update_guid>724ca1a44115c3dc0dd78bf3de246dd5</update_guid>
+        <update_guid_history>724ca1a44115c3dc0dd78bf3de246dd5:1952048112,0e852cc0623c0bd0d4a9c48f5b788440:851982509,1d756444693c0bd0fd156db8143abf1a:-1885481048,80d45cc417b00bd046c18eacfe84cfc1:1916949740</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 04:53:18</sys_created_on>
+        <sys_db_object display_value="" name="sys_number">sys_number</sys_db_object>
+        <sys_id>52da9f57e45c4b229a204c2fe4bddad1</sys_id>
+        <sys_metadata>b314dc00cfb00bd08935fb251d851c0a</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CHK</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent display_value="">8b6b5b27cfe00f908935fb251d851cdd</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_number_b314dc00cfb00bd08935fb251d851c0a</sys_update_name>
+        <sys_update_version display_value="sys_number_b314dc00cfb00bd08935fb251d851c0a">f64ca1a4cf15c3dc8935fb251d851cd6</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 04:53:18</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script/>
+        <description/>
+        <direct>false</direct>
+        <endpoint>x_snc_airop_airop_admin.do</endpoint>
+        <html><![CDATA[<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 800px;">
+    <h2 style="color: #293e40; border-bottom: 2px solid #81b5a1; padding-bottom: 10px;">
+        AIROP Check Library Administration
+    </h2>
+
+    <div style="background: #f5f5f5; border-radius: 6px; padding: 20px; margin-top: 20px;">
+        <h3 style="margin-top: 0; color: #293e40;">Rebuild Libraries from Current Definitions</h3>
+        <p style="color: #666;">Rebuilds all per-module check libraries from active check definitions. Run this after adding, editing, or activating check definitions.</p>
+        <button id="rebuildBtn" onclick="rebuildLibraries()"
+            style="background: #81b5a1; color: white; border: none; padding: 10px 24px; border-radius: 4px; font-size: 14px; cursor: pointer;">
+            Rebuild Libraries from Current Definitions
+        </button>
+        <div id="rebuildStatus" style="margin-top: 15px; display: none;">
+            <div id="rebuildMsg" style="padding: 10px; border-radius: 4px;"></div>
+        </div>
+    </div>
+
+    <div style="background: #f5f5f5; border-radius: 6px; padding: 20px; margin-top: 20px;">
+        <h3 style="margin-top: 0; color: #293e40;">Load Default Check Definitions</h3>
+        <p style="color: #666;">Deletes all existing check definitions and reloads the default set. <strong>This cannot be undone.</strong> Any custom check scripts will be permanently lost. Please export any custom definitions to xml before performing this action. Libraries are automatically rebuilt after loading.</p>
+        <button id="loadDefaultsBtn" onclick="loadDefaultDefinitions()"
+            style="background: #c0392b; color: white; border: none; padding: 10px 24px; border-radius: 4px; font-size: 14px; cursor: pointer;">
+            Load Default Check Definitions
+        </button>
+        <div id="loadDefaultsStatus" style="margin-top: 15px; display: none;">
+            <div id="loadDefaultsMsg" style="padding: 10px; border-radius: 4px;"></div>
+        </div>
+    </div>
+</div>
+<script>
+function rebuildLibraries() {
+    var btn = document.getElementById("rebuildBtn");
+    var status = document.getElementById("rebuildStatus");
+    var msg = document.getElementById("rebuildMsg");
+    btn.disabled = true;
+    btn.innerText = "Rebuilding...";
+    btn.style.background = "#999";
+    status.style.display = "none";
+    var ga = new GlideAjax("AROPAdminAjax");
+    ga.addParam("sysparm_name", "rebuildLibraries");
+    ga.getXMLAnswer(function(response) {
+        try {
+            var result = JSON.parse(response);
+            if (result.success) {
+                msg.style.background = "#dff0d8";
+                msg.style.color = "#3c763d";
+                msg.style.border = "1px solid #d6e9c6";
+                msg.innerHTML = "<strong>Success!</strong> All libraries rebuilt. " + result.injected + " check methods injected. " + result.skipped + " skipped.";
+            } else {
+                msg.style.background = "#f2dede";
+                msg.style.color = "#a94442";
+                msg.style.border = "1px solid #ebccd1";
+                msg.innerHTML = "<strong>Completed with errors:</strong> " + result.errors + ". " + result.injected + " methods injected.";
+            }
+        } catch(e) {
+            msg.style.background = "#f2dede";
+            msg.style.color = "#a94442";
+            msg.style.border = "1px solid #ebccd1";
+            msg.innerHTML = "<strong>Error:</strong> Unexpected response from server.";
+        }
+        status.style.display = "block";
+        btn.disabled = false;
+        btn.innerText = "Rebuild Libraries from Current Definitions";
+        btn.style.background = "#81b5a1";
+    });
+}
+
+function loadDefaultDefinitions() {
+    var confirmed = window.confirm(
+        "WARNING: This will permanently delete all existing AIROP check definitions and replace them with the defaults.\n\n" +
+        "Any custom check scripts will be lost. This cannot be undone.\n\n" +
+        "Are you sure you want to continue?"
+    );
+    if (!confirmed) { return; }
+    var btn = document.getElementById("loadDefaultsBtn");
+    var status = document.getElementById("loadDefaultsStatus");
+    var msg = document.getElementById("loadDefaultsMsg");
+    btn.disabled = true;
+    btn.innerText = "Loading...";
+    btn.style.background = "#999";
+    status.style.display = "none";
+    var ga = new GlideAjax("AROPAdminAjax");
+    ga.addParam("sysparm_name", "loadDefaultDefinitions");
+    ga.getXMLAnswer(function(response) {
+        try {
+            var result = JSON.parse(response);
+            if (result.success) {
+                msg.style.background = "#dff0d8";
+                msg.style.color = "#3c763d";
+                msg.style.border = "1px solid #d6e9c6";
+                msg.innerHTML = "<strong>Success!</strong> " + result.inserted + " check definitions loaded. " + result.failed + " failed. Libraries rebuilt.";
+            } else {
+                msg.style.background = "#f2dede";
+                msg.style.color = "#a94442";
+                msg.style.border = "1px solid #ebccd1";
+                msg.innerHTML = "<strong>Error:</strong> " + (result.error || "Unexpected error.");
+            }
+        } catch(e) {
+            msg.style.background = "#f2dede";
+            msg.style.color = "#a94442";
+            msg.style.border = "1px solid #ebccd1";
+            msg.innerHTML = "<strong>Error:</strong> Unexpected response from server.";
+        }
+        status.style.display = "block";
+        btn.disabled = false;
+        btn.innerText = "Load Default Check Definitions";
+        btn.style.background = "#c0392b";
+    });
+}
+</script>
+</j:jelly>]]></html>
+        <name>airop_admin</name>
+        <processing_script/>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-23 15:57:38</sys_created_on>
+        <sys_id>414b6219cfc583d48935fb251d851ce8</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>airop_admin</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_ui_page_414b6219cfc583d48935fb251d851ce8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-08 19:43:52</sys_updated_on>
+    </sys_ui_page>
+</record_update>

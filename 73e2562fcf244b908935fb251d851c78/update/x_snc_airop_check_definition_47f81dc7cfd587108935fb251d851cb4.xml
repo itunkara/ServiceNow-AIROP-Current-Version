@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Field agent skills enable Now Assist FSM to match work orders to the most qualified agent.]]></ai_justification>
+        <check_name>FSM Agent Skill Configuration</check_name>
+        <check_script><![CDATA[(function() {
+    var skillTable = new GlideRecord("cmn_skill");
+    if (!skillTable.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table cmn_skill not found", finding: "Skills table (cmn_skill) is not available on this instance. Verify the Skills plugin is active." };
+    }
+    var gaSkills = new GlideAggregate("cmn_skill");
+    gaSkills.addQuery("active", true);
+    gaSkills.addAggregate("COUNT");
+    gaSkills.query();
+    var skills = gaSkills.next() ? parseInt(gaSkills.getAggregate("COUNT")) : 0;
+    var agentSkills = 0;
+    var userSkillTable = new GlideRecord("sys_user_has_skill");
+    if (userSkillTable.isValid()) {
+        var gaAssigned = new GlideAggregate("sys_user_has_skill");
+        gaAssigned.addAggregate("COUNT");
+        gaAssigned.query();
+        agentSkills = gaAssigned.next() ? parseInt(gaAssigned.getAggregate("COUNT")) : 0;
+    }
+    var actualValue = skills + " skill definitions | " + agentSkills + " agent skill assignments";
+    if (skills >= 10 && agentSkills >= 20) {
+        return { status: "ready", actualValue: actualValue, finding: skills + " skills with " + agentSkills + " agent assignments. Now Assist FSM has comprehensive skills data for competency-matched AI dispatch." };
+    } else if (skills >= 3 || agentSkills >= 5) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Partial skills configuration (" + skills + " skills, " + agentSkills + " assignments). Targets: 10+ skills, 20+ assignments. Now Assist FSM skill-based AI dispatch will have limited matching accuracy." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Insufficient skills configuration (" + skills + " skills, " + agentSkills + " assignments). Now Assist FSM cannot perform competency-matched AI dispatch without defined skills and agent assignments." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>FIELD_SERVICE</module>
+        <number>CHK0000430</number>
+        <order>30</order>
+        <remediation_guidance>Define field agent skills via wm_skill_list.do. Assign skills to all active field agents via wm_agent_skill. Target: 10+ skill definitions, 20+ agent skill assignments. Now Assist FSM uses skills data for AI-matched dispatch.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>47f81dc7cfd587108935fb251d851cb4</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>FSM Agent Skill Configuration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_47f81dc7cfd587108935fb251d851cb4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

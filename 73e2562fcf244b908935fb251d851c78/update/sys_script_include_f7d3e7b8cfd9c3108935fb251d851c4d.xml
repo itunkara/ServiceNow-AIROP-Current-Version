@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPExporter</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPExporter</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPExporter = Class.create();
+AROPExporter.prototype = {
+    initialize: function() {},
+
+    generateExportCSV: function(runId) {
+        try {
+            // Get run record for filename
+            var runGr = new GlideRecord('x_snc_airop_assessment_run');
+            if (!runGr.get(runId)) return { success: false, message: 'Run record not found' };
+            var runNumber = runGr.getValue('number');
+            var now = new GlideDateTime();
+            var fileName = runNumber + ' ' + now.getDisplayValue() + '.csv';
+
+            // CSV header
+            var rows = [];
+            rows.push([
+                'Module',
+                'Check Number',
+                'Check Name',
+                'Status',
+                'Actual Value',
+                'Finding',
+                'Remediation Guidance',
+                'AI Justification'
+            ].map(function(h) { return '"' + h + '"'; }).join(','));
+
+            // Query check results ordered by module then check number
+            var gr = new GlideRecord('x_snc_airop_check_result');
+            gr.addQuery('assessment_run', runId);
+            gr.orderBy('module');
+            gr.orderBy('number');
+            gr.query();
+
+            var escape = function(val) {
+                return '"' + (val || '').toString().replace(/"/g, '""')
+                    .replace(/\n/g, ' ').replace(/\r/g, '') + '"';
+            };
+
+            while (gr.next()) {
+                // Strip HTML from ai_justification
+                var aiJust = gr.check_definition.getRefRecord().getValue('ai_justification') || '';
+                aiJust = aiJust.replace(/<[^>]*>/g, '')
+                    .replace(/&nbsp;/g, ' ')
+                    .replace(/&amp;/g, '&')
+                    .replace(/&lt;/g, '<')
+                    .replace(/&gt;/g, '>')
+                    .trim();
+
+                rows.push([
+                    escape(gr.getValue('module')),
+                    escape(gr.getValue('number')),
+                    escape(gr.getValue('check_name')),
+                    escape(gr.getValue('status')),
+                    escape(gr.getValue('actual_value')),
+                    escape(gr.getValue('finding')),
+                    escape(gr.getValue('remediation_guidance')),
+                    escape(aiJust)
+                ].join(','));
+            }
+
+            var csvContent = rows.join('\n');
+
+            // Attach to run record
+            var att = new GlideSysAttachment();
+            var attSysId = att.write(runGr, fileName, 'text/csv', csvContent);
+
+            if (attSysId) {
+                return { success: true, message: 'File attached: ' + fileName, attachment_id: attSysId, file_name: fileName };
+            } else {
+                return { success: false, message: 'Attachment write failed' };
+            }
+        } catch(e) {
+            gs.error('[AIROP] generateExportCSV error: ' + e.message);
+            return { success: false, message: e.message };
+        }
+    },
+
+    getModuleSummary: function(runId) {
+        try {
+            var summary = [];
+            var ga = new GlideAggregate('x_snc_airop_check_result');
+            ga.addQuery('assessment_run', runId);
+            ga.addAggregate('COUNT');
+            ga.groupBy('module');
+            ga.orderBy('module');
+            ga.query();
+            while (ga.next()) {
+                summary.push({
+                    module: ga.getValue('module'),
+                    count: ga.getAggregate('COUNT')
+                });
+            }
+            return summary;
+        } catch(e) {
+            gs.error('[AIROP] getModuleSummary error: ' + e.message);
+            return [];
+        }
+    },
+
+    type: 'AROPExporter'
+};
+]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-03 17:01:49</sys_created_on>
+        <sys_id>f7d3e7b8cfd9c3108935fb251d851c4d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>AROPExporter</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_f7d3e7b8cfd9c3108935fb251d851c4d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-03 17:01:49</sys_updated_on>
+    </sys_script_include>
+</record_update>

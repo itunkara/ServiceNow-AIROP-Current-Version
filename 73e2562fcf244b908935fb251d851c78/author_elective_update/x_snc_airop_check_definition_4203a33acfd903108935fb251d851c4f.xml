@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[ITOM Visibility/Health entitlement gates Now Assist ITOM AI features. Without the correct SKU, ITOM Now Assist capabilities will not activate.]]></ai_justification>
+<check_name>ITOM Visibility / Health Entitlement</check_name>
+<check_script><![CDATA[(function() {
+    var t = new GlideRecord("samp_sw_license_metric");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table samp_sw_license_metric not found", finding: "License Metric table is not available. Verify the SAM plugin is active." };
+    }
+    var matched = {};
+    function collectMatches(keyword) {
+        var gr = new GlideRecord("samp_sw_license_metric");
+        gr.addQuery("name", "CONTAINS", keyword);
+        gr.query();
+        while (gr.next()) { matched[gr.getUniqueValue()] = true; }
+    }
+    collectMatches("itom");
+    collectMatches("ITOM");
+    var count = Object.keys(matched).length;
+    var actualValue = count + " ITOM license metric records found";
+    if (count > 0) {
+        return { status: "ready", actualValue: actualValue, finding: count + " ITOM license metric record(s) found. ITOM entitlement appears active — manual confirmation with account team recommended." };
+    } else {
+        return { status: "needs_attention", actualValue: actualValue, finding: "No ITOM license metric records found. Manual entitlement confirmation recommended — without the correct ITOM SKU, Now Assist ITOM capabilities will not activate regardless of plugin installation or data quality." };
+    }
+})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>ITOM</module>
+<number>CHK0005993</number>
+<order>150</order>
+<remediation_guidance>Contact your ServiceNow account team to confirm ITOM Visibility or ITOM Health SKU entitlement. Without the correct SKU, ITOM Now Assist capabilities will not activate regardless of plugin installation or data quality.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4203a33acfd903108935fb251d851c4f</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851c4f</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[ITOM Visibility/Health entitlement gates Now Assist ITOM AI features. Without the correct SKU, ITOM Now Assist capabilities will not activate.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;ITOM Visibility / Health Entitlement&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function() {
+    var t = new GlideRecord("samp_sw_license_metric");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table samp_sw_license_metric not found", finding: "License Metric table is not available. Verify the SAM plugin is active." };
+    }
+    var matched = {};
+    function collectMatches(keyword) {
+        var gr = new GlideRecord("samp_sw_license_metric");
+        gr.addQuery("name", "CONTAINS", keyword);
+        gr.query();
+        while (gr.next()) { matched[gr.getUniqueValue()] = true; }
+    }
+    collectMatches("itom");
+    collectMatches("ITOM");
+    var count = Object.keys(matched).length;
+    var actualValue = count + " ITOM license metric records found";
+    if (count &gt; 0) {
+        return { status: "ready", actualValue: actualValue, finding: count + " ITOM license metric record(s) found. ITOM entitlement appears active — manual confirmation with account team recommended." };
+    } else {
+        return { status: "needs_attention", actualValue: actualValue, finding: "No ITOM license metric records found. Manual entitlement confirmation recommended — without the correct ITOM SKU, Now Assist ITOM capabilities will not activate regardless of plugin installation or data quality." };
+    }
+})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;ITOM&lt;/module&gt;
+&lt;number&gt;CHK0005993&lt;/number&gt;
+&lt;order&gt;150&lt;/order&gt;
+&lt;remediation_guidance&gt;Contact your ServiceNow account team to confirm ITOM Visibility or ITOM Health SKU entitlement. Without the correct SKU, ITOM Now Assist capabilities will not activate regardless of plugin installation or data quality.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4203a33acfd903108935fb251d851c4f&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-440065820</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:23</sys_created_on>
+        <sys_id>88b6cd07cf9947108935fb251d851c3f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa65ad0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:23</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>c0b6cd07db994710a116bee4917e243e</update_guid>
+        <update_guid_history>c0b6cd07db994710a116bee4917e243e:-440065820</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">731f85cfcfdd47108935fb251d851c64</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:14</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>ecab80351696467aab6f25d8157f6561</sys_id>
+        <sys_metadata>4203a33acfd903108935fb251d851c4f</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851c4f</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4203a33acfd903108935fb251d851c4f">88b6cd07cf9947108935fb251d851c3f</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:14</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

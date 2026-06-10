@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Now Assist AI Search requires search sources to be configured and indexed. Without configured search sources, AI Search returns no results regardless of KB content quality or volume.]]></ai_justification>
+<check_name>AI Search Index Configuration</check_name>
+<check_script><![CDATA[(function() {
+    var t = new GlideRecord("ais_search_profile");
+    if (!t.isValid()) {
+        return { status: "not_applicable", actualValue: "AI Search profile table not found", finding: "AI Search (ais_search_profile) is not installed on this instance. AI Search may not be part of the current entitlement or configuration." };
+    }
+    var ga = new GlideAggregate("ais_search_profile");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active AI Search profile(s)";
+    if (count >= 1) return { status: "ready", actualValue: actualValue, finding: count + " active AI Search profile(s) configured. Now Assist AI Search is set up to return results to end users." };
+    return { status: "value_blocker", actualValue: actualValue, finding: "No active AI Search profiles configured. Now Assist AI Search requires at least one active search profile with indexed sources — without it AI Search returns no results to end users." };
+})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>PLATFORM</module>
+<number>CHK0006124</number>
+<order>200</order>
+<remediation_guidance>Configure Now Assist AI Search sources via sn_aisearch_search_profile_list.do. Add KB, catalog, and record sources relevant to your end-user use cases. Index each source. AI Search is entirely dependent on search source configuration.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4203a33acfd903108935fb251d851cf4</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851cf4</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Now Assist AI Search requires search sources to be configured and indexed. Without configured search sources, AI Search returns no results regardless of KB content quality or volume.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;AI Search Index Configuration&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function() {
+    var t = new GlideRecord("ais_search_profile");
+    if (!t.isValid()) {
+        return { status: "not_applicable", actualValue: "AI Search profile table not found", finding: "AI Search (ais_search_profile) is not installed on this instance. AI Search may not be part of the current entitlement or configuration." };
+    }
+    var ga = new GlideAggregate("ais_search_profile");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active AI Search profile(s)";
+    if (count &gt;= 1) return { status: "ready", actualValue: actualValue, finding: count + " active AI Search profile(s) configured. Now Assist AI Search is set up to return results to end users." };
+    return { status: "value_blocker", actualValue: actualValue, finding: "No active AI Search profiles configured. Now Assist AI Search requires at least one active search profile with indexed sources — without it AI Search returns no results to end users." };
+})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;PLATFORM&lt;/module&gt;
+&lt;number&gt;CHK0006124&lt;/number&gt;
+&lt;order&gt;200&lt;/order&gt;
+&lt;remediation_guidance&gt;Configure Now Assist AI Search sources via sn_aisearch_search_profile_list.do. Add KB, catalog, and record sources relevant to your end-user use cases. Index each source. AI Search is entirely dependent on search source configuration.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4203a33acfd903108935fb251d851cf4&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1586263372</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:18</sys_created_on>
+        <sys_id>76a64907cf9947108935fb251d851c49</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa53730000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:18</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>bea649075d994710c6f40d25240c8b47</update_guid>
+        <update_guid_history>bea649075d994710c6f40d25240c8b47:1586263372</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">bf1fc5cfcfdd47108935fb251d851c5c</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:14</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>572c0e0631a84550a5b390a9df560344</sys_id>
+        <sys_metadata>4203a33acfd903108935fb251d851cf4</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851cf4</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4203a33acfd903108935fb251d851cf4">76a64907cf9947108935fb251d851c49</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:14</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

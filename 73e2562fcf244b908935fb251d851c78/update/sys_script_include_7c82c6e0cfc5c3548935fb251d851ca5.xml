@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_HRSD</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for HRSD module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_HRSD</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_HRSD = Class.create();
+AROPCheckLibrary_HRSD.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000393: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("sn_hr_gen_ai", "sn_hr_gen_ai");
+    if (result.found) {
+        return {
+            status: "ready",
+            actualValue: "Now Assist for HRSD (" + "sn_hr_gen_ai" + ") installed | version: " + result.version + " | source: " + result.table,
+            finding: "Now Assist for HR Service Delivery is installed. AI capabilities including HR case summarization and AI-assisted routing are available."
+        };
+    } else {
+        return {
+            status: "not_ready",
+            actualValue: "Now Assist for HRSD (sn_hr_gen_ai) not found in sys_store_app or sys_plugins",
+            finding: "Now Assist for HR Service Delivery (sn_hr_gen_ai) not found. All Now Assist HRSD AI capabilities are unavailable."
+        };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000393: ' + e.message };
+        }
+    },
+    CHK0000394: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // HR case closed states: 3=Closed Complete, 4=Closed Incomplete
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var ga = new GlideAggregate('sn_hr_core_case');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var total = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' HR cases created in last 12 months';
+
+    if (total >= 500) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' HR cases in the last 12 months. Sufficient history for Now Assist HRSD AI summarization and similar case pattern learning.'
+        };
+    } else if (total >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' HR cases in the last 12 months (target: 500+). Now Assist HRSD AI learning will have limited pattern coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' HR cases in the last 12 months. Insufficient case history for Now Assist HRSD AI summarization and similar case matching.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000394: ' + e.message };
+        }
+    },
+    CHK0000395: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // HR case closed states: 3=Closed Complete, 4=Closed Incomplete
+    // close_notes is the OOB resolution field on sn_hr_core_case
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_hr_core_case');
+    gaTotal.addQuery('state', 'IN', '3,4');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed HR cases in last 12 months',
+            finding: 'No closed HR cases found in the last 12 months. Close notes coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('sn_hr_core_case');
+    gaMissing.addQuery('state', 'IN', '3,4');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('close_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed HR cases have close notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed HR cases have close notes. Now Assist HRSD summarization has strong resolution context for AI-generated case summaries.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed HR cases have close notes (target: 80%). Now Assist HRSD summarization quality will be reduced for cases missing resolution context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: missing + ' closed HR cases missing close notes (' + pct + '% populated). Critical gap — Now Assist HRSD cannot generate meaningful case summaries without resolution context.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000395: ' + e.message };
+        }
+    },
+    CHK0000396: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('kb_knowledge');
+    ga.addQuery('workflow_state', 'published');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' published active KB articles';
+
+    if (count >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' published KB articles. Now Assist HRSD AI Search and case deflection have sufficient knowledge content.'
+        };
+    } else if (count >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published KB articles (target: 50+). Now Assist HRSD AI Search deflection coverage will be limited — expand KB content for top HR inquiry categories.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published KB articles. Insufficient knowledge content for Now Assist HRSD AI Search and self-service deflection.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000396: ' + e.message };
+        }
+    },
+    CHK0000397: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // HR case closed states: 3=Closed Complete, 4=Closed Incomplete
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_hr_core_case');
+    gaTotal.addQuery('state', 'IN', '3,4');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed HR cases in last 12 months',
+            finding: 'No closed HR cases found in the last 12 months. HR Service categorization cannot be assessed.'
+        };
+    }
+
+    var gaCat = new GlideAggregate('sn_hr_core_case');
+    gaCat.addQuery('state', 'IN', '3,4');
+    gaCat.addQuery('closed_at', '>=', cutoff.getValue());
+    gaCat.addQuery('hr_service', '!=', '');
+    gaCat.addAggregate('COUNT');
+    gaCat.query();
+    var categorized = gaCat.next() ? parseInt(gaCat.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((categorized / total) * 100);
+    var actualValue = pct + '% of closed HR cases have HR Service populated (last 12 months, ' + categorized + '/' + total + ')';
+
+    if (pct >= 85) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed HR cases have HR Service populated. Now Assist HRSD has strong classification signal for AI-driven routing and similar case matching.'
+        };
+    } else if (pct >= 60) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed HR cases have HR Service populated (target: 85%). Now Assist HRSD AI routing and similar case matching will have reduced accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of HR cases have HR Service populated. Insufficient classification signal — Now Assist HRSD AI routing requires consistent HR Service categorization.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000397: ' + e.message };
+        }
+    },
+    CHK0000398: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    // Collect distinct assignment groups used on HR cases in last 12 months
+    var usedGroups = {};
+    var grCases = new GlideRecord('sn_hr_core_case');
+    grCases.addQuery('sys_created_on', '>=', cutoff.getValue());
+    grCases.addQuery('assignment_group', '!=', '');
+    grCases.query();
+    while (grCases.next()) {
+        usedGroups[grCases.getValue('assignment_group')] = true;
+    }
+
+    var groupIds = Object.keys(usedGroups);
+    var totalGroups = groupIds.length;
+
+    if (totalGroups === 0) {
+        return {
+            status: 'not_ready',
+            actualValue: 'No assignment groups used on HR cases in last 12 months',
+            finding: 'No assignment groups found on HR cases in the last 12 months. Now Assist HRSD AI routing has no group structure to route cases to.'
+        };
+    }
+
+    // Check which of those groups have active members
+    var groupsWithMembers = 0;
+    for (var i = 0; i < groupIds.length; i++) {
+        var memGr = new GlideRecord('sys_user_grmember');
+        memGr.addQuery('group', groupIds[i]);
+        memGr.setLimit(1);
+        memGr.query();
+        if (memGr.next()) groupsWithMembers++;
+    }
+
+    var pct = Math.round((groupsWithMembers / totalGroups) * 100);
+    var actualValue = totalGroups + ' HR assignment groups used (last 12 months) | ' + groupsWithMembers + ' with active members (' + pct + '%)';
+
+    if (groupsWithMembers >= 3 && pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: groupsWithMembers + ' populated HR assignment groups. Now Assist HRSD AI routing has well-defined, staffed groups to route cases to.'
+        };
+    } else if (groupsWithMembers >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + groupsWithMembers + ' of ' + totalGroups + ' HR assignment groups have members. Now Assist HRSD AI routing may attempt to assign cases to empty groups.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No HR assignment groups have active members. Now Assist HRSD AI routing cannot function without populated assignment groups.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000398: ' + e.message };
+        }
+    },
+    CHK0000399: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Count active catalog items linked to HR COEs via sc_cat_item
+    // Using hr_service reference which links catalog to HRSD
+    var gaHR = new GlideAggregate('sc_cat_item');
+    gaHR.addQuery('active', true);
+    gaHR.addQuery('sc_catalogs.title', 'CONTAINS', 'HR');
+    gaHR.addAggregate('COUNT');
+    gaHR.query();
+    var hrItems = gaHR.next() ? parseInt(gaHR.getAggregate('COUNT')) : 0;
+
+    // Fallback: count all active catalog items if HR-filtered returns 0
+    if (hrItems === 0) {
+        var gaAll = new GlideAggregate('sc_cat_item');
+        gaAll.addQuery('active', true);
+        gaAll.addAggregate('COUNT');
+        gaAll.query();
+        var allItems = gaAll.next() ? parseInt(gaAll.getAggregate('COUNT')) : 0;
+        var actualValue = '0 HR-specific catalog items found | ' + allItems + ' total active items (verify HR catalog configuration)';
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'No HR-specific catalog items found. Verify HR catalog configuration — Now Assist HRSD AI-assisted intake requires catalog items for each key HR service type.'
+        };
+    }
+
+    var actualValue = hrItems + ' active HR catalog items';
+
+    if (hrItems >= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: hrItems + ' active HR catalog items. Now Assist HRSD has broad catalog coverage for AI-assisted employee intake.'
+        };
+    } else if (hrItems >= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + hrItems + ' active HR catalog items (target: 20+). Now Assist HRSD AI-assisted intake will have limited coverage for HR service types.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + hrItems + ' active HR catalog items. Insufficient catalog coverage for Now Assist HRSD AI-assisted employee intake.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000399: ' + e.message };
+        }
+    },
+    CHK0000400: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    if (!gs.tableExists('sn_doc_template')) {
+        return { status: 'not_applicable', actualValue: 'sn_doc_template not found', finding: 'Document Templates (sn_doc) is not installed. HR document template check is not applicable.' };
+    }
+    var ga = new GlideAggregate('sn_doc_template');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+    var actualValue = count + ' active document templates';
+    if (count >= 5) {
+        return { status: 'ready', actualValue: actualValue, finding: count + ' active document templates. Now Assist HRSD can leverage these for automated AI-driven document generation workflows.' };
+    } else if (count >= 1) {
+        return { status: 'needs_attention', actualValue: actualValue, finding: 'Only ' + count + ' active document template(s) (target: 5+). Now Assist HRSD document automation will have limited coverage.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue, finding: 'No active document templates configured. Now Assist HRSD document automation requires configured templates for AI-driven document generation workflows.' };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000400: ' + e.message };
+        }
+    },
+    CHK0000401: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    if (!gs.tableExists('sn_hr_core_service')) {
+        return { status: 'not_applicable', actualValue: 'sn_hr_core_service not found', finding: 'HR Service Delivery core is not installed. HR service check is not applicable.' };
+    }
+    var ga = new GlideAggregate('sn_hr_core_service');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+    var actualValue = count + ' active HR services';
+    if (count >= 10) {
+        return { status: 'ready', actualValue: actualValue, finding: count + ' active HR services configured. Now Assist HRSD has a well-structured service catalog for AI-guided employee lifecycle support.' };
+    } else if (count >= 3) {
+        return { status: 'needs_attention', actualValue: actualValue, finding: 'Only ' + count + ' active HR services (target: 10+). Now Assist HRSD AI-guided lifecycle support will have limited service coverage.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue, finding: 'Fewer than 3 active HR services configured. Now Assist HRSD requires a structured HR service catalog for AI-guided employee lifecycle management.' };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000401: ' + e.message };
+        }
+    },
+    CHK0000402: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sla');
+    ga.addQuery('table', 'CONTAINS', 'sn_hr_core');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active HR SLA definitions';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active HR SLAs. Now Assist HRSD can use SLA breach risk for AI case prioritization.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active HR SLA(s) (target: 5+). Now Assist HRSD SLA-based AI prioritization will have limited differentiation across case types.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active HR SLAs defined. Now Assist HRSD cannot differentiate case urgency for AI prioritization without SLA definitions.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000402: ' + e.message };
+        }
+    },
+    CHK0000403: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // HR case closed states: 3=Closed Complete, 4=Closed Incomplete
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_hr_core_case');
+    gaTotal.addQuery('state', 'IN', '3,4');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed HR cases in last 12 months',
+            finding: 'No closed HR cases found in the last 12 months. Short description quality cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('sn_hr_core_case');
+    gaMissing.addQuery('state', 'IN', '3,4');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('short_description', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var missingPct = total > 0 ? Math.round((missing / total) * 100) : 0;
+    var actualValue = missing + ' of ' + total + ' closed HR cases missing short description (last 12 months, ' + missingPct + '%)';
+
+    if (missingPct <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + missingPct + '% of closed HR cases are missing short descriptions. Now Assist HRSD has strong NLP input quality for AI classification and routing.'
+        };
+    } else if (missingPct <= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: missing + ' closed HR cases have no short description (' + missingPct + '% missing, target: ≤5%). Short descriptions are the primary NLP input for Now Assist HRSD classification and routing.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: missing + ' closed HR cases missing short descriptions (' + missingPct + '%). Critical NLP input gap — Now Assist HRSD classification and AI routing accuracy will be significantly degraded.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000403: ' + e.message };
+        }
+    },
+    CHK0000404: function() {
+        try {
+            return (function(){try{var testGr=new GlideRecord("sn_hr_core_coe");testGr.setLimit(1);testGr.query();if(!testGr.isValid()){return{status:"not_applicable",actualValue:"HR COE table not found",finding:"HR Centers of Excellence table does not exist on this instance."};} var ga=new GlideAggregate("sn_hr_core_coe");ga.addQuery("active",true);ga.addAggregate("COUNT");ga.query();var count=ga.next()?parseInt(ga.getAggregate("COUNT")):0;var actualValue=count+" active HR Centers of Excellence";if(count>=3){return{status:"ready",actualValue:actualValue,finding:count+" active HR COEs. Now Assist HRSD can provide department-aware AI case routing based on COE structure."};}else if(count>=1){return{status:"needs_attention",actualValue:actualValue,finding:"Only "+count+" active HR COE(s) (target: 3+). Now Assist HRSD routing will have limited organizational differentiation."};}else{return{status:"not_ready",actualValue:actualValue,finding:"No active HR COEs configured. COEs define the routing structure Now Assist uses for intelligent HR case assignment."};}}catch(e){return{status:"needs_validation",actualValue:"Check failed — manual verification required",finding:"Script execution error: "+e.message};}})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000404: ' + e.message };
+        }
+    },
+    CHK0000405: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("cmn_skill");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table cmn_skill not found", finding: "Skills table (cmn_skill) is not available. Verify the Skills plugin is active." };
+    }
+    var ga = new GlideAggregate("cmn_skill");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active skill definitions";
+    if (count >= 10) {
+        return { status: "ready", actualValue: actualValue, finding: count + " active skill definitions. Now Assist HRSD can perform competency-matched AI case assignment." };
+    } else if (count >= 3) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " active skill definitions (target: 10+). Now Assist HRSD skill-based AI assignment will have limited matching coverage." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Fewer than 3 active skill definitions. Now Assist HRSD AI case assignment defaults to simple routing without skills data — competency-matched assignment is unavailable." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000405: ' + e.message };
+        }
+    },
+    CHK0000406: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaBR = new GlideAggregate('sys_script');
+    gaBR.addQuery('collection', 'sn_hr_core_case');
+    gaBR.addQuery('active', true);
+    gaBR.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaBR.addAggregate('COUNT');
+    gaBR.query();
+    var brs = gaBR.next() ? parseInt(gaBR.getAggregate('COUNT')) : 0;
+
+    var gaCS = new GlideAggregate('sys_script_client');
+    gaCS.addQuery('table', 'sn_hr_core_case');
+    gaCS.addQuery('active', true);
+    gaCS.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaCS.addAggregate('COUNT');
+    gaCS.query();
+    var cs = gaCS.next() ? parseInt(gaCS.getAggregate('COUNT')) : 0;
+
+    var risk = brs + cs;
+    var actualValue = brs + ' custom BRs + ' + cs + ' client scripts on HR case (risk score: ' + risk + ')';
+
+    if (risk <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low HR customization risk (score: ' + risk + '). Now Assist HRSD AI Agent actions are unlikely to encounter conflicts with existing customizations.'
+        };
+    } else if (risk <= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Moderate HR customization risk (score: ' + risk + '). Test Now Assist HRSD in sub-production before enabling in production to identify conflicts.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High HR customization risk (score: ' + risk + '). Extensive customization on sn_hr_core_case increases the risk of conflicts with Now Assist HRSD AI Agent actions.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000406: ' + e.message };
+        }
+    },
+    CHK0000407: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var matched = {};
+
+    function collectMatches(keyword) {
+        var gr = new GlideRecord('pa_indicators');
+        gr.addQuery('active', true);
+        gr.addQuery('name', 'CONTAINS', keyword);
+        gr.query();
+        while (gr.next()) {
+            matched[gr.getUniqueValue()] = true;
+        }
+    }
+
+    collectMatches('HR');
+    collectMatches('human resources');
+    collectMatches('Human Resources');
+
+    var count = Object.keys(matched).length;
+    var actualValue = count + ' active HR Performance Analytics indicators';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active HR PA indicators. Now Assist HRSD can provide trend-based AI insights for HR service delivery.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active HR PA indicator(s) (target: 3+). Now Assist HRSD trend-based insights will be limited — point-in-time analysis only for uncovered metrics.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active HR PA indicators found. Now Assist HRSD uses PA trend data for predictive HR insights — without it AI defaults to point-in-time analysis only.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000407: ' + e.message };
+        }
+    },
+    CHK0000408: function() {
+        try {
+            return (function(){
+var gr=new GlideRecord("sys_cs_topic");
+gr.addEncodedQuery("active=true^published=true^topicBlockLIKEHR^ORtopicBlockLIKEHuman Resources");
+gr.query();
+var n=gr.getRowCount();
+return{status:n>=10?"ready":"needs_attention",actualValue:n+" published active HR VA topics",finding:n<10?"Only "+n+" published HR VA topics. More active HR topics means broader Now Assist HRSD AI-assisted self-service coverage for employee HR inquiries.":""+n+" published HR VA topics -- good coverage for Now Assist HRSD conversational AI."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000408: ' + e.message };
+        }
+    },
+    CHK0000409: function() {
+        try {
+            return (function(){
+var gr=new GlideRecord("sn_hr_core_case");
+gr.addNotNullQuery("sentiment");
+gr.query();
+var n=gr.getRowCount();
+return{status:n>=100?"ready":"needs_attention",actualValue:n+" HR cases with sentiment data",finding:n<100?"Only "+n+" HR cases have sentiment data. Now Assist HRSD uses sentiment for AI-driven empathetic responses and proactive escalation -- insufficient data limits this capability.":""+n+" HR cases with sentiment data -- Now Assist HRSD can leverage sentiment for empathetic AI responses."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000409: ' + e.message };
+        }
+    },
+    CHK0000410: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('task_rel_task');
+    ga.addEncodedQuery('parent.sys_class_name=sn_hr_core_case^ORchild.sys_class_name=sn_hr_core_case');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' HR case relationships in task_rel_task';
+
+    if (count >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' HR case relationships. Now Assist HRSD summarization has rich relationship context for comprehensive AI-generated case summaries.'
+        };
+    } else if (count >= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' HR case relationships (target: 50+). Now Assist HRSD summarization will have limited relationship context for AI summary depth.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' HR case relationships. Now Assist HRSD summarization uses related records for comprehensive context — encourage agents to link related cases and tasks.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000410: ' + e.message };
+        }
+    },
+    CHK0000411: function() {
+        try {
+            return (function(){
+var gr=new GlideRecord("sn_hr_core_case");
+gr.addNotNullQuery("confidentiality");
+gr.query();
+var n=gr.getRowCount();
+var gr2=new GlideRecord("sn_hr_core_case");
+gr2.query();
+var total=gr2.getRowCount();
+var pct=total>0?Math.round((n/total)*100):0;
+return{status:pct>=50?"ready":"needs_attention",actualValue:pct+"% of HR cases have confidentiality classification ("+n+" of "+total+")",finding:pct<50?"Only "+pct+"% of HR cases have confidentiality classification. Now Assist respects case confidentiality in AI summaries -- unclassified cases may expose sensitive HR data in AI outputs.":""+pct+"% of HR cases are confidentiality-classified -- Now Assist can apply appropriate data restrictions in AI outputs."};
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000411: ' + e.message };
+        }
+    },
+    CHK0000412: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    if (!gs.tableExists('pa_job_config')) {
+        return { status: 'not_applicable', actualValue: 'pa_job_config not found', finding: 'Performance Analytics job configuration table not found. PA productivity metrics check is not applicable.' };
+    }
+    var ga = new GlideAggregate('pa_job_config');
+    ga.addQuery('name', 'CONTAINS', 'HR');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+    var actualValue = count + ' active HR PA job configurations';
+    if (count >= 2) {
+        return { status: 'ready', actualValue: actualValue, finding: count + ' active HR PA job configurations. Worker productivity data is being collected — Now Assist HRSD can use workload data for AI-driven assignment optimization.' };
+    } else if (count >= 1) {
+        return { status: 'needs_attention', actualValue: actualValue, finding: 'Only ' + count + ' active HR PA job configuration(s) (target: 2+). Limited productivity data collection — Now Assist HRSD workload optimization will have partial coverage.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue, finding: 'No active HR PA job configurations found. Now Assist HRSD uses worker productivity metrics for AI-driven workload balancing — without data collection AI cannot optimize HR agent assignments.' };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000412: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_HRSD'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:02:16</sys_created_on>
+        <sys_id>7c82c6e0cfc5c3548935fb251d851ca5</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>AROPCheckLibrary_HRSD</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_7c82c6e0cfc5c3548935fb251d851ca5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

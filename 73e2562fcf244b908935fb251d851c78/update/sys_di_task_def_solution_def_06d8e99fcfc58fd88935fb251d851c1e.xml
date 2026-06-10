@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_di_task_def_solution_def">
+    <sys_di_task_def_solution_def action="INSERT_OR_UPDATE">
+        <document_config display_value="ITAM">28dc54c887bc3110f6314156dabb3535</document_config>
+        <ml_capability_definition_base display_value="docintel_ocr_workflow_31d8299fcfc58fd88935fb251d851cdb">0ad8a99fcfc58fd88935fb251d851cff</ml_capability_definition_base>
+        <solution_type display_value="OCR">27d0b96cb70a2110cbc68b91ee11a93f</solution_type>
+        <sys_class_name>sys_di_task_def_solution_def</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 16:13:24</sys_created_on>
+        <sys_id>06d8e99fcfc58fd88935fb251d851c1e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_di_task_def_solution_def_06d8e99fcfc58fd88935fb251d851c1e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-29 16:13:24</sys_updated_on>
+        <task_definition display_value="ITAM Contract Extraction Clone - 2026-05-29 09:13:22">31d8299fcfc58fd88935fb251d851cdb</task_definition>
+    </sys_di_task_def_solution_def>
+</record_update>

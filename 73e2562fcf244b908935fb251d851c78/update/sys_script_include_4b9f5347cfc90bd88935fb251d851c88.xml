@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_HAM</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP per-module check library for Hardware Asset Management (HAM). Contains executable check methods injected from active check definitions.</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_HAM</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_HAM = Class.create();
+AROPCheckLibrary_HAM.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000608: function() {
+        try {
+            return ((function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_now_assist_ham"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Now Assist for Hardware Asset Management is active", finding: "Now Assist for HAM is active. AI-powered hardware asset lifecycle recommendations, refresh planning, and disposal insights are available." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_now_assist_ham"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Now Assist for HAM is active", finding: "Now Assist for HAM is active. AI-powered hardware lifecycle management and refresh planning are available." }; } return { status: "not_ready", actualValue: "Now Assist for HAM not found or inactive", finding: "Now Assist for HAM is not active. All AI-powered hardware asset management capabilities are unavailable without this plugin." }; }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000608: ' + e.message };
+        }
+    },
+    CHK0000609: function() {
+        try {
+            return ((function() { var ga = new GlideAggregate("alm_hardware"); ga.addAggregate("COUNT"); ga.query(); var total = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (total >= 500) { return { status: "ready", actualValue: total + " hardware asset records", finding: total + " hardware assets. Now Assist HAM has sufficient asset data for AI-powered lifecycle analysis and refresh recommendations." }; } else if (total >= 100) { return { status: "needs_attention", actualValue: total + " hardware asset records", finding: "Only " + total + " hardware assets (target: 500+). Now Assist HAM AI analysis will have limited coverage across the hardware estate." }; } else { return { status: "not_ready", actualValue: total + " hardware asset records", finding: "Only " + total + " hardware assets. Insufficient data for meaningful Now Assist HAM AI lifecycle recommendations." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000609: ' + e.message };
+        }
+    },
+    CHK0000610: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("alm_hardware"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No hardware asset records found", finding: "No hardware asset records found. Model coverage cannot be assessed." }; } var gaModel = new GlideAggregate("alm_hardware"); gaModel.addQuery("model", "!=", ""); gaModel.addAggregate("COUNT"); gaModel.query(); var withModel = gaModel.next() ? parseInt(gaModel.getAggregate("COUNT")) : 0; var pct = Math.round((withModel / total) * 100); var actualValue = pct + "% of hardware assets have a model (" + withModel + "/" + total + ")"; if (pct >= 90) { return { status: "ready", actualValue: actualValue, finding: pct + "% of hardware assets are linked to a model. Now Assist HAM has strong structured data for AI lifecycle analysis and refresh planning." }; } else if (pct >= 70) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of hardware assets have a model (target: 90%+). Now Assist HAM AI refresh recommendations will have reduced accuracy." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of hardware assets have a model. Insufficient structured data for meaningful Now Assist HAM AI lifecycle recommendations." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000610: ' + e.message };
+        }
+    },
+    CHK0000611: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("alm_hardware"); gaTotal.addQuery("install_status", "1"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_applicable", actualValue: "No in-use hardware assets found", finding: "No hardware assets in use state. Assignment rate cannot be assessed." }; } var gaAssigned = new GlideAggregate("alm_hardware"); gaAssigned.addQuery("install_status", "1"); gaAssigned.addQuery("assigned_to", "!=", ""); gaAssigned.addAggregate("COUNT"); gaAssigned.query(); var assigned = gaAssigned.next() ? parseInt(gaAssigned.getAggregate("COUNT")) : 0; var pct = Math.round((assigned / total) * 100); var actualValue = pct + "% of in-use assets are assigned to a user (" + assigned + "/" + total + ")"; if (pct >= 90) { return { status: "ready", actualValue: actualValue, finding: pct + "% of in-use hardware assets have a user assignment. Now Assist HAM can accurately target refresh recommendations and reclamation candidates." }; } else if (pct >= 70) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of in-use assets have a user assignment (target: 90%+). Now Assist HAM AI reclamation and refresh targeting will be less accurate." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of in-use assets have a user assignment. Now Assist HAM cannot accurately target AI refresh recommendations without user assignment data." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000611: ' + e.message };
+        }
+    },
+    CHK0000612: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("alm_hardware"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No hardware asset records found", finding: "No hardware asset records. Warranty data cannot be assessed." }; } var gaWarranty = new GlideAggregate("alm_hardware"); gaWarranty.addQuery("warranty_expiration", "!=", ""); gaWarranty.addAggregate("COUNT"); gaWarranty.query(); var withWarranty = gaWarranty.next() ? parseInt(gaWarranty.getAggregate("COUNT")) : 0; var pct = Math.round((withWarranty / total) * 100); var actualValue = pct + "% of hardware assets have warranty expiration data (" + withWarranty + "/" + total + ")"; if (pct >= 80) { return { status: "ready", actualValue: actualValue, finding: pct + "% of hardware assets have warranty expiration dates. Now Assist HAM can generate AI-powered warranty risk alerts and proactive refresh recommendations." }; } else if (pct >= 50) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of assets have warranty expiration data (target: 80%+). Now Assist HAM AI warranty risk analysis will have incomplete coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of assets have warranty expiration data. Now Assist HAM cannot generate meaningful AI warranty risk alerts without this data." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000612: ' + e.message };
+        }
+    },
+    CHK0000613: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("alm_hardware"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No hardware asset records found", finding: "No hardware asset records. Financial data cannot be assessed." }; } var gaFinancial = new GlideAggregate("alm_hardware"); gaFinancial.addQuery("cost", ">", "0"); gaFinancial.addAggregate("COUNT"); gaFinancial.query(); var withCost = gaFinancial.next() ? parseInt(gaFinancial.getAggregate("COUNT")) : 0; var pct = Math.round((withCost / total) * 100); var actualValue = pct + "% of hardware assets have cost data (" + withCost + "/" + total + ")"; if (pct >= 75) { return { status: "ready", actualValue: actualValue, finding: pct + "% of hardware assets have cost data. Now Assist HAM can generate AI-powered total cost of ownership analysis and financially-informed refresh recommendations." }; } else if (pct >= 40) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of assets have cost data (target: 75%+). Now Assist HAM AI financial analysis will have incomplete coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of assets have cost data. Now Assist HAM cannot generate AI total cost of ownership analysis without financial data." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000613: ' + e.message };
+        }
+    },
+    CHK0000614: function() {
+        try {
+            return ((function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_ham_workspace"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Hardware Asset Workspace is active", finding: "Hardware Asset Workspace is active. Now Assist HAM AI insights are surfaced in context for hardware asset managers." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_ham_workspace"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Hardware Asset Workspace is active", finding: "Hardware Asset Workspace is active. Now Assist HAM AI lifecycle and refresh insights are available to asset managers." }; } return { status: "not_ready", actualValue: "Hardware Asset Workspace not found or inactive", finding: "Hardware Asset Workspace is not active. Now Assist HAM AI insights are not accessible in a contextually relevant interface for hardware asset managers." }; }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000614: ' + e.message };
+        }
+    },
+    CHK0000615: function() {
+        try {
+            return ((function() { var ga = new GlideAggregate("alm_stockroom"); ga.addQuery("active", true); ga.addAggregate("COUNT"); ga.query(); var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (count >= 3) { return { status: "ready", actualValue: count + " active stockrooms configured", finding: count + " active stockrooms. Now Assist HAM has structured inventory locations for AI-powered stock level analysis and procurement recommendations." }; } else if (count >= 1) { return { status: "needs_attention", actualValue: count + " active stockroom(s) configured", finding: "Only " + count + " active stockroom(s) (target: 3+). Now Assist HAM AI stock analysis may not cover all inventory locations." }; } else { return { status: "not_ready", actualValue: "No active stockrooms configured", finding: "No active stockrooms configured. Now Assist HAM cannot perform AI inventory level analysis or generate procurement recommendations without stockroom data." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000615: ' + e.message };
+        }
+    },
+    CHK0000616: function() {
+        try {
+            return ((function() { var ga = new GlideAggregate("sys_script"); ga.addQuery("collection", "alm_hardware"); ga.addQuery("active", true); ga.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); ga.addAggregate("COUNT"); ga.query(); var brs = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; var actualValue = brs + " custom Business Rules on alm_hardware"; if (brs <= 5) { return { status: "ready", actualValue: actualValue, finding: "Low HAM customization risk (" + brs + " custom BRs). Now Assist HAM AI recommendations are unlikely to encounter conflicts with existing customizations." }; } else if (brs <= 10) { return { status: "needs_attention", actualValue: actualValue, finding: "Moderate HAM customization risk (" + brs + " custom BRs). Test Now Assist HAM in sub-production before enabling in production." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "High HAM customization risk (" + brs + " custom BRs). Extensive customization increases the risk of conflicts with Now Assist HAM AI actions." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000616: ' + e.message };
+        }
+    },
+    CHK0000617: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("alm_hardware"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No hardware asset records found", finding: "No hardware asset records found." }; } // Count retired/disposed assets older than 2 years still in system var cutoff = new GlideDateTime(); cutoff.addYearsUTC(-2); var gaStale = new GlideAggregate("alm_hardware"); gaStale.addQuery("install_status", "IN", "7,9"); gaStale.addQuery("sys_updated_on", "<", cutoff.getValue()); gaStale.addAggregate("COUNT"); gaStale.query(); var stale = gaStale.next() ? parseInt(gaStale.getAggregate("COUNT")) : 0; var pct = Math.round((stale / total) * 100); var actualValue = stale + " retired/disposed assets not updated in 2+ years (" + pct + "% of total)"; if (pct <= 5) { return { status: "ready", actualValue: actualValue, finding: "Low stale asset ratio (" + pct + "%). Asset lifecycle data is well maintained. Now Assist HAM AI analysis is based on current, accurate asset data." }; } else if (pct <= 15) { return { status: "needs_attention", actualValue: actualValue, finding: pct + "% of assets are stale retired/disposed records. Now Assist HAM AI analysis accuracy will be reduced by outdated lifecycle data." }; } else { return { status: "not_ready", actualValue: actualValue, finding: pct + "% of assets are stale retired/disposed records. Now Assist HAM AI recommendations will be unreliable with significant stale asset data contaminating the dataset." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000617: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_HAM'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 06:13:49</sys_created_on>
+        <sys_id>4b9f5347cfc90bd88935fb251d851c88</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>AROPCheckLibrary_HAM</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_4b9f5347cfc90bd88935fb251d851c88</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

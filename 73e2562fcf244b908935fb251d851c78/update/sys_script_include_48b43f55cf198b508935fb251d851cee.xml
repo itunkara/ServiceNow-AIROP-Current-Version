@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name/>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <mobile_callable>false</mobile_callable>
+        <name/>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckSeeder = Class.create();
+AROPCheckSeeder.prototype = {
+    initialize: function() {},
+
+    seed: function() {
+        var TABLE = 'x_snc_airop_check_definition';
+
+        var delGr = new GlideRecord(TABLE);
+        delGr.query();
+        while (delGr.next()) {
+            delGr.setWorkflow(false);
+            delGr.deleteRecord();
+        }
+        gs.info('AROPCheckSeeder: deleted existing check definitions.');
+
+        var checks = [];
+        var s0 = new AROPCheckSeeder_ITSM(); checks = checks.concat(s0.getChecks());
+        var s1 = new AROPCheckSeeder_ITOM(); checks = checks.concat(s1.getChecks());
+        var s2 = new AROPCheckSeeder_CMDB(); checks = checks.concat(s2.getChecks());
+        var s3 = new AROPCheckSeeder_HRSD(); checks = checks.concat(s3.getChecks());
+        var s4 = new AROPCheckSeeder_CSM(); checks = checks.concat(s4.getChecks());
+        var s5 = new AROPCheckSeeder_FIELD_SERVICE(); checks = checks.concat(s5.getChecks());
+        var s6 = new AROPCheckSeeder_AIOPS(); checks = checks.concat(s6.getChecks());
+        var s7 = new AROPCheckSeeder_GRC(); checks = checks.concat(s7.getChecks());
+        var s8 = new AROPCheckSeeder_SPM(); checks = checks.concat(s8.getChecks());
+        var s9 = new AROPCheckSeeder_PLATFORM(); checks = checks.concat(s9.getChecks());
+        var s10 = new AROPCheckSeeder_VIRTUAL_AGENT(); checks = checks.concat(s10.getChecks());
+        var s11 = new AROPCheckSeeder_DEX(); checks = checks.concat(s11.getChecks());
+        var s12 = new AROPCheckSeeder_SECOPS(); checks = checks.concat(s12.getChecks());
+        var s13 = new AROPCheckSeeder_HS(); checks = checks.concat(s13.getChecks());
+        var s14 = new AROPCheckSeeder_OTSM(); checks = checks.concat(s14.getChecks());
+        var s15 = new AROPCheckSeeder_CREATOR(); checks = checks.concat(s15.getChecks());
+        var s16 = new AROPCheckSeeder_SPO(); checks = checks.concat(s16.getChecks());
+        var s17 = new AROPCheckSeeder_TPRM(); checks = checks.concat(s17.getChecks());
+        var s18 = new AROPCheckSeeder_LSD(); checks = checks.concat(s18.getChecks());
+        var s19 = new AROPCheckSeeder_WSD(); checks = checks.concat(s19.getChecks());
+        var s20 = new AROPCheckSeeder_HAM(); checks = checks.concat(s20.getChecks());
+        var s21 = new AROPCheckSeeder_SAM(); checks = checks.concat(s21.getChecks());
+
+        var inserted = 0;
+        var failed = 0;
+
+        for (var i = 0; i < checks.length; i++) {
+            var c = checks[i];
+            try {
+                var gr = new GlideRecord(TABLE);
+                gr.initialize();
+                gr.setValue('module', c.module);
+                gr.setValue('check_name', c.check_name);
+                if (c.order !== null && c.order !== '') {
+                    gr.setValue('order', c.order);
+                }
+                gr.setValue('check_script', c.check_script);
+                gr.setValue('ai_justification', c.ai_justification || '');
+                gr.setValue('remediation_guidance', c.remediation_guidance || '');
+                gr.setValue('is_manual', c.is_manual || '0');
+                gr.setValue('is_clone_sensitive', c.is_clone_sensitive || '0');
+                gr.setValue('is_active', '1');
+                gr.setWorkflow(false);
+                var sysId = gr.insert();
+                if (sysId) { inserted++; }
+                else { failed++; gs.warn('AROPCheckSeeder: failed: ' + c.check_name); }
+            } catch(e) {
+                failed++;
+                gs.error('AROPCheckSeeder: error on ' + c.check_name + ': ' + e.message);
+            }
+        }
+
+        gs.info('AROPCheckSeeder: inserted=' + inserted + ', failed=' + failed + ', total=' + checks.length);
+        return { inserted: inserted, failed: failed, total: checks.length };
+    },
+
+    type: 'AROPCheckSeeder'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-05 07:32:15</sys_created_on>
+        <sys_id>48b43f55cf198b508935fb251d851cee</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_48b43f55cf198b508935fb251d851cee</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-08 21:10:36</sys_updated_on>
+    </sys_script_include>
+</record_update>

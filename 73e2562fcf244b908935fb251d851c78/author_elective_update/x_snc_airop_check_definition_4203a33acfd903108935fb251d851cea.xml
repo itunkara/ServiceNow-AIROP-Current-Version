@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Now Assist Core is the foundational plugin that enables all Now Assist AI capabilities across every module. Without Now Assist Core active, no AI features — summarization, routing, search, or agentic workflows — can function regardless of how well the underlying data is prepared.]]></ai_justification>
+<check_name>Now Assist Core Plugin Status..</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Check sys_store_app by scope first
+    var saGR = new GlideRecord("sys_store_app");
+    saGR.addQuery("scope", "now_assist_core");
+    saGR.setLimit(1);
+    saGR.query();
+    if (saGR.next()) {
+        return { status: "ready", actualValue: "Now Assist Core found in sys_store_app (scope: now_assist_core) v" + saGR.getValue("version"), finding: "Now Assist Core is installed. Platform-wide AI features are available." };
+    }
+    // Fallback: sys_plugins by name (plugin_id is null for store apps)
+    var spGR = new GlideRecord("sys_plugins");
+    spGR.addQuery("name", "Now Assist Core");
+    spGR.addQuery("active", true);
+    spGR.setLimit(1);
+    spGR.query();
+    if (spGR.next()) {
+        return { status: "ready", actualValue: "Now Assist Core found in sys_plugins (name match) v" + spGR.getValue("version"), finding: "Now Assist Core is installed. Platform-wide AI features are available." };
+    }
+    return { status: "blocker", actualValue: "Now Assist Core not found in sys_store_app (scope: now_assist_core) or sys_plugins.", finding: "Now Assist Core not installed. Required for all Now Assist and AI Agent features across all modules." };
+})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>PLATFORM</module>
+<number>CHK0006104</number>
+<order/>
+<remediation_guidance>Activate Now Assist Core via the ServiceNow Store or Plugin Manager. Confirm entitlement with your ServiceNow account team before activation. Now Assist Core is a prerequisite gate — no module-specific Now Assist capabilities will function without it.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4203a33acfd903108935fb251d851cea</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851cea</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Now Assist Core is the foundational plugin that enables all Now Assist AI capabilities across every module. Without Now Assist Core active, no AI features — summarization, routing, search, or agentic workflows — can function regardless of how well the underlying data is prepared.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Now Assist Core Plugin Status..&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    // Check sys_store_app by scope first
+    var saGR = new GlideRecord("sys_store_app");
+    saGR.addQuery("scope", "now_assist_core");
+    saGR.setLimit(1);
+    saGR.query();
+    if (saGR.next()) {
+        return { status: "ready", actualValue: "Now Assist Core found in sys_store_app (scope: now_assist_core) v" + saGR.getValue("version"), finding: "Now Assist Core is installed. Platform-wide AI features are available." };
+    }
+    // Fallback: sys_plugins by name (plugin_id is null for store apps)
+    var spGR = new GlideRecord("sys_plugins");
+    spGR.addQuery("name", "Now Assist Core");
+    spGR.addQuery("active", true);
+    spGR.setLimit(1);
+    spGR.query();
+    if (spGR.next()) {
+        return { status: "ready", actualValue: "Now Assist Core found in sys_plugins (name match) v" + spGR.getValue("version"), finding: "Now Assist Core is installed. Platform-wide AI features are available." };
+    }
+    return { status: "blocker", actualValue: "Now Assist Core not found in sys_store_app (scope: now_assist_core) or sys_plugins.", finding: "Now Assist Core not installed. Required for all Now Assist and AI Agent features across all modules." };
+})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;PLATFORM&lt;/module&gt;
+&lt;number&gt;CHK0006104&lt;/number&gt;
+&lt;order/&gt;
+&lt;remediation_guidance&gt;Activate Now Assist Core via the ServiceNow Store or Plugin Manager. Confirm entitlement with your ServiceNow account team before activation. Now Assist Core is a prerequisite gate — no module-specific Now Assist capabilities will function without it.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4203a33acfd903108935fb251d851cea&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>126300135</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:24</sys_created_on>
+        <sys_id>dcb60147cf9947108935fb251d851c77</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa69c70000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:24</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>18b60147e199471027d5ed6fdd66f976</update_guid>
+        <update_guid_history>18b60147e199471027d5ed6fdd66f976:126300135</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">371f85cfcfdd47108935fb251d851ccc</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:14</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>c156a13ac665413086d7bba7458446e1</sys_id>
+        <sys_metadata>4203a33acfd903108935fb251d851cea</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4203a33acfd903108935fb251d851cea</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4203a33acfd903108935fb251d851cea">dcb60147cf9947108935fb251d851c77</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:14</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

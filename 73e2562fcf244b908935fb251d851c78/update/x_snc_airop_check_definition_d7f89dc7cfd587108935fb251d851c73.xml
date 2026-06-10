@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[The WSD Workspace is the primary interface where Now Assist WSD AI insights are presented to managers and employees. Without it, AI-generated space recommendations and occupancy insights are produced but never surfaced where they are needed.]]></ai_justification>
+        <check_name>WSD Workspace Activation</check_name>
+        <check_script><![CDATA[(function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_wsd_core"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Workplace Core (" + gr.getValue("name") + ") is active", finding: "Workplace Core is active. Now Assist WSD AI insights including space recommendations and occupancy analysis are accessible to workplace managers and employees." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_wsd_workspace"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Workplace Service Delivery Workspace is active", finding: "WSD Workspace is active. Now Assist WSD AI insights are surfaced in context for workplace managers." }; } return { status: "not_ready", actualValue: "WSD Workspace not found or inactive", finding: "WSD Workspace is not active. Now Assist WSD AI insights are not accessible in a contextually relevant interface." }; })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>WSD</module>
+        <number>CHK0000605</number>
+        <order>800</order>
+        <remediation_guidance>Activate the Workplace Service Delivery workspace via the ServiceNow Store or Plugin Manager. The workspace is required for Now Assist WSD AI insights to surface in context.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:21</sys_created_on>
+        <sys_id>d7f89dc7cfd587108935fb251d851c73</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>WSD Workspace Activation</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_d7f89dc7cfd587108935fb251d851c73</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Overly permissive or missing ACLs on core tables can allow AI Agents to read or write data beyond intended scope. Proper ACL coverage is a prerequisite for production AI Agent enablement.]]></ai_justification>
+        <check_name>ACL Coverage on Core Tables</check_name>
+        <check_script><![CDATA[(function(){
+var gr=new GlideRecord("sys_security_acl");
+gr.addEncodedQuery("nameINincident,task,change_request,cmdb_ci");
+gr.query();
+var n=gr.getRowCount();
+return{status:n>=10?"ready":"needs_attention",actualValue:n+" ACLs on core AI tables",finding:n<10?"Only "+n+" ACLs found on core AI tables (incident, task, change_request, cmdb_ci). Proper ACL coverage is required before production AI Agent enablement.":""+n+" ACLs protect core AI tables -- access control coverage is adequate."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>PLATFORM</module>
+        <number>CHK0000490</number>
+        <order>110</order>
+        <remediation_guidance>Review ACLs on incident, task, change_request, and cmdb_ci tables via sys_security_acl_list.do. Ensure read/write ACLs are properly scoped for AI Agent service accounts. Test AI Agent operations against ACL policies in sub-production.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>07f85dc7cfd587108935fb251d851c32</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>ACL Coverage on Core Tables</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_07f85dc7cfd587108935fb251d851c32</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

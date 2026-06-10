@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_WSD</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP per-module check library for Workplace Service Delivery (WSD). Contains executable check methods injected from active check definitions.</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_WSD</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_WSD = Class.create();
+AROPCheckLibrary_WSD.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000598: function() {
+        try {
+            return ((function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_now_assist_wsd"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Now Assist for WSD is active", finding: "Now Assist for Workplace Service Delivery is active. AI-powered space recommendations, reservation summarization, and workplace insights are available." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_now_assist_wsd"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Now Assist for WSD is active", finding: "Now Assist for Workplace Service Delivery is active. AI-powered space recommendations and workplace insights are available." }; } return { status: "not_ready", actualValue: "Now Assist for WSD not found or inactive", finding: "Now Assist for WSD is not active. All AI-powered workplace service delivery capabilities are unavailable without this plugin." }; }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000598: ' + e.message };
+        }
+    },
+    CHK0000599: function() {
+        try {
+            return ((function() { var ga = new GlideAggregate("sn_wsd_core_space"); ga.addAggregate("COUNT"); ga.query(); var total = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (total >= 100) { return { status: "ready", actualValue: total + " space records in inventory", finding: total + " spaces. Now Assist WSD has sufficient space data for AI-powered space recommendations and occupancy analysis." }; } else if (total >= 20) { return { status: "needs_attention", actualValue: total + " space records in inventory", finding: "Only " + total + " spaces (target: 100+). Now Assist WSD AI space recommendations will have limited coverage." }; } else { return { status: "not_ready", actualValue: total + " space records in inventory", finding: "Only " + total + " spaces. Insufficient space data for meaningful Now Assist WSD AI recommendations." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000599: ' + e.message };
+        }
+    },
+    CHK0000600: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("sn_wsd_core_space"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No space records found", finding: "No space records found. Capacity data cannot be assessed." }; } var gaCap = new GlideAggregate("sn_wsd_core_space"); gaCap.addQuery("capacity", ">", "0"); gaCap.addAggregate("COUNT"); gaCap.query(); var withCap = gaCap.next() ? parseInt(gaCap.getAggregate("COUNT")) : 0; var pct = Math.round((withCap / total) * 100); var actualValue = pct + "% of spaces have capacity data (" + withCap + "/" + total + ")"; if (pct >= 90) { return { status: "ready", actualValue: actualValue, finding: pct + "% of spaces have capacity configured. Now Assist WSD can accurately match group sizes to appropriate spaces in AI recommendations." }; } else if (pct >= 70) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of spaces have capacity data (target: 90%+). Now Assist WSD AI space matching accuracy will be reduced." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of spaces have capacity data. Now Assist WSD cannot accurately match group sizes to spaces without capacity information." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000600: ' + e.message };
+        }
+    },
+    CHK0000601: function() {
+        try {
+            return ((function() { var cutoff = new GlideDateTime(); cutoff.addYearsUTC(-1); var ga = new GlideAggregate("sn_wsd_rsv_reservation"); ga.addQuery("sys_created_on", ">=", cutoff.getValue()); ga.addAggregate("COUNT"); ga.query(); var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (count >= 500) { return { status: "ready", actualValue: count + " reservations in last 12 months", finding: count + " reservations in the last 12 months. Now Assist WSD has sufficient reservation history for AI occupancy analysis and space utilization insights." }; } else if (count >= 100) { return { status: "needs_attention", actualValue: count + " reservations in last 12 months", finding: "Only " + count + " reservations in the last 12 months (target: 500+). Now Assist WSD AI occupancy analysis will have limited pattern data." }; } else { return { status: "not_ready", actualValue: count + " reservations in last 12 months", finding: "Only " + count + " reservations in the last 12 months. Insufficient reservation history for meaningful Now Assist WSD AI occupancy analysis." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000601: ' + e.message };
+        }
+    },
+    CHK0000602: function() {
+        try {
+            return ((function() { var ga = new GlideAggregate("sn_wsd_core_campus"); ga.addAggregate("COUNT"); ga.query(); var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (count >= 3) { return { status: "ready", actualValue: count + " campus records configured", finding: count + " campuses configured. Now Assist WSD has structured location hierarchy for AI-powered location-aware space recommendations." }; } else if (count >= 1) { return { status: "needs_attention", actualValue: count + " campus record(s) configured", finding: "Only " + count + " campus configured (target: 3+). Now Assist WSD AI location-based recommendations may have limited geographic coverage." }; } else { return { status: "not_ready", actualValue: "No campus records configured", finding: "No campuses configured. Now Assist WSD cannot provide location-aware AI space recommendations without campus structure." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000602: ' + e.message };
+        }
+    },
+    CHK0000603: function() {
+        try {
+            return ((function() { var ga = new GlideAggregate("sn_wsd_rsv_reservable_module"); ga.addAggregate("COUNT"); ga.query(); var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (count >= 3) { return { status: "ready", actualValue: count + " reservable modules configured", finding: count + " reservable modules configured. Now Assist WSD can recommend across multiple space types including desks, meeting rooms, and amenity spaces." }; } else if (count >= 1) { return { status: "needs_attention", actualValue: count + " reservable module(s) configured", finding: "Only " + count + " reservable module(s) configured (target: 3+). Now Assist WSD AI recommendations will be limited to fewer space types." }; } else { return { status: "not_ready", actualValue: "No reservable modules configured", finding: "No reservable modules configured. Now Assist WSD cannot make AI space recommendations without defined reservable space types." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000603: ' + e.message };
+        }
+    },
+    CHK0000604: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("sn_wsd_rsv_reservation"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_applicable", actualValue: "No reservations found", finding: "No reservations found. Check-in configuration cannot be assessed." }; } var gaCheckin = new GlideAggregate("sn_wsd_rsv_reservation"); gaCheckin.addQuery("check_in_state", "awaiting_check_in"); gaCheckin.addAggregate("COUNT"); gaCheckin.query(); var awaiting = gaCheckin.next() ? parseInt(gaCheckin.getAggregate("COUNT")) : 0; var pct = Math.round((awaiting / total) * 100); var actualValue = pct + "% of reservations use check-in (" + awaiting + "/" + total + ")"; if (pct >= 50) { return { status: "ready", actualValue: actualValue, finding: pct + "% of reservations have check-in enabled. Now Assist WSD has occupancy confirmation data for accurate AI space utilization analysis." }; } else if (pct >= 20) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of reservations use check-in (target: 50%+). Now Assist WSD AI occupancy data will be based on reservations rather than confirmed attendance." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of reservations use check-in. Now Assist WSD AI occupancy analysis will be inaccurate without check-in confirmation data." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000604: ' + e.message };
+        }
+    },
+    CHK0000605: function() {
+        try {
+            return ((function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_wsd_core"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Workplace Core (" + gr.getValue("name") + ") is active", finding: "Workplace Core is active. Now Assist WSD AI insights including space recommendations and occupancy analysis are accessible to workplace managers and employees." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_wsd_workspace"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Workplace Service Delivery Workspace is active", finding: "WSD Workspace is active. Now Assist WSD AI insights are surfaced in context for workplace managers." }; } return { status: "not_ready", actualValue: "WSD Workspace not found or inactive", finding: "WSD Workspace is not active. Now Assist WSD AI insights are not accessible in a contextually relevant interface." }; }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000605: ' + e.message };
+        }
+    },
+    CHK0000606: function() {
+        try {
+            return ((function() { var gaTotal = new GlideAggregate("sn_wsd_core_space"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No space records found", finding: "No space records found. Location coverage cannot be assessed." }; } var gaLoc = new GlideAggregate("sn_wsd_core_space"); gaLoc.addQuery("building", "!=", ""); gaLoc.addAggregate("COUNT"); gaLoc.query(); var withBuilding = gaLoc.next() ? parseInt(gaLoc.getAggregate("COUNT")) : 0; var pct = Math.round((withBuilding / total) * 100); var actualValue = pct + "% of spaces have a building assigned (" + withBuilding + "/" + total + ")"; if (pct >= 90) { return { status: "ready", actualValue: actualValue, finding: pct + "% of spaces have building assignments. Now Assist WSD can provide accurate location-aware AI space recommendations." }; } else if (pct >= 60) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of spaces have building assignments (target: 90%+). Now Assist WSD AI location filtering will have incomplete coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of spaces have building assignments. Now Assist WSD cannot provide location-aware AI recommendations without building data on spaces." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000606: ' + e.message };
+        }
+    },
+    CHK0000607: function() {
+        try {
+            return ((function() { var ga1 = new GlideAggregate("sys_script"); ga1.addQuery("collection", "sn_wsd_rsv_reservation"); ga1.addQuery("active", true); ga1.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); ga1.addAggregate("COUNT"); ga1.query(); var brs1 = ga1.next() ? parseInt(ga1.getAggregate("COUNT")) : 0; var ga2 = new GlideAggregate("sys_script"); ga2.addQuery("collection", "sn_wsd_core_space"); ga2.addQuery("active", true); ga2.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); ga2.addAggregate("COUNT"); ga2.query(); var brs2 = ga2.next() ? parseInt(ga2.getAggregate("COUNT")) : 0; var risk = brs1 + brs2; var actualValue = brs1 + " custom BRs on reservations + " + brs2 + " on spaces (risk score: " + risk + ")"; if (risk <= 5) { return { status: "ready", actualValue: actualValue, finding: "Low WSD customization risk (score: " + risk + "). Now Assist WSD AI recommendations are unlikely to encounter conflicts with existing customizations." }; } else if (risk <= 10) { return { status: "needs_attention", actualValue: actualValue, finding: "Moderate WSD customization risk (score: " + risk + "). Test Now Assist WSD in sub-production before enabling in production." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "High WSD customization risk (score: " + risk + "). Extensive customization increases the risk of conflicts with Now Assist WSD AI actions." }; } }))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000607: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_WSD'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-29 06:14:13</sys_created_on>
+        <sys_id>7cbf9347cfc90bd88935fb251d851c83</sys_id>
+        <sys_mod_count>14</sys_mod_count>
+        <sys_name>AROPCheckLibrary_WSD</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_7cbf9347cfc90bd88935fb251d851c83</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

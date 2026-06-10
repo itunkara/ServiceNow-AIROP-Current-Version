@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[DEX and Now Assist must both be active for AI-powered device diagnosis and agentic endpoint workflows. Without both plugins, DEX AI capabilities including conversational diagnosis and automated remediation are completely unavailable.]]></ai_justification>
+        <check_name>DEX and Now Assist Plugin Status</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+
+    // Check sn_dex -- may be sys_scope or sys_store_app
+    var dexResult = checkPlugin("sn_dex", "sn_dex");
+    if (!dexResult.found) {
+        var gr = new GlideRecord("sys_scope");
+        gr.addQuery("scope", "sn_dex");
+        gr.addQuery("active", true);
+        gr.setLimit(1);
+        gr.query();
+        if (gr.next()) { dexResult.found = true; dexResult.table = "sys_scope"; }
+    }
+    var dexActive = dexResult.found;
+
+    // Check sn_itsm_gen_ai -- Store App confirmed
+    var itsmAIResult = checkPlugin("sn_itsm_gen_ai", "sn_itsm_gen_ai");
+    var itsmAIActive = itsmAIResult.found;
+
+    var actualValue = "sn_dex: " + (dexActive ? "active" : "inactive") +
+                      " | sn_itsm_gen_ai: " + (itsmAIActive ? "active (v" + itsmAIResult.version + ")" : "inactive");
+
+    if (dexActive && itsmAIActive) {
+        return { status: "ready", actualValue: actualValue,
+            finding: "DEX base plugin and Now Assist for ITSM are both active. DEX AI capabilities are available." };
+    } else if (dexActive && !itsmAIActive) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "DEX base plugin is active but Now Assist for ITSM (sn_itsm_gen_ai) is not. DEX AI diagnosis and agentic workflows are unavailable without sn_itsm_gen_ai." };
+    } else if (!dexActive && itsmAIActive) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Now Assist for ITSM is active but the DEX base plugin (sn_dex) is not. DEX AI capabilities require both plugins." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Neither DEX (sn_dex) nor Now Assist for ITSM (sn_itsm_gen_ai) are active. DEX AI capabilities are completely unavailable." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>DEX</module>
+        <number>CHK0000519</number>
+        <order/>
+        <remediation_guidance>Activate the base DEX plugin (sn_dex) and Now Assist for ITSM (sn_itsm_gen_ai) via the ServiceNow Store. sn_itsm_gen_ai provides the conversational AI and agentic diagnosis workflows that power DEX AI capabilities. Both are required for full DEX AI readiness.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>87f85dc7cfd587108935fb251d851c76</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>DEX and Now Assist Plugin Status</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_87f85dc7cfd587108935fb251d851c76</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

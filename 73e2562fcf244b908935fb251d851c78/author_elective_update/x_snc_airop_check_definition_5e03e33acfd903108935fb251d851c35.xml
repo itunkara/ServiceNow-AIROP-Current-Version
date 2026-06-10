@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Assignment groups are the routing targets for Now Assist SIR AI recommendations. Without populated groups, AI routing suggestions have nowhere to send incidents and automated assignment will fail.]]></ai_justification>
+<check_name>Security Incident Assignment Group Configuration</check_name>
+<check_script><![CDATA[(function() { var cutoff = new GlideDateTime(); cutoff.addYearsUTC(-1); var usedGroups = {}; var gr = new GlideRecord("sn_si_incident"); gr.addQuery("sys_created_on", ">=", cutoff.getValue()); gr.addQuery("assignment_group", "!=", ""); gr.query(); while (gr.next()) { usedGroups[gr.getValue("assignment_group")] = true; } var groupIds = Object.keys(usedGroups); var totalGroups = groupIds.length; if (totalGroups === 0) { return { status: "not_ready", actualValue: "No assignment groups used on security incidents in last 12 months", finding: "No assignment groups found on security incidents. Now Assist SIR AI routing has no group structure to route incidents to." }; } var groupsWithMembers = 0; for (var i = 0; i < groupIds.length; i++) { var memGr = new GlideRecord("sys_user_grmember"); memGr.addQuery("group", groupIds[i]); memGr.setLimit(1); memGr.query(); if (memGr.next()) groupsWithMembers++; } var pct = Math.round((groupsWithMembers / totalGroups) * 100); var actualValue = totalGroups + " security assignment groups | " + groupsWithMembers + " with active members (" + pct + "%)"; if (groupsWithMembers >= 2 && pct >= 80) { return { status: "ready", actualValue: actualValue, finding: groupsWithMembers + " populated security assignment groups. Now Assist SIR AI routing has well-defined staffed groups to route incidents to." }; } else if (groupsWithMembers >= 1) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + groupsWithMembers + " of " + totalGroups + " security assignment groups have members. Now Assist SIR AI routing may attempt to assign incidents to empty groups." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "No security assignment groups have active members. Now Assist SIR AI routing cannot function without populated assignment groups." }; } })]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>SECOPS</module>
+<number>CHK0006156</number>
+<order>500</order>
+<remediation_guidance>Ensure all active security assignment groups have members. Populate group membership and assign managers to each group. Now Assist SIR uses group structure for AI-driven incident routing.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:06:00</sys_created_on>
+<sys_id>5e03e33acfd903108935fb251d851c35</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:06:00</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_5e03e33acfd903108935fb251d851c35</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Assignment groups are the routing targets for Now Assist SIR AI recommendations. Without populated groups, AI routing suggestions have nowhere to send incidents and automated assignment will fail.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Security Incident Assignment Group Configuration&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function() { var cutoff = new GlideDateTime(); cutoff.addYearsUTC(-1); var usedGroups = {}; var gr = new GlideRecord("sn_si_incident"); gr.addQuery("sys_created_on", "&gt;=", cutoff.getValue()); gr.addQuery("assignment_group", "!=", ""); gr.query(); while (gr.next()) { usedGroups[gr.getValue("assignment_group")] = true; } var groupIds = Object.keys(usedGroups); var totalGroups = groupIds.length; if (totalGroups === 0) { return { status: "not_ready", actualValue: "No assignment groups used on security incidents in last 12 months", finding: "No assignment groups found on security incidents. Now Assist SIR AI routing has no group structure to route incidents to." }; } var groupsWithMembers = 0; for (var i = 0; i &lt; groupIds.length; i++) { var memGr = new GlideRecord("sys_user_grmember"); memGr.addQuery("group", groupIds[i]); memGr.setLimit(1); memGr.query(); if (memGr.next()) groupsWithMembers++; } var pct = Math.round((groupsWithMembers / totalGroups) * 100); var actualValue = totalGroups + " security assignment groups | " + groupsWithMembers + " with active members (" + pct + "%)"; if (groupsWithMembers &gt;= 2 &amp;&amp; pct &gt;= 80) { return { status: "ready", actualValue: actualValue, finding: groupsWithMembers + " populated security assignment groups. Now Assist SIR AI routing has well-defined staffed groups to route incidents to." }; } else if (groupsWithMembers &gt;= 1) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + groupsWithMembers + " of " + totalGroups + " security assignment groups have members. Now Assist SIR AI routing may attempt to assign incidents to empty groups." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "No security assignment groups have active members. Now Assist SIR AI routing cannot function without populated assignment groups." }; } })]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;SECOPS&lt;/module&gt;
+&lt;number&gt;CHK0006156&lt;/number&gt;
+&lt;order&gt;500&lt;/order&gt;
+&lt;remediation_guidance&gt;Ensure all active security assignment groups have members. Populate group membership and assign managers to each group. Now Assist SIR uses group structure for AI-driven incident routing.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:06:00&lt;/sys_created_on&gt;
+&lt;sys_id&gt;5e03e33acfd903108935fb251d851c35&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:06:00&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>2085956528</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:26</sys_created_on>
+        <sys_id>f8b68147cf9947108935fb251d851cc6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa71820000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:26</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>34b681475d994710c748c0dc30c61ec5</update_guid>
+        <update_guid_history>34b681475d994710c748c0dc30c61ec5:2085956528</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">642fc9cfcfdd47108935fb251d851c93</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:17</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>05a63662a6cd492480af6e3c843a5199</sys_id>
+        <sys_metadata>5e03e33acfd903108935fb251d851c35</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_5e03e33acfd903108935fb251d851c35</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_5e03e33acfd903108935fb251d851c35">f8b68147cf9947108935fb251d851cc6</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:17</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

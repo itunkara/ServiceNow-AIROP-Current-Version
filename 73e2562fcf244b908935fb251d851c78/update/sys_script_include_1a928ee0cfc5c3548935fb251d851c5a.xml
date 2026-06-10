@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_VIRTUAL_AGENT</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for VIRTUAL_AGENT module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_VIRTUAL_AGENT</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_VIRTUAL_AGENT = Class.create();
+AROPCheckLibrary_VIRTUAL_AGENT.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000501: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var vaResult = checkPlugin("com.glide.cs.chatbot", "com.glide.cs.chatbot");
+    var pluginActive = vaResult.found;
+    // Functional fallback: sys_cs_topic table existing = VA is installed
+    if (!pluginActive) {
+        var testGr = new GlideRecord("sys_cs_topic");
+        testGr.setLimit(1);
+        testGr.query();
+        pluginActive = testGr.isValid();
+    }
+    var prop = gs.getProperty("glide.cs.enabled", "false");
+    var actualValue = "Plugin active: " + pluginActive + " | glide.cs.enabled: " + prop;
+    if (pluginActive && prop === "true") {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Virtual Agent plugin is active and glide.cs.enabled=true. Now Assist conversational AI prerequisites are satisfied." };
+    } else if (pluginActive) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Virtual Agent plugin is active but glide.cs.enabled is not set to true. Now Assist conversational AI will not function until this property is enabled." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Virtual Agent plugin (com.glide.cs.chatbot) is not active. Now Assist conversational AI cannot function without the base VA plugin." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000501: ' + e.message };
+        }
+    },
+    CHK0000502: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("sn_nowassist_va", "sn_nowassist_va");
+    if (result.found) {
+        return {
+            status: "ready",
+            actualValue: "Now Assist VA Integration (" + "sn_nowassist_va" + ") installed | version: " + result.version + " | source: " + result.table,
+            finding: "Now Assist VA integration is installed. Generative AI responses and enhanced intent matching are available in VA conversations."
+        };
+    } else {
+        return {
+            status: "not_ready",
+            actualValue: "Now Assist VA Integration (sn_nowassist_va) not found in sys_store_app or sys_plugins",
+            finding: "Now Assist VA integration (sn_nowassist_va) not found. Generative AI responses and enhanced intent matching are unavailable in VA conversations."
+        };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000502: ' + e.message };
+        }
+    },
+    CHK0000503: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_cs_topic');
+    ga.addQuery('active', true);
+    ga.addQuery('published', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' published active VA topics';
+
+    if (count >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' published VA topics. Now Assist VA has broad topic coverage for meaningful AI-assisted self-service.'
+        };
+    } else if (count >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics (target: 50+). Now Assist VA self-service coverage will be limited — publish additional topics for key use cases.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics. Insufficient topic coverage for meaningful Now Assist VA self-service — a minimum foundation of topics is required before AI enhancement adds value.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000503: ' + e.message };
+        }
+    },
+    CHK0000504: function() {
+        try {
+            return (function() {
+    var t = new GlideRecord("sys_nlu_model");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table sys_nlu_model not found", finding: "NLU Model table (sys_nlu_model) is not available. Verify the Virtual Agent plugin is active." };
+    }
+    var gaTotal = new GlideAggregate("sys_nlu_model");
+    gaTotal.addQuery("active", true);
+    gaTotal.addAggregate("COUNT");
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0;
+    if (total === 0) {
+        return { status: "not_applicable", actualValue: "No active NLU models found", finding: "No active NLU models found. NLU training status cannot be assessed — configure NLU models for VA topic intent recognition." };
+    }
+    var gaTrained = new GlideAggregate("sys_nlu_model");
+    gaTrained.addQuery("active", true);
+    gaTrained.addQuery("state", "trained");
+    gaTrained.addAggregate("COUNT");
+    gaTrained.query();
+    var trained = gaTrained.next() ? parseInt(gaTrained.getAggregate("COUNT")) : 0;
+    var pct = Math.round((trained / total) * 100);
+    var actualValue = trained + " of " + total + " active NLU models trained (" + pct + "%)";
+    if (pct >= 80) {
+        return { status: "ready", actualValue: actualValue, finding: pct + "% of active NLU models are trained. Now Assist intent recognition has accurate model coverage." };
+    } else if (pct >= 50) {
+        return { status: "needs_attention", actualValue: actualValue, finding: (total - trained) + " of " + total + " NLU models are untrained (" + pct + "% trained, target: 80%+). Now Assist intent matching accuracy will be reduced for topics without trained models." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Only " + pct + "% of NLU models are trained. Now Assist intent recognition requires trained NLU models — untrained models produce poor AI matching accuracy." };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000504: ' + e.message };
+        }
+    },
+    CHK0000505: function() {
+        try {
+            return (function(){var gr=new GlideRecord("sys_cs_channel");gr.addQuery("active",true);gr.query();var n=gr.getRowCount();return{status:n>=3?"ready":"needs_attention",actualValue:n+" active VA channels",finding:n<3?"Only "+n+" VA channels. Now Assist conversational AI should be deployed across multiple channels for maximum self-service reach.":n+" VA channels -- Now Assist reaches employees across "+n+" deployment channels."};})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000505: ' + e.message };
+        }
+    },
+    CHK0000506: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('sys_cs_conversation');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No VA conversations in last 90 days',
+            finding: 'No VA conversations found in the last 90 days. Conversation volume and containment cannot be assessed — drive VA adoption before enabling Now Assist.'
+        };
+    }
+
+    var gaContained = new GlideAggregate('sys_cs_conversation');
+    gaContained.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaContained.addQuery('state', 'complete');
+    gaContained.addQuery('agent_transfer_at', '');
+    gaContained.addAggregate('COUNT');
+    gaContained.query();
+    var contained = gaContained.next() ? parseInt(gaContained.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((contained / total) * 100);
+    var actualValue = total + ' conversations (last 90 days) | ' + pct + '% contained without agent transfer';
+
+    if (total >= 1000 && pct >= 40) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' conversations with ' + pct + '% containment rate (last 90 days). Now Assist VA has a solid self-service foundation to build on.'
+        };
+    } else if (total >= 200 || pct >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: total + ' conversations with ' + pct + '% containment (last 90 days). Targets: 1,000+ conversations, 40%+ containment. Drive VA adoption and improve topic fulfillment before Now Assist enablement.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Low VA usage (' + total + ' conversations, ' + pct + '% containment in last 90 days). Now Assist VA AI improvements require an established VA user base and conversation history to be effective.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000506: ' + e.message };
+        }
+    },
+    CHK0000507: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaPublished = new GlideAggregate('sys_cs_topic');
+    gaPublished.addQuery('active', true);
+    gaPublished.addQuery('published', true);
+    gaPublished.addAggregate('COUNT');
+    gaPublished.query();
+    var published = gaPublished.next() ? parseInt(gaPublished.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('sys_cs_topic');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active VA topics found',
+            finding: 'No active VA topics found. Topic intent coverage cannot be assessed.'
+        };
+    }
+
+    var unpublished = total - published;
+    var pct = Math.round((published / total) * 100);
+    var actualValue = published + ' published | ' + unpublished + ' unpublished | ' + pct + '% of active topics published';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of active VA topics are published. Now Assist VA intent coverage is comprehensive — most authored topics are available to users.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active topics are published (' + unpublished + ' unpublished). Now Assist VA intent gaps exist for topics in development — publish high-priority topics to improve AI coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active topics are published (' + unpublished + ' unpublished). More than half of authored VA topics are unavailable to users — Now Assist VA intent coverage has significant gaps.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000507: ' + e.message };
+        }
+    },
+    CHK0000508: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gr = new GlideRecord('sys_properties');
+    gr.addQuery('name', 'com.glide.cs.analytics.enabled');
+    gr.setLimit(1);
+    gr.query();
+
+    var exists = gr.next();
+    var value = exists ? gr.getValue('value') : null;
+    var enabled = value === 'true';
+
+    var actualValue = 'VA analytics enabled: ' + enabled;
+
+    if (enabled) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'VA analytics is enabled. Now Assist VA self-service impact is being measured — deflection rate, containment, and top topics are tracked.'
+        };
+    } else if (!exists) {
+        return {
+            status: 'needs_attention',
+            actualValue: 'VA analytics property not set (com.glide.cs.analytics.enabled)',
+            finding: 'VA analytics property has not been configured. Enable VA analytics to measure Now Assist self-service impact and identify AI improvement opportunities.'
+        };
+    } else {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'VA analytics is explicitly disabled. Enable VA analytics to measure Now Assist self-service impact and identify AI improvement opportunities.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000508: ' + e.message };
+        }
+    },
+    CHK0000509: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('sys_cs_conversation');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addQuery('state', 'IN', 'complete,agent_requested,abandoned');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No completed VA conversations in last 90 days',
+            finding: 'No completed VA conversations found in the last 90 days. Topic fulfillment rate cannot be assessed.'
+        };
+    }
+
+    var gaCompleted = new GlideAggregate('sys_cs_conversation');
+    gaCompleted.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaCompleted.addQuery('state', 'complete');
+    gaCompleted.addAggregate('COUNT');
+    gaCompleted.query();
+    var completed = gaCompleted.next() ? parseInt(gaCompleted.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((completed / total) * 100);
+    var actualValue = pct + '% VA conversations fulfilled without agent transfer (last 90 days, ' + completed + '/' + total + ')';
+
+    if (pct >= 60) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of VA conversations completed without agent transfer (last 90 days). Now Assist VA has a strong self-service foundation to enhance.'
+        };
+    } else if (pct >= 30) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of VA conversations are fulfilled without agent transfer (last 90 days, target: 60%+). Now Assist AI self-service impact is limited when topic fulfillment is low.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of VA conversations are fulfilled (last 90 days). Very low fulfillment rate indicates broken topic flows or catalog integrations — fix these before enabling Now Assist VA.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000509: ' + e.message };
+        }
+    },
+    CHK0000510: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Check 1: Auto-resolution configuration (OOB VA-KB deflection mechanism on modern instances)
+    var gaAutoRes = new GlideAggregate('sys_cs_auto_resolution_configuration');
+    gaAutoRes.addQuery('active', true);
+    gaAutoRes.addAggregate('COUNT');
+    gaAutoRes.query();
+    var activeAutoRes = gaAutoRes.next() ? parseInt(gaAutoRes.getAggregate('COUNT')) : 0;
+
+    // Check 2: Published KB articles (content behind the deflection)
+    var gaKB = new GlideAggregate('kb_knowledge');
+    gaKB.addQuery('workflow_state', 'published');
+    gaKB.addAggregate('COUNT');
+    gaKB.query();
+    var articles = gaKB.next() ? parseInt(gaKB.getAggregate('COUNT')) : 0;
+
+    var actualValue = 'Auto-resolution configs active: ' + activeAutoRes + ' | Published KB articles: ' + articles;
+
+    if (activeAutoRes >= 1 && articles >= 100) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'VA auto-resolution is active with ' + articles + ' published KB articles. Now Assist VA can surface AI-recommended KB articles for self-service deflection.'
+        };
+    } else if (activeAutoRes >= 1 && articles >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'VA auto-resolution is active but only ' + articles + ' published KB articles exist (target: 100+). Now Assist VA KB deflection coverage will be limited.'
+        };
+    } else if (activeAutoRes === 0 && articles >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Sufficient KB content exists (' + articles + ' published articles) but VA auto-resolution is not active. Now Assist VA cannot surface KB articles for deflection without an active auto-resolution configuration.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'VA auto-resolution is ' + (activeAutoRes >= 1 ? 'active' : 'not active') + ' with only ' + articles + ' published KB articles. Now Assist VA cannot provide meaningful KB-based self-service deflection without both an active auto-resolution configuration and sufficient KB content.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000510: ' + e.message };
+        }
+    },
+    CHK0000511: function() {
+        try {
+            return (function(){var gr=new GlideRecord("sys_cs_topic");gr.addQuery("active",true);gr.addQuery("published",true);gr.addEncodedQuery("descriptionLIKEcatalog^ORdescriptionLIKErequest");gr.query();var catTopics=gr.getRowCount();return{status:catTopics>=10?"ready":"needs_attention",actualValue:catTopics+" catalog-connected VA topics",finding:catTopics<10?"Only "+catTopics+" catalog-connected VA topics. Now Assist AI-guided fulfillment requires catalog integration for service request completion.":catTopics+" catalog-connected topics -- Now Assist can guide employees through AI-assisted service fulfillment."};})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000511: ' + e.message };
+        }
+    },
+    CHK0000512: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('sys_cs_channel');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active VA channels found',
+            finding: 'No active VA channels found. Authentication configuration cannot be assessed.'
+        };
+    }
+
+    var gaSecured = new GlideAggregate('sys_cs_channel');
+    gaSecured.addQuery('active', true);
+    gaSecured.addQuery('requires_login', true);
+    gaSecured.addAggregate('COUNT');
+    gaSecured.query();
+    var secured = gaSecured.next() ? parseInt(gaSecured.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((secured / total) * 100);
+    var actualValue = pct + '% of active VA channels require authentication (' + secured + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of VA channels require authentication. Now Assist VA respects data access controls and will not surface unauthorized data in AI responses.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: (total - secured) + ' VA channel(s) allow unauthenticated access (' + pct + '% secured, target: 80%+). Now Assist VA must authenticate users to enforce data access controls in AI responses.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of VA channels require authentication. Most VA channels allow unauthenticated access — Now Assist VA AI responses may surface data without proper access control enforcement.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000512: ' + e.message };
+        }
+    },
+    CHK0000513: function() {
+        try {
+            return (function(){try{if(!gs.tableExists("awa_queue")){return{status:"needs_validation",actualValue:"Table not found",finding:"awa_queue table not present -- manual verification required. Confirm Advanced Work Assignment is installed and active."};}var ga=new GlideAggregate("awa_queue");ga.addQuery("active",true);ga.addAggregate("COUNT");ga.query();var count=ga.next()?parseInt(ga.getAggregate("COUNT")):0;var actualValue=count+" active agent escalation queues";if(count>=1){return{status:"ready",actualValue:actualValue,finding:count+" active escalation queue(s) configured. Now Assist VA can hand off to human agents when AI cannot resolve the conversation."};}else{return{status:"value_blocker",actualValue:actualValue,finding:"No active agent escalation queues configured in AWA. Now Assist VA users are stranded when AI cannot resolve their request -- live agent escalation paths are required for a complete self-service experience.";};};}catch(e){return{status:"needs_validation",actualValue:"Check failed",finding:"Script execution error: "+e.message};}})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000513: ' + e.message };
+        }
+    },
+    CHK0000514: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('sys_cs_topic');
+    gaTotal.addQuery('active', true);
+    gaTotal.addQuery('published', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published VA topics found',
+            finding: 'No published VA topics found. Topic testing cannot be assessed.'
+        };
+    }
+
+    // Topics updated in last 90 days — proxy for active maintenance
+    var gaRecent = new GlideAggregate('sys_cs_topic');
+    gaRecent.addQuery('active', true);
+    gaRecent.addQuery('published', true);
+    gaRecent.addQuery('sys_updated_on', '>=', cutoff.getValue());
+    gaRecent.addAggregate('COUNT');
+    gaRecent.query();
+    var recentlyUpdated = gaRecent.next() ? parseInt(gaRecent.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' published topics | ' + recentlyUpdated + ' updated in last 90 days';
+
+    if (total >= 20 && recentlyUpdated >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' published topics with ' + recentlyUpdated + ' updated in the last 90 days, indicating active topic maintenance. Note: actual test simulation results must be manually verified in the VA Test Simulation console before Now Assist enablement.'
+        };
+    } else if (total >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: total + ' published topics but only ' + recentlyUpdated + ' updated recently. Topics may not be actively maintained — review and test via VA Test Simulation before Now Assist enablement.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' published topics (target: 20+). Ensure all published topics are tested via VA Test Simulation before Now Assist enablement.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000514: ' + e.message };
+        }
+    },
+    CHK0000515: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_cs_topic');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom active VA topics';
+
+    if (count <= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low VA customization risk (' + count + ' custom topics). Now Assist VA generative AI responses and intent matching are unlikely to encounter conflicts.'
+        };
+    } else if (count <= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom active VA topics. Moderate customization — test Now Assist VA with all custom topics enabled in sub-production before go-live.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High VA customization risk: ' + count + ' custom active topics. Extensive customization may interfere with Now Assist VA generative AI responses and intent matching accuracy.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000515: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_VIRTUAL_AGENT'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:02:38</sys_created_on>
+        <sys_id>1a928ee0cfc5c3548935fb251d851c5a</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>AROPCheckLibrary_VIRTUAL_AGENT</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_1a928ee0cfc5c3548935fb251d851c5a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

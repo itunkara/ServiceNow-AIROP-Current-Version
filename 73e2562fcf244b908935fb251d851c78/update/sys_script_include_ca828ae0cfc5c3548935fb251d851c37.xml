@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPCheckLibrary_CSM</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>AIROP check library for CSM module</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPCheckLibrary_CSM</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPCheckLibrary_CSM = Class.create();
+AROPCheckLibrary_CSM.prototype = {
+    initialize: function() {},
+    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },
+    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },
+    CHK0000413: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var result = checkPlugin("sn_csm_gen_ai", "sn_csm_gen_ai");
+    if (result.found) {
+        return {
+            status: "ready",
+            actualValue: "Now Assist for CSM (" + "sn_csm_gen_ai" + ") installed | version: " + result.version + " | source: " + result.table,
+            finding: "Now Assist for CSM is installed. Case summarization, similar case suggestions, and AI-assisted routing are available."
+        };
+    } else {
+        return {
+            status: "not_ready",
+            actualValue: "Now Assist for CSM (sn_csm_gen_ai) not found in sys_store_app or sys_plugins",
+            finding: "Now Assist for CSM (sn_csm_gen_ai) not found. All Now Assist CSM AI capabilities are unavailable."
+        };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000413: ' + e.message };
+        }
+    },
+    CHK0000414: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // sn_customerservice_case.state is INTEGER: 3=Closed, 6=Resolved
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_customerservice_case');
+    gaTotal.addQuery('state', 'IN', '3,6');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed CSM cases in last 12 months',
+            finding: 'No closed CSM cases found in the last 12 months. Account linkage cannot be assessed.'
+        };
+    }
+
+    var gaWithAcct = new GlideAggregate('sn_customerservice_case');
+    gaWithAcct.addQuery('state', 'IN', '3,6');
+    gaWithAcct.addQuery('closed_at', '>=', cutoff.getValue());
+    gaWithAcct.addQuery('account', '!=', '');
+    gaWithAcct.addAggregate('COUNT');
+    gaWithAcct.query();
+    var withAcct = gaWithAcct.next() ? parseInt(gaWithAcct.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withAcct / total) * 100);
+    var actualValue = pct + '% of closed CSM cases have account linked (last 12 months, ' + withAcct + '/' + total + ')';
+
+    if (pct >= 90) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed CSM cases are linked to an account. Now Assist CSM has strong customer context for personalized AI responses.'
+        };
+    } else if (pct >= 70) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have an account linked (target: 90%). Now Assist CSM personalization will be limited for unlinked cases.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have an account linked. Now Assist CSM cannot provide meaningful personalized AI responses without customer account context.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000414: ' + e.message };
+        }
+    },
+    CHK0000415: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var ga = new GlideAggregate('sn_customerservice_case');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var total = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = total + ' CSM cases created in last 12 months';
+
+    if (total >= 500) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' CSM cases in the last 12 months. Sufficient history for Now Assist CSM AI summarization and pattern learning.'
+        };
+    } else if (total >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' CSM cases in the last 12 months (target: 500+). Now Assist CSM AI learning will have limited pattern coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + total + ' CSM cases in the last 12 months. Insufficient case history for meaningful Now Assist CSM AI summarization and similar case matching.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000415: ' + e.message };
+        }
+    },
+    CHK0000416: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_customerservice_case');
+    gaTotal.addQuery('state', 'IN', '3,6');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed CSM cases in last 12 months',
+            finding: 'No closed CSM cases found in the last 12 months. Resolution note coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('sn_customerservice_case');
+    gaMissing.addQuery('state', 'IN', '3,6');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('resolution_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed CSM cases have resolution notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct >= 85) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed CSM cases have resolution notes. Now Assist CSM summarization has strong resolution context for AI-generated case summaries.'
+        };
+    } else if (pct >= 60) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have resolution notes (target: 85%). Now Assist CSM summarization quality will be reduced for cases missing this data.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: missing + ' closed CSM cases missing resolution notes (' + pct + '% populated). Critical gap — Now Assist CSM cannot generate meaningful case summaries without resolution context.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000416: ' + e.message };
+        }
+    },
+    CHK0000417: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Check all published active KB articles — Now Assist CSM AI Search
+    // indexes across all accessible KBs regardless of KB name
+    var ga = new GlideAggregate('kb_knowledge');
+    ga.addQuery('workflow_state', 'published');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' published active KB articles';
+
+    if (count >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' published KB articles. Now Assist CSM AI Search has sufficient content for customer-facing self-service deflection.'
+        };
+    } else if (count >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published KB articles (target: 50+). Now Assist CSM AI Search coverage will be limited — expand KB content for key customer inquiry categories.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published KB articles. Insufficient KB content for meaningful Now Assist CSM AI Search and self-service deflection.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000417: ' + e.message };
+        }
+    },
+    CHK0000418: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sla');
+    ga.addQuery('table', 'CONTAINS', 'sn_customerservice');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active CSM SLA definitions';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active CSM SLAs. Now Assist CSM can prioritize cases using AI-driven SLA breach risk analysis.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active CSM SLA(s) (target: 5+). Now Assist CSM SLA-based AI prioritization will have limited differentiation across case types and customer tiers.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active CSM SLAs defined. Now Assist CSM cannot differentiate case urgency for AI prioritization without SLA definitions.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000418: ' + e.message };
+        }
+    },
+    CHK0000419: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_plugins');
+    ga.addQuery('name', 'CSM Workspace');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    if (count >= 1) {
+        return {
+            status: 'ready',
+            actualValue: 'CSM Workspace plugin is active',
+            finding: 'CSM Workspace is active. Now Assist CSM AI features — including case summarization and similar case suggestions — are visible to agents.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: 'CSM Workspace plugin not found or inactive',
+            finding: 'CSM Workspace is not active. Now Assist CSM AI features surface exclusively in the CSM Workspace — agents cannot see AI insights without it.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000419: ' + e.message };
+        }
+    },
+    CHK0000420: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // Check for any active Service Portal — CSM portal naming varies by org
+    // Now Assist CSM AI Search and VA require an active portal to reach customers
+    var ga = new GlideAggregate('sp_portal');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active Service Portal(s) configured';
+
+    if (count >= 1) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active portal(s) configured. Now Assist CSM AI Search and VA can be delivered to customers via the portal.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active customer portals configured. Now Assist CSM AI Search and VA cannot reach customers without an active Service Portal.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000420: ' + e.message };
+        }
+    },
+    CHK0000421: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_customerservice_case');
+    gaTotal.addQuery('state', 'IN', '3,6');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed CSM cases in last 12 months',
+            finding: 'No closed CSM cases found in the last 12 months. Case categorization quality cannot be assessed.'
+        };
+    }
+
+    var gaCat = new GlideAggregate('sn_customerservice_case');
+    gaCat.addQuery('state', 'IN', '3,6');
+    gaCat.addQuery('closed_at', '>=', cutoff.getValue());
+    gaCat.addQuery('category', '!=', '');
+    gaCat.addAggregate('COUNT');
+    gaCat.query();
+    var categorized = gaCat.next() ? parseInt(gaCat.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((categorized / total) * 100);
+    var actualValue = pct + '% of closed CSM cases categorized (last 12 months, ' + categorized + '/' + total + ')';
+
+    if (pct >= 85) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed CSM cases have a category. Now Assist CSM has strong classification signal for AI routing and similar case matching.'
+        };
+    } else if (pct >= 60) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases are categorized (target: 85%). Now Assist CSM AI routing and similar case matching will have reduced accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of CSM cases are categorized. Insufficient classification signal — Now Assist CSM AI routing requires consistent category data.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000421: ' + e.message };
+        }
+    },
+    CHK0000422: function() {
+        try {
+            return (function(checkDef, dateFilter) {
+    if (!gs.tableExists('sn_pss_core_service_contract')) {
+        return { status: 'not_applicable', actualValue: 'sn_pss_core_service_contract not found', finding: 'Customer Contracts and Entitlements (sn_pss_core) is not installed. Entitlement contract check is not applicable.' };
+    }
+    var ga = new GlideAggregate('sn_pss_core_service_contract');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+    var actualValue = count + ' active service contracts';
+    if (count >= 5) {
+        return { status: 'ready', actualValue: actualValue, finding: count + ' active service contracts. Now Assist CSM can provide entitlement-aware AI responses tailored to each customer\'s service agreement.' };
+    } else if (count >= 1) {
+        return { status: 'needs_attention', actualValue: actualValue, finding: 'Only ' + count + ' active service contract(s) (target: 5+). Now Assist CSM entitlement-aware AI personalization will have limited coverage.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue, finding: 'No active service contracts. Now Assist CSM cannot provide entitlement-aware personalized AI responses without contract data.' };
+    }
+})();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000422: ' + e.message };
+        }
+    },
+    CHK0000423: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_customerservice_case');
+    gaTotal.addQuery('state', 'IN', '3,6');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed CSM cases in last 12 months',
+            finding: 'No closed CSM cases found in last 12 months. Sentiment data coverage cannot be assessed.'
+        };
+    }
+
+    var gaSentiment = new GlideAggregate('sn_customerservice_case');
+    gaSentiment.addQuery('state', 'IN', '3,6');
+    gaSentiment.addQuery('closed_at', '>=', cutoff.getValue());
+    gaSentiment.addQuery('sentiment', '!=', '');
+    gaSentiment.addAggregate('COUNT');
+    gaSentiment.query();
+    var withSentiment = gaSentiment.next() ? parseInt(gaSentiment.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withSentiment / total) * 100);
+    var actualValue = pct + '% of closed CSM cases have sentiment data (last 12 months, ' + withSentiment + '/' + total + ')';
+
+    if (pct >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed CSM cases have sentiment data. Now Assist CSM has sufficient signal for proactive AI escalation and sentiment-aware responses.'
+        };
+    } else if (pct >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have sentiment data (target: 50%+). Now Assist CSM proactive escalation recommendations will have limited sentiment coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have sentiment data. Now Assist CSM cannot provide meaningful sentiment-aware AI responses without this signal.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000423: ' + e.message };
+        }
+    },
+    CHK0000424: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    // sys_cs_live_agent_setup records only exist when omnichannel/chat
+    // is actively configured — reliable functional evidence
+    var ga = new GlideAggregate('sys_cs_live_agent_setup');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active omnichannel live agent setup record(s)';
+
+    if (count >= 1) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Omnichannel is configured and active. Now Assist CSM can engage customers across all configured channels with AI-assisted responses.'
+        };
+    } else {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'No active omnichannel configuration found. Now Assist CSM AI engagement is limited to portal without omnichannel — customers on chat, email, and messaging channels will not receive AI-assisted responses.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000424: ' + e.message };
+        }
+    },
+    CHK0000425: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    // Collect distinct assignment groups used on CSM cases in last 12 months
+    var usedGroups = {};
+    var grCases = new GlideRecord('sn_customerservice_case');
+    grCases.addQuery('sys_created_on', '>=', cutoff.getValue());
+    grCases.addQuery('assignment_group', '!=', '');
+    grCases.query();
+    while (grCases.next()) {
+        usedGroups[grCases.getValue('assignment_group')] = true;
+    }
+
+    var groupIds = Object.keys(usedGroups);
+    var totalGroups = groupIds.length;
+
+    if (totalGroups === 0) {
+        return {
+            status: 'not_ready',
+            actualValue: 'No assignment groups used on CSM cases in last 12 months',
+            finding: 'No assignment groups found on CSM cases in the last 12 months. Now Assist CSM AI routing has no group structure to route cases to.'
+        };
+    }
+
+    // Check which of those groups have active members
+    var groupsWithMembers = 0;
+    for (var i = 0; i < groupIds.length; i++) {
+        var memGr = new GlideRecord('sys_user_grmember');
+        memGr.addQuery('group', groupIds[i]);
+        memGr.setLimit(1);
+        memGr.query();
+        if (memGr.next()) groupsWithMembers++;
+    }
+
+    var pct = Math.round((groupsWithMembers / totalGroups) * 100);
+    var actualValue = totalGroups + ' CSM assignment groups used (last 12 months) | ' + groupsWithMembers + ' with active members (' + pct + '%)';
+
+    if (groupsWithMembers >= 3 && pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: groupsWithMembers + ' populated CSM assignment groups. Now Assist CSM AI routing has well-defined, staffed groups to route cases to.'
+        };
+    } else if (groupsWithMembers >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + groupsWithMembers + ' of ' + totalGroups + ' CSM assignment groups have members. Now Assist CSM AI routing may attempt to assign cases to empty groups.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No CSM assignment groups have active members. Now Assist CSM AI routing cannot function without populated assignment groups.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000425: ' + e.message };
+        }
+    },
+    CHK0000426: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_customerservice_case');
+    gaTotal.addQuery('state', 'IN', '3,6');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed CSM cases in last 12 months',
+            finding: 'No closed CSM cases found in the last 12 months. Product linkage cannot be assessed.'
+        };
+    }
+
+    var gaWithProd = new GlideAggregate('sn_customerservice_case');
+    gaWithProd.addQuery('state', 'IN', '3,6');
+    gaWithProd.addQuery('closed_at', '>=', cutoff.getValue());
+    gaWithProd.addQuery('product', '!=', '');
+    gaWithProd.addAggregate('COUNT');
+    gaWithProd.query();
+    var withProd = gaWithProd.next() ? parseInt(gaWithProd.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withProd / total) * 100);
+    var actualValue = pct + '% of closed CSM cases have product linked (last 12 months, ' + withProd + '/' + total + ')';
+
+    if (pct >= 70) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed CSM cases have a product linked. Now Assist CSM can provide product-specific AI troubleshooting guidance.'
+        };
+    } else if (pct >= 40) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases have a product linked (target: 70%). Now Assist CSM product-specific AI guidance will be limited for cases without product context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of CSM cases have a product linked. Now Assist CSM cannot provide targeted AI troubleshooting without product context.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000426: ' + e.message };
+        }
+    },
+    CHK0000427: function() {
+        try {
+            return ((function(checkDef, dateFilter) {
+    var gaBR = new GlideAggregate('sys_script');
+    gaBR.addQuery('collection', 'sn_customerservice_case');
+    gaBR.addQuery('active', true);
+    gaBR.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaBR.addAggregate('COUNT');
+    gaBR.query();
+    var brs = gaBR.next() ? parseInt(gaBR.getAggregate('COUNT')) : 0;
+
+    var gaCS = new GlideAggregate('sys_script_client');
+    gaCS.addQuery('table', 'sn_customerservice_case');
+    gaCS.addQuery('active', true);
+    gaCS.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    gaCS.addAggregate('COUNT');
+    gaCS.query();
+    var cs = gaCS.next() ? parseInt(gaCS.getAggregate('COUNT')) : 0;
+
+    var risk = brs + cs;
+    var actualValue = brs + ' custom BRs + ' + cs + ' client scripts on sn_customerservice_case (risk score: ' + risk + ')';
+
+    if (risk <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low CSM customization risk (score: ' + risk + '). Now Assist CSM AI Agent actions are unlikely to encounter conflicts with existing customizations.'
+        };
+    } else if (risk <= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Moderate CSM customization risk (score: ' + risk + '). Test Now Assist CSM in sub-production before enabling in production to identify conflicts.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High CSM customization risk (score: ' + risk + '). Extensive customization on sn_customerservice_case increases the risk of conflicts with Now Assist CSM AI Agent actions.'
+        };
+    }
+}))();
+        } catch(e) {
+            return { status: 'needs_validation', actualValue: 'Script error: ' + e.message, finding: 'Error in CHK0000427: ' + e.message };
+        }
+    },
+    type: 'AROPCheckLibrary_CSM'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-21 05:02:21</sys_created_on>
+        <sys_id>ca828ae0cfc5c3548935fb251d851c37</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>AROPCheckLibrary_CSM</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_ca828ae0cfc5c3548935fb251d851c37</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:41:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

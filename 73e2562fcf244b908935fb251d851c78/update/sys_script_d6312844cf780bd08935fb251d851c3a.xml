@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_script">
+    <sys_script action="INSERT_OR_UPDATE">
+        <abort_action>false</abort_action>
+        <access>package_private</access>
+        <action_delete>false</action_delete>
+        <action_insert>true</action_insert>
+        <action_query>false</action_query>
+        <action_update>true</action_update>
+        <active>true</active>
+        <add_message>false</add_message>
+        <advanced>true</advanced>
+        <change_fields>false</change_fields>
+        <client_callable>false</client_callable>
+        <collection>x_snc_airop_check_definition</collection>
+        <condition/>
+        <description/>
+        <execute_function>false</execute_function>
+        <filter_condition table="x_snc_airop_check_definition">is_active=true<item endquery="false" field="is_active" goto="false" newquery="false" operator="=" or="false" value="true"/>
+        </filter_condition>
+        <is_rest>false</is_rest>
+        <message/>
+        <name>AIROP Inject Check Script into Library</name>
+        <order>100</order>
+        <priority>100</priority>
+        <rest_method/>
+        <rest_method_text/>
+        <rest_service/>
+        <rest_service_text/>
+        <rest_variables/>
+        <role_conditions/>
+        <script><![CDATA[var checkNum   = current.getValue('number');
+var checkScript = current.getValue('check_script');
+var module     = current.getValue('module');
+var isActive   = current.getValue('is_active');
+
+if (isActive !== '1' && isActive !== true) {
+    gs.info('[AIROP] Skipping rebuild - check is not active.');
+} else if (!checkNum || !checkScript || !module) {
+    gs.info('[AIROP] Skipping rebuild - missing number, script, or module.');
+} else {
+    var libName = 'AROPCheckLibrary_' + module;
+    var si = new GlideRecord('sys_script_include');
+    si.addQuery('name', libName);
+    si.setLimit(1);
+    si.query();
+    if (!si.next()) {
+        gs.error('[AIROP] ' + libName + ' not found. Create the shell in Studio first.');
+    } else {
+        var libHeader =
+            'var ' + libName + ' = Class.create();\n' +
+            libName + '.prototype = {\n' +
+            '    initialize: function() {},\n' +
+            '    _count: function(table, query) { var gr = new GlideRecord(table); if (query) gr.addEncodedQuery(query); gr.query(); return gr.getRowCount(); },\n' +
+            '    _pct: function(num, den) { return den > 0 ? Math.round((num/den)*100) : 0; },\n' +
+            '    _daysAgo: function(field, days) { var d = new GlideDateTime(); d.addDaysUTC(-days); return field + String.fromCharCode(60) + d.getValue(); },\n';
+        var libFooter = '    type: \'' + libName + '\'\n};' ;
+        var checks = new GlideRecord('x_snc_airop_check_definition');
+        checks.addQuery('module', module);
+        checks.addQuery('is_active', true);
+        checks.orderBy('order');
+        checks.query();
+        var methodBlocks = [];
+        var injected = 0;
+        while (checks.next()) {
+            var num = checks.getValue('number');
+            var scr = checks.getValue('check_script');
+            if (!num || !scr || scr.trim() === '') continue;
+            var trimmed = scr.trim();
+            var alreadyCalled = trimmed.endsWith('})()')
+                             || trimmed.endsWith('})();');
+            var returnStatement = alreadyCalled
+                ? 'return ' + trimmed + (trimmed.endsWith(';') ? '' : ';')
+                : 'return (' + trimmed + ')();';
+            var method =
+                '    ' + num + ': function() {\n' +
+                '        try {\n' +
+                '            ' + returnStatement + '\n' +
+                '        } catch(e) {\n' +
+                '            return { status: \'needs_attention\', actualValue: \'Script error: \' + e.message, finding: \'Error in ' + num + ': \' + e.message };\n' +
+                '        }\n' +
+                '    }';
+            methodBlocks.push(method);
+            injected++;
+        }
+        var newLibScript = libHeader +
+                           (methodBlocks.length > 0 ? methodBlocks.join(',\n') + ',\n' : '') +
+                           libFooter;
+        si.setValue('script', newLibScript);
+        si.setWorkflow(false);
+        si.update();
+        gs.info('[AIROP] ' + libName + ' rebuilt with ' + injected + ' methods.');
+    }
+}]]></script>
+        <sys_class_name>sys_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 22:24:33</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>d6312844cf780bd08935fb251d851c3a</sys_id>
+        <sys_mod_count>31</sys_mod_count>
+        <sys_name>AIROP Inject Check Script into Library</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_d6312844cf780bd08935fb251d851c3a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-05 05:15:46</sys_updated_on>
+        <template/>
+        <when>after</when>
+    </sys_script>
+    <sys_translated_text action="delete_multiple" query="documentkey=d6312844cf780bd08935fb251d851c3a"/>
+</record_update>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_dictionary_override">
+    <sys_dictionary_override action="DELETE">
+        <attributes/>
+        <attributes_override>false</attributes_override>
+        <base_table>task</base_table>
+        <calculation/>
+        <calculation_override>false</calculation_override>
+        <default_value/>
+        <default_value_override>false</default_value_override>
+        <dependent/>
+        <dependent_override>false</dependent_override>
+        <display_override>false</display_override>
+        <element>assignment_group</element>
+        <mandatory>false</mandatory>
+        <mandatory_override>false</mandatory_override>
+        <name>x_snc_airop_assessment_run</name>
+        <read_only>false</read_only>
+        <read_only_override>false</read_only_override>
+        <reference_qual>active=true</reference_qual>
+        <reference_qual_override>true</reference_qual_override>
+        <sys_class_name>sys_dictionary_override</sys_class_name>
+        <sys_created_by>system</sys_created_by>
+        <sys_created_on>2026-05-05 18:48:02</sys_created_on>
+        <sys_id>c11666ebcfe08b908935fb251d851cb2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>assignment_group</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_dictionary_override_c11666ebcfe08b908935fb251d851cb2</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2026-05-05 18:48:02</sys_updated_on>
+    </sys_dictionary_override>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_dictionary_override_c11666ebcfe08b908935fb251d851cb2</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_dictionary_override"><sys_dictionary_override action="INSERT_OR_UPDATE"><attributes/><attributes_override>false</attributes_override><base_table>task</base_table><calculation/><calculation_override>false</calculation_override><default_value/><default_value_override>false</default_value_override><dependent/><dependent_override>false</dependent_override><display_override>false</display_override><element>assignment_group</element><mandatory>false</mandatory><mandatory_override>false</mandatory_override><name>x_snc_airop_assessment_run</name><read_only>false</read_only><read_only_override>false</read_only_override><reference_qual>active=true</reference_qual><reference_qual_override>true</reference_qual_override><sys_class_name>sys_dictionary_override</sys_class_name><sys_created_by>system</sys_created_by><sys_created_on>2026-05-05 18:48:02</sys_created_on><sys_id>c11666ebcfe08b908935fb251d851cb2</sys_id><sys_mod_count>0</sys_mod_count><sys_name>assignment_group</sys_name><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_dictionary_override_c11666ebcfe08b908935fb251d851cb2</sys_update_name><sys_updated_by>system</sys_updated_by><sys_updated_on>2026-05-05 18:48:02</sys_updated_on></sys_dictionary_override></record_update>]]></payload>
+        <payload_hash>2091072744</payload_hash>
+        <record_name>assignment_group</record_name>
+        <reverted_from/>
+        <source>0ba6d0decf923210544cb7c51d851cc9</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>system</sys_created_by>
+        <sys_created_on>2026-05-05 18:48:02</sys_created_on>
+        <sys_id>811666ebcfe08b908935fb251d851cb7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19df977f79e0000001</sys_recorded_at>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2026-05-05 18:48:02</sys_updated_on>
+        <type>Dictionary Entry Override</type>
+        <update_guid>4d1666eb38e08b90f9d2dd5a4c2c1cb5</update_guid>
+        <update_guid_history>4d1666eb38e08b90f9d2dd5a4c2c1cb5:2091072744</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>system</sys_created_by>
+        <sys_created_on>2026-05-05 22:34:12</sys_created_on>
+        <sys_db_object display_value="" name="sys_dictionary_override">sys_dictionary_override</sys_db_object>
+        <sys_id>039240739aa04139892cadc81297eb29</sys_id>
+        <sys_metadata>c11666ebcfe08b908935fb251d851cb2</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>assignment_group</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent display_value="">04d49aefcfa44b908935fb251d851cd4</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_dictionary_override_c11666ebcfe08b908935fb251d851cb2</sys_update_name>
+        <sys_update_version display_value="sys_dictionary_override_c11666ebcfe08b908935fb251d851cb2">811666ebcfe08b908935fb251d851cb7</sys_update_version>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2026-05-05 22:34:12</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

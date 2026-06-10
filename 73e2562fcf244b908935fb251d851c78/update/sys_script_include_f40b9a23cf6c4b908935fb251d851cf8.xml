@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPRunner</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Orchestrates assessment execution</description>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPRunner</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPRunner = Class.create();
+AROPRunner.prototype = {
+    initialize: function() {
+        this._checkPrivilegesActivated();
+        this.utils = new AROPUtils();
+        this.modules = [
+            'ITSM','ITOM','CMDB','HRSD',
+            'CSM','FIELD_SERVICE','AIOPS','GRC','SPM',
+            'PLATFORM','VIRTUAL_AGENT','DEX','SECOPS','HS','OTSM','CREATOR','SPO','TPRM','LSD','WSD','HAM','SAM'
+        ];
+        this.dispatchMap = {
+            'ITSM':            function() { return new AROP_ITSM(); },
+            'ITOM':            function() { return new AROP_ITOM(); },
+            'CMDB':            function() { return new AROP_CMDB(); },
+            'HRSD':            function() { return new AROP_HRSD(); },
+            'CSM':             function() { return new AROP_CSM(); },
+            'FIELD_SERVICE':   function() { return new AROP_FIELD_SERVICE(); },
+            'AIOPS':           function() { return new AROP_AIOPS(); },
+            'GRC':             function() { return new AROP_GRC(); },
+            'SPM':             function() { return new AROP_SPM(); },
+            'PLATFORM':        function() { return new AROP_PLATFORM(); },
+            'VIRTUAL_AGENT':   function() { return new AROP_VIRTUAL_AGENT(); },
+            'DEX':             function() { return new AROP_DEX(); },
+            'SECOPS':          function() { return new AROP_SECOPS(); },
+            'HS':              function() { return new AROP_HS(); },
+            'OTSM':            function() { return new AROP_OTSM(); },
+            'CREATOR':         function() { return new AROP_CREATOR(); },
+            'SPO':             function() { return new AROP_SPO(); },
+            'TPRM':            function() { return new AROP_TPRM(); },
+            'LSD':             function() { return new AROP_LSD(); },
+            'WSD':             function() { return new AROP_WSD(); },
+            'HAM':             function() { return new AROP_HAM(); },
+            'SAM':             function() { return new AROP_SAM(); }
+        };
+    },
+
+    _checkPrivilegesActivated: function() {
+        try {
+            var propName = 'x_snc_airop.privileges_activated';
+            var activated = gs.getProperty(propName, 'false');
+            if (activated !== 'true') {
+                gs.info('[AIROP] First run detected - flushing cache to activate cross-scope privileges...');
+                try {
+                    var cache = new GlideCacheManager();
+                    cache.flushAll();
+                    gs.info('[AIROP] Cache flushed via GlideCacheManager');
+                } catch(e1) {
+                    try {
+                        GlideCache.flushAll();
+                        gs.info('[AIROP] Cache flushed via GlideCache');
+                    } catch(e2) {
+                        gs.warn('[AIROP] Cache flush failed - manual cache.do may be required: ' + e2.message);
+                    }
+                }
+                gs.setProperty(propName, 'true');
+                gs.info('[AIROP] Privilege activation complete');
+            }
+        } catch(e) {
+            gs.warn('[AIROP] Privilege check error: ' + e.message);
+        }
+    },
+
+    // Appends a timestamped entry to the assessment_log journal field
+    _log: function(runId, message) {
+        try {
+            var gr = new GlideRecord('x_snc_airop_assessment_run');
+            gr.setWorkflow(false);
+            if (gr.get(runId)) {
+                var ts = new GlideDateTime().getDisplayValue();
+                gr.assessment_log = '[' + ts + '] ' + message;
+                gr.update();
+            }
+        } catch(e) {
+            gs.warn('[AIROP] Log write error: ' + e.message);
+        }
+    },
+
+    executeWithRunId: function(runId) {
+        gs.info('[AIROP] ==================================');
+        gs.info('[AIROP] Executing checks for run: ' + runId);
+
+        var runGr = new GlideRecord('x_snc_airop_assessment_run');
+        if (!runGr.get(runId)) {
+            gs.error('[AIROP] Run record not found: ' + runId);
+            return;
+        }
+
+        var modulesScanned = runGr.getValue('modules_scanned') || '';
+        var enabledModules = modulesScanned.length > 0 ? modulesScanned.split(', ') : [];
+        gs.info('[AIROP] Modules: ' + enabledModules.join(', '));
+
+        // Log assessment start
+        this._log(runId, 'Assessment started. Modules: ' + enabledModules.join(', '));
+
+        var totalChecks = 0;
+        for (var m = 0; m < enabledModules.length; m++) {
+            var checkCount = new GlideRecord('x_snc_airop_check_definition');
+            checkCount.addQuery('module', enabledModules[m]);
+            checkCount.addQuery('is_active', true);
+            checkCount.query();
+            totalChecks += checkCount.getRowCount();
+        }
+        this._updateRun(runId, { total_checks: totalChecks, checks_executed: 0 });
+        gs.info('[AIROP] Total checks to execute: ' + totalChecks);
+        this._log(runId, 'Total checks to execute: ' + totalChecks);
+
+        var cloneResult = this.utils.detectClone();
+        this._updateRun(runId, {
+            is_clone_detected: cloneResult.isClone,
+            environment_type:  cloneResult.isClone ? 'non-production' : 'production'
+        });
+        this._log(runId, 'Environment: ' + (cloneResult.isClone ? 'Non-Production (clone detected)' : 'Production') + ' — ' + cloneResult.reason);
+
+        var scores     = [];
+        var hasError   = false;
+        var checksExecuted = 0;
+
+        for (var j = 0; j < enabledModules.length; j++) {
+            var mod = enabledModules[j];
+            if (!this.dispatchMap[mod]) {
+                gs.error('[AIROP] No handler for module: ' + mod);
+                this._log(runId, 'WARNING: No handler found for module ' + mod + ' — skipped');
+                continue;
+            }
+            try {
+                gs.info('[AIROP] Starting: ' + mod);
+                var moduleRunner = this.dispatchMap[mod]();
+                var modCount = moduleRunner.execute(runId);
+                checksExecuted += modCount;
+                this._updateRun(runId, { checks_executed: checksExecuted });
+                var score = this.utils.calculateScore(runId, mod);
+                this.utils.updateRunScore(runId, mod, score);
+                scores.push(score);
+                gs.info('[AIROP] ' + mod + ' score: ' + score + '%');
+                this._log(runId, mod + ' — ' + modCount + ' checks completed. Score: ' + score + '%');
+            } catch(e) {
+                gs.error('[AIROP] Error in ' + mod + ': ' + e.message);
+                this._log(runId, 'ERROR in ' + mod + ': ' + e.message);
+                hasError = true;
+            }
+        }
+
+        // Calculate overall score
+        var totalPoints = 0;
+        var totalDenominator = 0;
+        var overallGA = new GlideAggregate('x_snc_airop_check_result');
+        overallGA.addQuery('assessment_run', runId);
+        overallGA.addQuery('status', '!=', 'not_applicable');
+        overallGA.addAggregate('COUNT');
+        overallGA.groupBy('status');
+        overallGA.query();
+        while (overallGA.next()) {
+            var oStatus = overallGA.getValue('status');
+            var oCount  = parseInt(overallGA.getAggregate('COUNT'));
+            totalDenominator += oCount;
+            if (oStatus === 'ready')             totalPoints += oCount * 1.0;
+            else if (oStatus === 'needs_attention') totalPoints += oCount * 0.5;
+        }
+        var overall = totalDenominator > 0 ? Math.round((totalPoints / totalDenominator) * 100) : 0;
+
+        var finalStatus = hasError ? 'failed' : 'complete';
+        this._updateRun(runId, {
+            status:          finalStatus,
+            overall_score:   overall,
+            checks_executed: checksExecuted,
+            run_date:        new GlideDateTime()
+        });
+
+        // Log assessment end
+        this._log(runId,
+            'Assessment ' + finalStatus + '. ' +
+            'Overall score: ' + overall + '%. ' +
+            'Checks executed: ' + checksExecuted + ' of ' + totalChecks + '.'
+        );
+
+        gs.info('[AIROP] ==================================');
+        gs.info('[AIROP] Complete. Status: ' + finalStatus);
+        gs.info('[AIROP] Overall score: ' + overall + '%');
+        gs.info('[AIROP] Checks executed: ' + checksExecuted + ' of ' + totalChecks);
+        gs.info('[AIROP] ==================================');
+
+        gs.setProperty('x_snc_airop.latest_run_sys_id', runId);
+        if (gs.getProperty('x_snc_airop.notify_on_complete', 'false') === 'true') {
+            this._notify(runId, overall, enabledModules, scores);
+        }
+    },
+
+    _updateRun: function(runId, fields) {
+        try {
+            var gr = new GlideRecord('x_snc_airop_assessment_run');
+            gr.setWorkflow(false);
+            if (gr.get(runId)) {
+                for (var f in fields) gr.setValue(f, fields[f]);
+                gr.update();
+            }
+        } catch(e) {
+            gs.error('[AIROP] Error updating run: ' + e.message);
+        }
+    },
+
+    _notify: function(runId, overall, modules, scores) {
+        try {
+            var email = gs.getProperty('x_snc_airop.notify_email', '');
+            if (!email) return;
+            var body  = 'ServiceNow AI Readiness Optimization Platform\n';
+            body     += 'Assessment Complete\n\n';
+            body     += 'Overall Score: ' + overall + '%\n\n';
+            body     += 'Module Scores:\n';
+            for (var i = 0; i < modules.length; i++) {
+                body += '  ' + modules[i] + ': ' + (scores[i] || 0) + '%\n';
+            }
+            body += '\nView: ' + gs.getProperty('glide.servlet.uri') +
+                   'x_snc_airop_assessment_run.do?sys_id=' + runId;
+            var em = new GlideEmailOutbound();
+            em.setTo(email);
+            em.setSubject('[AIROP] Assessment Complete - Score: ' + overall + '%');
+            em.setBody(body);
+            em.send();
+        } catch(e) {
+            gs.error('[AIROP] Notify error: ' + e.message);
+        }
+    },
+
+    type: 'AROPRunner'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-05 17:59:41</sys_created_on>
+        <sys_id>f40b9a23cf6c4b908935fb251d851cf8</sys_id>
+        <sys_mod_count>16</sys_mod_count>
+        <sys_name>AROPRunner</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_f40b9a23cf6c4b908935fb251d851cf8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-03 04:21:25</sys_updated_on>
+    </sys_script_include>
+</record_update>

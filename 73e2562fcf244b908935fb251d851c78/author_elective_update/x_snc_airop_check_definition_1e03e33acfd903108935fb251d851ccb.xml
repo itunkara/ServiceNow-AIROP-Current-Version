@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Custom Business Rules on WSD tables can intercept or conflict with Now Assist WSD AI recommendation actions. High customization density increases the risk of AI recommendations failing or producing unexpected results.]]></ai_justification>
+<check_name>WSD Customization Risk</check_name>
+<check_script><![CDATA[(function() { var ga1 = new GlideAggregate("sys_script"); ga1.addQuery("collection", "sn_wsd_rsv_reservation"); ga1.addQuery("active", true); ga1.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); ga1.addAggregate("COUNT"); ga1.query(); var brs1 = ga1.next() ? parseInt(ga1.getAggregate("COUNT")) : 0; var ga2 = new GlideAggregate("sys_script"); ga2.addQuery("collection", "sn_wsd_core_space"); ga2.addQuery("active", true); ga2.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); ga2.addAggregate("COUNT"); ga2.query(); var brs2 = ga2.next() ? parseInt(ga2.getAggregate("COUNT")) : 0; var risk = brs1 + brs2; var actualValue = brs1 + " custom BRs on reservations + " + brs2 + " on spaces (risk score: " + risk + ")"; if (risk <= 5) { return { status: "ready", actualValue: actualValue, finding: "Low WSD customization risk (score: " + risk + "). Now Assist WSD AI recommendations are unlikely to encounter conflicts with existing customizations." }; } else if (risk <= 10) { return { status: "needs_attention", actualValue: actualValue, finding: "Moderate WSD customization risk (score: " + risk + "). Test Now Assist WSD in sub-production before enabling in production." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "High WSD customization risk (score: " + risk + "). Extensive customization increases the risk of conflicts with Now Assist WSD AI actions." }; } })]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>WSD</module>
+<number>CHK0006232</number>
+<order>1000</order>
+<remediation_guidance>Review custom Business Rules on sn_wsd_rsv_reservation and sn_wsd_core_space tables. Test Now Assist WSD in sub-production to identify and resolve conflicts before enabling in production.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:06:00</sys_created_on>
+<sys_id>1e03e33acfd903108935fb251d851ccb</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:06:00</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_1e03e33acfd903108935fb251d851ccb</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Custom Business Rules on WSD tables can intercept or conflict with Now Assist WSD AI recommendation actions. High customization density increases the risk of AI recommendations failing or producing unexpected results.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;WSD Customization Risk&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function() { var ga1 = new GlideAggregate("sys_script"); ga1.addQuery("collection", "sn_wsd_rsv_reservation"); ga1.addQuery("active", true); ga1.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); ga1.addAggregate("COUNT"); ga1.query(); var brs1 = ga1.next() ? parseInt(ga1.getAggregate("COUNT")) : 0; var ga2 = new GlideAggregate("sys_script"); ga2.addQuery("collection", "sn_wsd_core_space"); ga2.addQuery("active", true); ga2.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); ga2.addAggregate("COUNT"); ga2.query(); var brs2 = ga2.next() ? parseInt(ga2.getAggregate("COUNT")) : 0; var risk = brs1 + brs2; var actualValue = brs1 + " custom BRs on reservations + " + brs2 + " on spaces (risk score: " + risk + ")"; if (risk &lt;= 5) { return { status: "ready", actualValue: actualValue, finding: "Low WSD customization risk (score: " + risk + "). Now Assist WSD AI recommendations are unlikely to encounter conflicts with existing customizations." }; } else if (risk &lt;= 10) { return { status: "needs_attention", actualValue: actualValue, finding: "Moderate WSD customization risk (score: " + risk + "). Test Now Assist WSD in sub-production before enabling in production." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "High WSD customization risk (score: " + risk + "). Extensive customization increases the risk of conflicts with Now Assist WSD AI actions." }; } })]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;WSD&lt;/module&gt;
+&lt;number&gt;CHK0006232&lt;/number&gt;
+&lt;order&gt;1000&lt;/order&gt;
+&lt;remediation_guidance&gt;Review custom Business Rules on sn_wsd_rsv_reservation and sn_wsd_core_space tables. Test Now Assist WSD in sub-production to identify and resolve conflicts before enabling in production.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:06:00&lt;/sys_created_on&gt;
+&lt;sys_id&gt;1e03e33acfd903108935fb251d851ccb&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:06:00&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-400160196</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:28</sys_created_on>
+        <sys_id>45b60547cf9947108935fb251d851c93</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa785d0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:28</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>8db605478d994710f85503bb706c0391</update_guid>
+        <update_guid_history>8db605478d994710f85503bb706c0391:-400160196</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">6f1f45cfcfdd47108935fb251d851c57</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:13</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>21ae55c4d3274becaa18a8c7747b9910</sys_id>
+        <sys_metadata>1e03e33acfd903108935fb251d851ccb</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_1e03e33acfd903108935fb251d851ccb</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_1e03e33acfd903108935fb251d851ccb">45b60547cf9947108935fb251d851c93</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:13</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

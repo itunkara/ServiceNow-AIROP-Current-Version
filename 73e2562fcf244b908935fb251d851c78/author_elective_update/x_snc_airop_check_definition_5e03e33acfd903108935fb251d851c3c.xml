@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Audit volume indicates the frequency of compliance assessments that can be enhanced with AI-generated findings summaries and corrective action recommendations. Now Assist can accelerate audit closure and improve documentation quality.]]></ai_justification>
+<check_name>HS Audit Volume</check_name>
+<check_script><![CDATA[(function(){
+var ga=new GlideAggregate("sn_hs_rm_audit");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=20)return{status:"ready",actualValue:c+" audits",finding:c+" HS audits found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" audits",finding:c+" HS audits found."};
+return{status:"needs_attention",actualValue:"0 audits",finding:"No HS audits found."};
+})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>HS</module>
+<number>CHK0006170</number>
+<order/>
+<remediation_guidance>Conduct health and safety audits through the HS module.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:06:00</sys_created_on>
+<sys_id>5e03e33acfd903108935fb251d851c3c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:06:00</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_5e03e33acfd903108935fb251d851c3c</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Audit volume indicates the frequency of compliance assessments that can be enhanced with AI-generated findings summaries and corrective action recommendations. Now Assist can accelerate audit closure and improve documentation quality.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;HS Audit Volume&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(){
+var ga=new GlideAggregate("sn_hs_rm_audit");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c&gt;=20)return{status:"ready",actualValue:c+" audits",finding:c+" HS audits found."};
+if(c&gt;0)return{status:"needs_attention",actualValue:c+" audits",finding:c+" HS audits found."};
+return{status:"needs_attention",actualValue:"0 audits",finding:"No HS audits found."};
+})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;HS&lt;/module&gt;
+&lt;number&gt;CHK0006170&lt;/number&gt;
+&lt;order/&gt;
+&lt;remediation_guidance&gt;Conduct health and safety audits through the HS module.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:06:00&lt;/sys_created_on&gt;
+&lt;sys_id&gt;5e03e33acfd903108935fb251d851c3c&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:06:00&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1711362735</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:22</sys_created_on>
+        <sys_id>73a68d07cf9947108935fb251d851c89</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa626c0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:22</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>bba68d076f9947104b580e0cb75a5f87</update_guid>
+        <update_guid_history>bba68d076f9947104b580e0cb75a5f87:1711362735</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">602fc9cfcfdd47108935fb251d851cf6</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:17</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>a75812c0bd5845e3bd462aaef7632e11</sys_id>
+        <sys_metadata>5e03e33acfd903108935fb251d851c3c</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_5e03e33acfd903108935fb251d851c3c</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_5e03e33acfd903108935fb251d851c3c">73a68d07cf9947108935fb251d851c89</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:17</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

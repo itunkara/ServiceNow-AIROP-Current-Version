@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_wizard_answer">
+    <sys_wizard_answer action="DELETE">
+        <active>true</active>
+        <answer>New Assessment Run</answer>
+        <button_label/>
+        <dependent_value/>
+        <element/>
+        <name>Assessment Run</name>
+        <next_question/>
+        <order>100</order>
+        <payload_name/>
+        <question display_value="Task" name="Task">7f81d45acf123210544cb7c51d851cc5</question>
+        <roles/>
+        <script/>
+        <sys_class_name>sys_wizard_answer</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-05 18:47:55</sys_created_on>
+        <sys_id>1706eeabcfe08b908935fb251d851c7e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Assessment Run</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_wizard_answer_1706eeabcfe08b908935fb251d851c7e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-05 18:47:55</sys_updated_on>
+        <table/>
+        <target_url>x_snc_airop_assessment_run.do</target_url>
+        <type>1</type>
+    </sys_wizard_answer>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_wizard_answer_1706eeabcfe08b908935fb251d851c7e</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_wizard_answer"><sys_wizard_answer action="INSERT_OR_UPDATE"><active>true</active><answer>New Assessment Run</answer><button_label/><dependent_value/><element/><name>Assessment Run</name><next_question/><order>100</order><payload_name/><question display_value="Task" name="Task">7f81d45acf123210544cb7c51d851cc5</question><roles/><script/><sys_class_name>sys_wizard_answer</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-05-05 18:47:55</sys_created_on><sys_id>1706eeabcfe08b908935fb251d851c7e</sys_id><sys_mod_count>0</sys_mod_count><sys_name>Assessment Run</sys_name><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_wizard_answer_1706eeabcfe08b908935fb251d851c7e</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-05-05 18:47:55</sys_updated_on><table/><target_url>x_snc_airop_assessment_run.do</target_url><type>1</type></sys_wizard_answer></record_update>]]></payload>
+        <payload_hash>585552854</payload_hash>
+        <record_name>Assessment Run</record_name>
+        <reverted_from/>
+        <source>37e29a6bcf644b908935fb251d851c7a</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-05 18:47:55</sys_created_on>
+        <sys_id>9b06eeabcfe08b908935fb251d851c9d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19df977dc4e0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-05 18:47:55</sys_updated_on>
+        <type>Answer</type>
+        <update_guid>9306eeabc8e08b90f1c58774aaf4809c</update_guid>
+        <update_guid_history>9306eeabc8e08b90f1c58774aaf4809c:585552854</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-05 22:34:27</sys_created_on>
+        <sys_db_object display_value="" name="sys_wizard_answer">sys_wizard_answer</sys_db_object>
+        <sys_id>35f30cd32a45465bb076a10acdd921a9</sys_id>
+        <sys_metadata>1706eeabcfe08b908935fb251d851c7e</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Assessment Run</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent display_value="Task">7f81d45acf123210544cb7c51d851cc5</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_wizard_answer_1706eeabcfe08b908935fb251d851c7e</sys_update_name>
+        <sys_update_version display_value="sys_wizard_answer_1706eeabcfe08b908935fb251d851c7e">9b06eeabcfe08b908935fb251d851c9d</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-05 22:34:27</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

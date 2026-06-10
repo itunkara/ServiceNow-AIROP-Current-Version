@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Publisher data enables Now Assist SAM to group license obligations by vendor for AI-powered spend analysis and optimization recommendations. Without publisher coverage, AI cannot identify publisher-level consolidation or renegotiation opportunities.]]></ai_justification>
+        <check_name>Publisher Coverage on Installs</check_name>
+        <check_script><![CDATA[(function() { var gaTotal = new GlideAggregate("cmdb_sam_sw_install"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No software install records found", finding: "No software install records found. Publisher coverage cannot be assessed." }; } var gaPub = new GlideAggregate("cmdb_sam_sw_install"); gaPub.addQuery("manufacturer", "!=", ""); gaPub.addAggregate("COUNT"); gaPub.query(); var withPub = gaPub.next() ? parseInt(gaPub.getAggregate("COUNT")) : 0; var pct = Math.round((withPub / total) * 100); var actualValue = pct + "% of installs have a publisher (" + withPub + "/" + total + ")"; if (pct >= 85) { return { status: "ready", actualValue: actualValue, finding: pct + "% of software installs have a publisher. Now Assist SAM can group and analyze license obligations by publisher for AI optimization recommendations." }; } else if (pct >= 60) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of installs have a publisher (target: 85%+). Now Assist SAM publisher-level AI analysis will have incomplete coverage." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of installs have a publisher. Now Assist SAM cannot perform meaningful publisher-level AI license analysis without publisher data." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SAM</module>
+        <number>CHK0000622</number>
+        <order>500</order>
+        <remediation_guidance>Normalize software installs against the SAM content library to auto-populate publisher data. Use the Normalization workspace to identify installs missing publisher information.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:21</sys_created_on>
+        <sys_id>97f89dc7cfd587108935fb251d851c9e</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Publisher Coverage on Installs</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_97f89dc7cfd587108935fb251d851c9e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

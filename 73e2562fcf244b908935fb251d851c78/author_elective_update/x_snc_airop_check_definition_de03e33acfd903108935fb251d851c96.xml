@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Purchase requisition volume indicates the frequency of procurement requests that AI Agents can automate through intake, routing, and approval orchestration. Adequate requisition volume maximizes the impact of Now Assist procurement capabilities.]]></ai_justification>
+<check_name>Purchase Requisition Volume</check_name>
+<check_script><![CDATA[(function(){
+var ga=new GlideAggregate("sn_shop_purchase_requisition");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=100)return{status:"ready",actualValue:c+" requisitions",finding:c+" requisitions found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" requisitions",finding:c+" requisitions found."};
+return{status:"value_blocker",actualValue:"0 requisitions",finding:"No requisitions found."};
+})()]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>SPO</module>
+<number>CHK0006201</number>
+<order/>
+<remediation_guidance>Ensure purchase requisitions are being submitted through SPO.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:06:00</sys_created_on>
+<sys_id>de03e33acfd903108935fb251d851c96</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:06:00</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_de03e33acfd903108935fb251d851c96</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Purchase requisition volume indicates the frequency of procurement requests that AI Agents can automate through intake, routing, and approval orchestration. Adequate requisition volume maximizes the impact of Now Assist procurement capabilities.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;Purchase Requisition Volume&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(){
+var ga=new GlideAggregate("sn_shop_purchase_requisition");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c&gt;=100)return{status:"ready",actualValue:c+" requisitions",finding:c+" requisitions found."};
+if(c&gt;0)return{status:"needs_attention",actualValue:c+" requisitions",finding:c+" requisitions found."};
+return{status:"value_blocker",actualValue:"0 requisitions",finding:"No requisitions found."};
+})()]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;SPO&lt;/module&gt;
+&lt;number&gt;CHK0006201&lt;/number&gt;
+&lt;order/&gt;
+&lt;remediation_guidance&gt;Ensure purchase requisitions are being submitted through SPO.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:06:00&lt;/sys_created_on&gt;
+&lt;sys_id&gt;de03e33acfd903108935fb251d851c96&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:06:00&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1382067365</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:25</sys_created_on>
+        <sys_id>ecb68147cf9947108935fb251d851c44</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa6f450000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:25</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>28b6814708994710d161bdf4fa2b9f43</update_guid>
+        <update_guid_history>28b6814708994710d161bdf4fa2b9f43:-1382067365</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">b52f4503cf1187108935fb251d851c60</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:22</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>875f1be6cb7b4956bd3d8118cba60ac4</sys_id>
+        <sys_metadata>de03e33acfd903108935fb251d851c96</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_de03e33acfd903108935fb251d851c96</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_de03e33acfd903108935fb251d851c96">ecb68147cf9947108935fb251d851c44</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:22</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

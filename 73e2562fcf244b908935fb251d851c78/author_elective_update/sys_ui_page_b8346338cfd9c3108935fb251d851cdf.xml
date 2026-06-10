@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="DELETE">
+        <category>general</category>
+        <client_script/>
+        <description>AIROP Export Check Results to CSV</description>
+        <direct>false</direct>
+        <endpoint>x_snc_airop_assessment_export.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+<g:evaluate>
+    var runId = RP.getParameterValue("sysparm_run_id");
+    var generated = RP.getParameterValue("generated");
+    var fileName = RP.getParameterValue("file_name") || "";
+    var errorMsg = RP.getParameterValue("error_msg") || "";
+    var runGr = new GlideRecord("x_snc_airop_assessment_run");
+    runGr.get(runId);
+    var runNumber = runGr.getValue("number");
+    var totalChecks = runGr.getValue("checks_executed") || "0";
+</g:evaluate>
+<style>
+    body { font-family: "Source Sans Pro", Arial, sans-serif; margin: 20px; color: #333; }
+    h2 { color: #1a1a1a; margin-bottom: 4px; }
+    .info-box { background: #f5f5f5; padding: 14px 18px; border-radius: 4px; margin-bottom: 20px; font-size: 13px; }
+    .btn-generate { background: #81b5a1; color: #fff; border: none; padding: 10px 24px; font-size: 14px; cursor: pointer; border-radius: 3px; }
+    .btn-generate:hover { background: #6a9e8a; }
+    .success { color: #2e7d32; font-size: 13px; margin-top: 14px; }
+    .error { color: #c62828; font-size: 13px; margin-top: 14px; }
+</style>
+<h2>Export Check Results</h2>
+<div class="info-box">
+    <strong>Assessment Run:</strong> ${runNumber}<br/>
+    <strong>Total Checks:</strong> ${totalChecks}
+</div>
+<p style="font-size:13px;color:#555;">Clicking Generate will create a CSV file and attach it to the assessment run record.</p>
+<j:if test="${generated == 'true'}">
+    <div class="success">&#10003; File generated: <strong>${fileName}</strong>. Check the Attachments on the assessment run record.</div>
+</j:if>
+<j:if test="${errorMsg != ''}">
+    <div class="error">Error: ${errorMsg}</div>
+</j:if>
+<j:if test="${generated != 'true'}">
+    <g:ui_form action="ui_page_process.do" id="assessment_export_form">
+        <input type="hidden" name="sysparm_name" value="assessment_export"/>
+        <input type="hidden" name="sysparm_run_id" value="${runId}"/>
+        <input type="hidden" name="sysparm_action" value="generate"/>
+        <button type="submit" class="btn-generate">Generate CSV File</button>
+    </g:ui_form>
+</j:if>
+</j:jelly>
+]]></html>
+        <name>assessment_export</name>
+        <processing_script><![CDATA[var action = RP.getParameterValue("sysparm_action");
+if (action == "generate") {
+    var runId = RP.getParameterValue("sysparm_run_id");
+    var exporter = new x_snc_airop.AROPExporter();
+    var result = exporter.generateExportCSV(runId);
+    if (result.success) {
+        RP.setRedirectURL("assessment_export.do?sysparm_run_id=" + runId + "&generated=true&file_name=" + encodeURIComponent(result.file_name));
+    } else {
+        RP.setRedirectURL("assessment_export.do?sysparm_run_id=" + runId + "&error_msg=" + encodeURIComponent(result.message));
+    }
+}
+]]></processing_script>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-03 17:03:14</sys_created_on>
+        <sys_id>b8346338cfd9c3108935fb251d851cdf</sys_id>
+        <sys_mod_count>11</sys_mod_count>
+        <sys_name>assessment_export</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_ui_page_b8346338cfd9c3108935fb251d851cdf</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-03 19:50:56</sys_updated_on>
+    </sys_ui_page>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_ui_page_b8346338cfd9c3108935fb251d851cdf</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_page"&gt;&lt;sys_ui_page action="INSERT_OR_UPDATE"&gt;&lt;category&gt;general&lt;/category&gt;&lt;client_script/&gt;&lt;description&gt;AIROP Export Check Results to CSV&lt;/description&gt;&lt;direct&gt;false&lt;/direct&gt;&lt;endpoint&gt;x_snc_airop_assessment_export.do&lt;/endpoint&gt;&lt;html&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null"&gt;
+&lt;g:evaluate&gt;
+    var runId = RP.getParameterValue("sysparm_run_id");
+    var generated = RP.getParameterValue("generated");
+    var fileName = RP.getParameterValue("file_name") || "";
+    var errorMsg = RP.getParameterValue("error_msg") || "";
+    var runGr = new GlideRecord("x_snc_airop_assessment_run");
+    runGr.get(runId);
+    var runNumber = runGr.getValue("number");
+    var totalChecks = runGr.getValue("checks_executed") || "0";
+&lt;/g:evaluate&gt;
+&lt;style&gt;
+    body { font-family: "Source Sans Pro", Arial, sans-serif; margin: 20px; color: #333; }
+    h2 { color: #1a1a1a; margin-bottom: 4px; }
+    .info-box { background: #f5f5f5; padding: 14px 18px; border-radius: 4px; margin-bottom: 20px; font-size: 13px; }
+    .btn-generate { background: #81b5a1; color: #fff; border: none; padding: 10px 24px; font-size: 14px; cursor: pointer; border-radius: 3px; }
+    .btn-generate:hover { background: #6a9e8a; }
+    .success { color: #2e7d32; font-size: 13px; margin-top: 14px; }
+    .error { color: #c62828; font-size: 13px; margin-top: 14px; }
+&lt;/style&gt;
+&lt;h2&gt;Export Check Results&lt;/h2&gt;
+&lt;div class="info-box"&gt;
+    &lt;strong&gt;Assessment Run:&lt;/strong&gt; ${runNumber}&lt;br/&gt;
+    &lt;strong&gt;Total Checks:&lt;/strong&gt; ${totalChecks}
+&lt;/div&gt;
+&lt;p style="font-size:13px;color:#555;"&gt;Clicking Generate will create a CSV file and attach it to the assessment run record.&lt;/p&gt;
+&lt;j:if test="${generated == 'true'}"&gt;
+    &lt;div class="success"&gt;&amp;#10003; File generated: &lt;strong&gt;${fileName}&lt;/strong&gt;. Check the Attachments on the assessment run record.&lt;/div&gt;
+&lt;/j:if&gt;
+&lt;j:if test="${errorMsg != ''}"&gt;
+    &lt;div class="error"&gt;Error: ${errorMsg}&lt;/div&gt;
+&lt;/j:if&gt;
+&lt;j:if test="${generated != 'true'}"&gt;
+    &lt;g:ui_form action="ui_page_process.do" id="assessment_export_form"&gt;
+        &lt;input type="hidden" name="sysparm_name" value="assessment_export"/&gt;
+        &lt;input type="hidden" name="sysparm_run_id" value="${runId}"/&gt;
+        &lt;input type="hidden" name="sysparm_action" value="generate"/&gt;
+        &lt;button type="submit" class="btn-generate"&gt;Generate CSV File&lt;/button&gt;
+    &lt;/g:ui_form&gt;
+&lt;/j:if&gt;
+&lt;/j:jelly&gt;
+]]&gt;&lt;/html&gt;&lt;name&gt;assessment_export&lt;/name&gt;&lt;processing_script&gt;&lt;![CDATA[var action = RP.getParameterValue("sysparm_action");
+if (action == "generate") {
+    var runId = RP.getParameterValue("sysparm_run_id");
+    var exporter = new x_snc_airop.AROPExporter();
+    var result = exporter.generateExportCSV(runId);
+    if (result.success) {
+        RP.setRedirectURL("assessment_export.do?sysparm_run_id=" + runId + "&amp;generated=true&amp;file_name=" + encodeURIComponent(result.file_name));
+    } else {
+        RP.setRedirectURL("assessment_export.do?sysparm_run_id=" + runId + "&amp;error_msg=" + encodeURIComponent(result.message));
+    }
+}
+]]&gt;&lt;/processing_script&gt;&lt;sys_class_name&gt;sys_ui_page&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-03 17:03:14&lt;/sys_created_on&gt;&lt;sys_id&gt;b8346338cfd9c3108935fb251d851cdf&lt;/sys_id&gt;&lt;sys_mod_count&gt;11&lt;/sys_mod_count&gt;&lt;sys_name&gt;assessment_export&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_page_b8346338cfd9c3108935fb251d851cdf&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-03 19:50:56&lt;/sys_updated_on&gt;&lt;/sys_ui_page&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-975262219</payload_hash>
+        <record_name>assessment_export</record_name>
+        <reverted_from/>
+        <source>37e29a6bcf644b908935fb251d851c7a</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-03 19:50:56</sys_created_on>
+        <sys_id>8d9ac4c9cfd547108935fb251d851c31</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19e8f09fa6b0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-03 19:50:56</sys_updated_on>
+        <type>UI Page</type>
+        <update_guid>c19ac4c920d5471091dd33089fdef430</update_guid>
+        <update_guid_history>c19ac4c920d5471091dd33089fdef430:-975262219,2ab984813bd547107238f7aa4c3691bc:901318810,bd57ccc5d85547105b9bbc81168702ca:-1828767573,6ff60c05a55547100911a122e23a9a5a:-73879124,74764c0d2c1547103dcd8d6952aecd6f:1761138102,fb260cc9b7154710cdd8481feeae40b4:-770332673,ffe5c845471547108ef8f9edb0d16f08:-1468551286,2985804554154710d2ad5c17e0d840f1:1970669580,cf73c88d06914710fc97f892677ca682:-1805570345,7da0cc0146514710858c282dba6a9d95:-1071201187,369008016d514710fb3beb18cfa57ac7:1877064793,7c346b7ca5d9c310289c87bb9225d801:135298038</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-03 19:57:38</sys_created_on>
+        <sys_db_object display_value="" name="sys_ui_page">sys_ui_page</sys_db_object>
+        <sys_id>c27db169cae242f59a837c7678e3fc21</sys_id>
+        <sys_metadata>b8346338cfd9c3108935fb251d851cdf</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>assessment_export</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_ui_page_b8346338cfd9c3108935fb251d851cdf</sys_update_name>
+        <sys_update_version display_value="sys_ui_page_b8346338cfd9c3108935fb251d851cdf">8d9ac4c9cfd547108935fb251d851c31</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-03 19:57:38</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

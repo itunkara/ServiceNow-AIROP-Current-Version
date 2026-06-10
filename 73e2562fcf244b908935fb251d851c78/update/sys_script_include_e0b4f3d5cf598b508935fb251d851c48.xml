@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_snc_airop.AROPInstaller</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <mobile_callable>false</mobile_callable>
+        <name>AROPInstaller</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var AROPInstaller = Class.create();
+AROPInstaller.prototype = {
+    initialize: function() {},
+
+    install: function() {
+        var log = [];
+        try {
+            log.push('=== AROPInstaller: starting ===');
+            this._setupPrivileges(log);
+            this._setupRestrictedCallerAccess(log);
+            this._setupServiceAccount(log);
+            this._flushCache(log);
+            this._seedChecksIfEmpty(log);
+            this._rebuildLibraries(log);
+            this._setActivatedFlag(log);
+            log.push('=== AROPInstaller: complete ===');
+        } catch(e) {
+            log.push('AROPInstaller ERROR: ' + e.message);
+            gs.error('AROPInstaller: fatal: ' + e.message);
+        }
+        var summary = log.join('\n');
+        gs.info(summary);
+        return summary;
+    },
+
+    _setupPrivileges: function(log) {
+        log.push('--- Setting up sys_scope_privilege records ---');
+        var AIROP_SCOPE = '73e2562fcf244b908935fb251d851c78';
+        var privileges = [
+            'sn_hr_core_coe',
+            'sn_lg_ops_request',
+            'sn_lg_matter_matter'
+        ];
+        var created = 0;
+        var fixed = 0;
+        var skipped = 0;
+
+        for (var i = 0; i < privileges.length; i++) {
+            var tableName = privileges[i];
+            var check = new GlideRecord('sys_scope_privilege');
+            check.addQuery('source_scope', AIROP_SCOPE);
+            check.addQuery('target_name', tableName);
+            check.addQuery('operation', 'read');
+            check.setLimit(1);
+            check.query();
+
+            if (check.next()) {
+                if (check.getValue('status') !== 'allowed') {
+                    check.setValue('status', 'allowed');
+                    check.setWorkflow(false);
+                    check.update();
+                    fixed++;
+                    log.push('Fixed privilege: ' + tableName);
+                } else {
+                    skipped++;
+                }
+            } else {
+                var gr = new GlideRecord('sys_scope_privilege');
+                gr.initialize();
+                gr.setValue('source_scope', AIROP_SCOPE);
+                gr.setValue('target_name', tableName);
+                gr.setValue('operation', 'read');
+                gr.setValue('status', 'allowed');
+                gr.setWorkflow(false);
+                if (gr.insert()) {
+                    created++;
+                    log.push('Created privilege: ' + tableName);
+                } else {
+                    log.push('FAILED privilege: ' + tableName);
+                }
+            }
+        }
+        log.push('sys_scope_privilege: created=' + created + ', fixed=' + fixed + ', skipped=' + skipped);
+    },
+
+    _setupRestrictedCallerAccess: function(log) {
+        log.push('--- sys_restricted_caller_access: setting status=2 ---');
+        var AIROP_SCOPE = '73e2562fcf244b908935fb251d851c78';
+        var gr = new GlideRecord('sys_restricted_caller_access');
+        gr.addQuery('source_scope', AIROP_SCOPE);
+        gr.addQuery('status', '3');
+        gr.query();
+        var fixed = 0;
+        while (gr.next()) {
+            gr.setValue('status', '2');
+            gr.setWorkflow(false);
+            gr.update();
+            fixed++;
+            log.push('Fixed: ' + gr.getDisplayValue('target_scope'));
+        }
+        log.push('Fixed ' + fixed + ' restricted_caller_access records');
+    },
+
+    _setupServiceAccount: function(log) {
+        log.push('--- svc.airop service account ---');
+        var USER_NAME = 'svc.airop';
+        var ROLES = [
+            'sn_hr_core.basic','itil_admin','discovery_admin','snc_internal',
+            'sn_lg_ops.legal_admin','itil','wm_agent','sn_hr_core.case_reader',
+            'catalog','pa_viewer','cmdb_read','asset','evt_mgmt_user','sn_grc.user'
+        ];
+        var userGr = new GlideRecord('sys_user');
+        userGr.addQuery('user_name', USER_NAME);
+        userGr.setLimit(1);
+        userGr.query();
+        var userSysId;
+        if (userGr.next()) {
+            userSysId = userGr.getUniqueValue();
+            log.push('svc.airop: found existing user');
+        } else {
+            var newUser = new GlideRecord('sys_user');
+            newUser.initialize();
+            newUser.setValue('user_name', USER_NAME);
+            newUser.setValue('first_name', 'AIROP');
+            newUser.setValue('last_name', 'Service Account');
+            newUser.setValue('email', 'svc.airop@noreply.local');
+            newUser.setValue('active', true);
+            newUser.setValue('web_service_access_only', true);
+            newUser.setWorkflow(false);
+            userSysId = newUser.insert();
+            log.push('svc.airop: created user ' + userSysId);
+        }
+        if (!userSysId) { log.push('ERROR: could not create svc.airop'); return; }
+        var added = 0;
+        for (var i = 0; i < ROLES.length; i++) {
+            var roleGr = new GlideRecord('sys_user_role');
+            roleGr.addQuery('name', ROLES[i]);
+            roleGr.setLimit(1);
+            roleGr.query();
+            if (!roleGr.next()) { log.push('Role not found: ' + ROLES[i]); continue; }
+            var chk = new GlideRecord('sys_user_has_role');
+            chk.addQuery('user', userSysId);
+            chk.addQuery('role', roleGr.getUniqueValue());
+            chk.setLimit(1); chk.query();
+            if (chk.next()) continue;
+            var assign = new GlideRecord('sys_user_has_role');
+            assign.initialize();
+            assign.setValue('user', userSysId);
+            assign.setValue('role', roleGr.getUniqueValue());
+            assign.setWorkflow(false);
+            if (assign.insert()) added++;
+        }
+        log.push('svc.airop: ' + added + ' roles assigned');
+    },
+
+    _flushCache: function(log) {
+        log.push('--- Flushing cache ---');
+        try { GlideCacheManager.flush(); log.push('Cache flushed'); }
+        catch(e) { log.push('Cache flush note: ' + e.message); }
+    },
+
+    _seedChecksIfEmpty: function(log) {
+        log.push('--- Checking if seeding required ---');
+        var count = new GlideAggregate('x_snc_airop_check_definition');
+        count.addAggregate('COUNT');
+        count.query();
+        var existing = count.next() ? parseInt(count.getAggregate('COUNT')) : 0;
+
+        if (existing > 0) {
+            log.push('Skipping seed: ' + existing + ' check definitions already exist');
+            return;
+        }
+
+        log.push('No checks found — seeding defaults');
+        try {
+            var seeder = new AROPCheckSeeder();
+            var r = seeder.seed();
+            log.push('Seeder: inserted=' + r.inserted + ', failed=' + r.failed + ', total=' + r.total);
+        } catch(e) {
+            log.push('Seeder ERROR: ' + e.message);
+        }
+    },
+
+    _rebuildLibraries: function(log) {
+        log.push('--- Rebuilding check libraries ---');
+        try {
+            var admin = new AROPAdminAjax();
+            admin.rebuildAllLibraries();
+            log.push('Library rebuild complete');
+        } catch(e) { log.push('Rebuild ERROR: ' + e.message); }
+    },
+
+    _setActivatedFlag: function(log) {
+        log.push('--- Setting privileges_activated flag ---');
+        try {
+            gs.setProperty('x_snc_airop.privileges_activated', 'true');
+            log.push('x_snc_airop.privileges_activated = true');
+        } catch(e) { log.push('Flag set note: ' + e.message); }
+    },
+
+    type: 'AROPInstaller'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-05 07:32:17</sys_created_on>
+        <sys_id>e0b4f3d5cf598b508935fb251d851c48</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>AROPInstaller</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_script_include_e0b4f3d5cf598b508935fb251d851c48</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-08 22:55:07</sys_updated_on>
+    </sys_script_include>
+</record_update>

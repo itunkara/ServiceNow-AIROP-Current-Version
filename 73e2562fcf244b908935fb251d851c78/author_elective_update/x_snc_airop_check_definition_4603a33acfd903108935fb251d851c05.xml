@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[DEX scores are the computed health signals that AI diagnostic skills use to identify device issues and prioritize interventions. Without score data, DEX AI cannot rank device health or trigger proactive workflows.]]></ai_justification>
+<check_name>KB Article Empty Text Fields</check_name>
+<check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. Empty text field check cannot be assessed.'
+        };
+    }
+
+    var gaEmpty = new GlideAggregate('kb_knowledge');
+    gaEmpty.addQuery('workflow_state', 'published');
+    gaEmpty.addQuery('active', true);
+    gaEmpty.addQuery('text', '');
+    gaEmpty.addAggregate('COUNT');
+    gaEmpty.query();
+    var empty = gaEmpty.next() ? parseInt(gaEmpty.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((empty / total) * 100);
+    var actualValue = empty + ' of ' + total + ' published articles have empty text body (' + pct + '%)';
+
+    if (empty === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'All published KB articles have body content. Now Assist AI Search has substantive content to index and surface as self-service answers.'
+        };
+    } else if (pct <= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: empty + ' published KB articles have empty body text (' + pct + '%). Empty articles degrade Now Assist AI Search quality — populate or retire these articles.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: empty + ' published KB articles (' + pct + '%) have no body content. Now Assist AI Search will return empty or useless results for these articles.'
+        };
+    }
+})]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>ITSM</module>
+<number>CHK0005945</number>
+<order>60</order>
+<remediation_guidance>Populate body content on empty published KB articles or retire them. Add a UI policy preventing publication of articles with empty text fields. Target: 0 published articles with empty body content.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:05:59</sys_created_on>
+<sys_id>4603a33acfd903108935fb251d851c05</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:05:59</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4603a33acfd903108935fb251d851c05</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[DEX scores are the computed health signals that AI diagnostic skills use to identify device issues and prioritize interventions. Without score data, DEX AI cannot rank device health or trigger proactive workflows.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;KB Article Empty Text Fields&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. Empty text field check cannot be assessed.'
+        };
+    }
+
+    var gaEmpty = new GlideAggregate('kb_knowledge');
+    gaEmpty.addQuery('workflow_state', 'published');
+    gaEmpty.addQuery('active', true);
+    gaEmpty.addQuery('text', '');
+    gaEmpty.addAggregate('COUNT');
+    gaEmpty.query();
+    var empty = gaEmpty.next() ? parseInt(gaEmpty.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((empty / total) * 100);
+    var actualValue = empty + ' of ' + total + ' published articles have empty text body (' + pct + '%)';
+
+    if (empty === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'All published KB articles have body content. Now Assist AI Search has substantive content to index and surface as self-service answers.'
+        };
+    } else if (pct &lt;= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: empty + ' published KB articles have empty body text (' + pct + '%). Empty articles degrade Now Assist AI Search quality — populate or retire these articles.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: empty + ' published KB articles (' + pct + '%) have no body content. Now Assist AI Search will return empty or useless results for these articles.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;ITSM&lt;/module&gt;
+&lt;number&gt;CHK0005945&lt;/number&gt;
+&lt;order&gt;60&lt;/order&gt;
+&lt;remediation_guidance&gt;Populate body content on empty published KB articles or retire them. Add a UI policy preventing publication of articles with empty text fields. Target: 0 published articles with empty body content.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:05:59&lt;/sys_created_on&gt;
+&lt;sys_id&gt;4603a33acfd903108935fb251d851c05&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:05:59&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-276215439</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:23</sys_created_on>
+        <sys_id>4cb6cd07cf9947108935fb251d851c48</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa66010000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:23</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>84b6cd0799994710f64c024f6a3d2647</update_guid>
+        <update_guid_history>84b6cd0799994710f64c024f6a3d2647:-276215439</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">0c2fc5cfcfdd47108935fb251d851c91</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:15</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>2b70ee81645c4e78aa7259182b6d10f9</sys_id>
+        <sys_metadata>4603a33acfd903108935fb251d851c05</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4603a33acfd903108935fb251d851c05</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4603a33acfd903108935fb251d851c05">4cb6cd07cf9947108935fb251d851c48</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:15</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

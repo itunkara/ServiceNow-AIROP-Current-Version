@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_policy_action">
+    <sys_ui_policy_action action="DELETE">
+        <cleared>false</cleared>
+        <disabled>ignore</disabled>
+        <field/>
+        <field_message/>
+        <field_message_type>none</field_message_type>
+        <mandatory>false</mandatory>
+        <sys_class_name>sys_ui_policy_action</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 17:02:46</sys_created_on>
+        <sys_id>7897db3fcf2c47d08935fb251d851c59</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_ui_policy_action_7897db3fcf2c47d08935fb251d851c59</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 17:02:46</sys_updated_on>
+        <table>x_snc_airop_assessment_run</table>
+        <ui_policy display_value="Make all fields read only on form. ">57b65737cf2c47d08935fb251d851c55</ui_policy>
+        <value/>
+        <value_action>ignore</value_action>
+        <visible>true</visible>
+    </sys_ui_policy_action>
+    <sys_translated_text action="DELETE" query="documentkey=7897db3fcf2c47d08935fb251d851c59"/>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_ui_policy_action_7897db3fcf2c47d08935fb251d851c59</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_policy_action"><sys_ui_policy_action action="INSERT_OR_UPDATE"><cleared>false</cleared><disabled>ignore</disabled><field/><field_message/><field_message_type>none</field_message_type><mandatory>false</mandatory><sys_class_name>sys_ui_policy_action</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-05-06 17:02:46</sys_created_on><sys_id>7897db3fcf2c47d08935fb251d851c59</sys_id><sys_mod_count>0</sys_mod_count><sys_name/><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_ui_policy_action_7897db3fcf2c47d08935fb251d851c59</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-05-06 17:02:46</sys_updated_on><table>x_snc_airop_assessment_run</table><ui_policy display_value="Make all fields read only on form. ">57b65737cf2c47d08935fb251d851c55</ui_policy><value/><value_action>ignore</value_action><visible>true</visible></sys_ui_policy_action><sys_translated_text action="delete_multiple" query="documentkey=7897db3fcf2c47d08935fb251d851c59"/></record_update>]]></payload>
+        <payload_hash>-643324745</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>37e29a6bcf644b908935fb251d851c7a</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 17:02:46</sys_created_on>
+        <sys_id>3097db3fcf2c47d08935fb251d851c5e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19dfe3df3cf0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 17:02:46</sys_updated_on>
+        <type>UI Policy Action</type>
+        <update_guid>f497db3fb82c47d020a814bbc3c41e5c</update_guid>
+        <update_guid_history>f497db3fb82c47d020a814bbc3c41e5c:-643324745</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-06 17:04:49</sys_created_on>
+        <sys_db_object display_value="" name="sys_ui_policy_action">sys_ui_policy_action</sys_db_object>
+        <sys_id>0bfc12a598b445a4a44ade85e29f1b90</sys_id>
+        <sys_metadata>7897db3fcf2c47d08935fb251d851c59</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent display_value="Make all fields read only on form. ">57b65737cf2c47d08935fb251d851c55</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_ui_policy_action_7897db3fcf2c47d08935fb251d851c59</sys_update_name>
+        <sys_update_version display_value="sys_ui_policy_action_7897db3fcf2c47d08935fb251d851c59">3097db3fcf2c47d08935fb251d851c5e</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-06 17:04:49</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

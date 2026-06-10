@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <x_snc_airop_check_definition action="DELETE">
+<ai_justification><![CDATA[Hardware Asset Workspace is the primary interface where Now Assist HAM AI insights are presented to asset managers. Without it, AI-generated lifecycle recommendations and refresh plans are produced but never surfaced where asset managers work.]]></ai_justification>
+<check_name>HAM Workspace Activation</check_name>
+<check_script><![CDATA[(function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_ham_workspace"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Hardware Asset Workspace is active", finding: "Hardware Asset Workspace is active. Now Assist HAM AI insights are surfaced in context for hardware asset managers." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_ham_workspace"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Hardware Asset Workspace is active", finding: "Hardware Asset Workspace is active. Now Assist HAM AI lifecycle and refresh insights are available to asset managers." }; } return { status: "not_ready", actualValue: "Hardware Asset Workspace not found or inactive", finding: "Hardware Asset Workspace is not active. Now Assist HAM AI insights are not accessible in a contextually relevant interface for hardware asset managers." }; })]]></check_script>
+<is_active>true</is_active>
+<is_clone_sensitive>false</is_clone_sensitive>
+<is_manual>false</is_manual>
+<module>HAM</module>
+<number>CHK0006239</number>
+<order>700</order>
+<remediation_guidance>Activate the Hardware Asset Workspace via the ServiceNow Store or Plugin Manager. The workspace is required for Now Assist HAM AI insights to surface in context for hardware asset managers.</remediation_guidance>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-06-09 22:06:00</sys_created_on>
+<sys_id>1603e33acfd903108935fb251d851ccf</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-06-09 22:06:00</sys_updated_on>
+</x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application/>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_1603e33acfd903108935fb251d851ccf</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;
+&lt;ai_justification&gt;&lt;![CDATA[Hardware Asset Workspace is the primary interface where Now Assist HAM AI insights are presented to asset managers. Without it, AI-generated lifecycle recommendations and refresh plans are produced but never surfaced where asset managers work.]]&gt;&lt;/ai_justification&gt;
+&lt;check_name&gt;HAM Workspace Activation&lt;/check_name&gt;
+&lt;check_script&gt;&lt;![CDATA[(function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_ham_workspace"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Hardware Asset Workspace is active", finding: "Hardware Asset Workspace is active. Now Assist HAM AI insights are surfaced in context for hardware asset managers." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_ham_workspace"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Hardware Asset Workspace is active", finding: "Hardware Asset Workspace is active. Now Assist HAM AI lifecycle and refresh insights are available to asset managers." }; } return { status: "not_ready", actualValue: "Hardware Asset Workspace not found or inactive", finding: "Hardware Asset Workspace is not active. Now Assist HAM AI insights are not accessible in a contextually relevant interface for hardware asset managers." }; })]]&gt;&lt;/check_script&gt;
+&lt;is_active&gt;true&lt;/is_active&gt;
+&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;
+&lt;is_manual&gt;false&lt;/is_manual&gt;
+&lt;module&gt;HAM&lt;/module&gt;
+&lt;number&gt;CHK0006239&lt;/number&gt;
+&lt;order&gt;700&lt;/order&gt;
+&lt;remediation_guidance&gt;Activate the Hardware Asset Workspace via the ServiceNow Store or Plugin Manager. The workspace is required for Now Assist HAM AI insights to surface in context for hardware asset managers.&lt;/remediation_guidance&gt;
+&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;
+&lt;sys_created_on&gt;2026-06-09 22:06:00&lt;/sys_created_on&gt;
+&lt;sys_id&gt;1603e33acfd903108935fb251d851ccf&lt;/sys_id&gt;
+&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;
+&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;
+&lt;sys_updated_on&gt;2026-06-09 22:06:00&lt;/sys_updated_on&gt;
+&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1633774691</payload_hash>
+        <record_name/>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:21:21</sys_created_on>
+        <sys_id>a7a64d07cf9947108935fb251d851c3a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eaffa5f280000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:21:21</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>efa64d079a9947109fd60f4b0347af38</update_guid>
+        <update_guid_history>efa64d079a9947109fd60f4b0347af38:-1633774691</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">e71f05cfcfdd47108935fb251d851c9c</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 05:58:13</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>4598e7ebb88d4e6bace73151253b1921</sys_id>
+        <sys_metadata>1603e33acfd903108935fb251d851ccf</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_1603e33acfd903108935fb251d851ccf</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_1603e33acfd903108935fb251d851ccf">a7a64d07cf9947108935fb251d851c3a</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 05:58:13</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

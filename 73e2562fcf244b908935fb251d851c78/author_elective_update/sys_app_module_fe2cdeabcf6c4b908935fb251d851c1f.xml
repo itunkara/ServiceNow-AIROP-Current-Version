@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="DELETE">
+        <active>true</active>
+        <application display_value="ServiceNow AI Readiness Optimization Pla">2e2c12abcf6c4b908935fb251d851c59</application>
+        <assessment/>
+        <device_type/>
+        <filter/>
+        <hint>View AIROP script errors for troubleshooting</hint>
+        <homepage/>
+        <image/>
+        <link_type>LIST</link_type>
+        <map_page/>
+        <mobile_title>Script Execution Log</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name>syslog_script_error</name>
+        <order>700</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query/>
+        <report/>
+        <require_confirmation>true</require_confirmation>
+        <roles>43d49623cfe44b908935fb251d851cd1</roles>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-05 18:04:44</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>fe2cdeabcf6c4b908935fb251d851c1f</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Script Execution Log</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_app_module_fe2cdeabcf6c4b908935fb251d851c1f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-05 18:12:30</sys_updated_on>
+        <timeline_page/>
+        <title>Script Execution Log</title>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+        <window_name/>
+    </sys_app_module>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_app_module_fe2cdeabcf6c4b908935fb251d851c1f</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="ServiceNow AI Readiness Optimization Pla">2e2c12abcf6c4b908935fb251d851c59</application><assessment/><device_type/><filter/><hint>View AIROP script errors for troubleshooting</hint><homepage/><image/><link_type>LIST</link_type><map_page/><mobile_title>Script Execution Log</mobile_title><mobile_view_name>Mobile</mobile_view_name><name>syslog_script_error</name><order>700</order><override_menu_roles>false</override_menu_roles><query/><report/><require_confirmation>true</require_confirmation><roles>43d49623cfe44b908935fb251d851cd1</roles><sys_class_name>sys_app_module</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-05-05 18:04:44</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>fe2cdeabcf6c4b908935fb251d851c1f</sys_id><sys_mod_count>2</sys_mod_count><sys_name>Script Execution Log</sys_name><sys_overrides/><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_app_module_fe2cdeabcf6c4b908935fb251d851c1f</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-05-05 18:12:30</sys_updated_on><timeline_page/><title>Script Execution Log</title><uncancelable>false</uncancelable><view_name/><window_name/></sys_app_module></record_update>]]></payload>
+        <payload_hash>-939139148</payload_hash>
+        <record_name>Script Execution Log</record_name>
+        <reverted_from/>
+        <source>37e29a6bcf644b908935fb251d851c7a</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-05 18:12:30</sys_created_on>
+        <sys_id>a4fd5e2fcfac4b908935fb251d851c29</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19df9576fcf0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-05 18:12:30</sys_updated_on>
+        <type>Module</type>
+        <update_guid>60fd5e2fc0ac4b90d821d6e78c2a3628</update_guid>
+        <update_guid_history>60fd5e2fc0ac4b90d821d6e78c2a3628:-939139148,9b6d56e7efac4b90ea311b334054a310:899764683,f62cdeabae6c4b903ac2e23f079e9455:1700705683</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="">90ef1263cf208b908935fb251d851ce2</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-05 18:20:57</sys_created_on>
+        <sys_db_object display_value="" name="sys_app_module">sys_app_module</sys_db_object>
+        <sys_id>23a5a260c3444c3c9dfe01b3bd4e2aa4</sys_id>
+        <sys_metadata>fe2cdeabcf6c4b908935fb251d851c1f</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Script Execution Log</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_app_module_fe2cdeabcf6c4b908935fb251d851c1f</sys_update_name>
+        <sys_update_version display_value="sys_app_module_fe2cdeabcf6c4b908935fb251d851c1f">a4fd5e2fcfac4b908935fb251d851c29</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-05 18:20:57</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

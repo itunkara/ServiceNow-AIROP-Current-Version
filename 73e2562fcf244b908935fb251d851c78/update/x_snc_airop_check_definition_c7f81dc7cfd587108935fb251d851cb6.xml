@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Work order resolution notes enable Now Assist FSM to learn from historical resolutions and suggest similar solutions.]]></ai_justification>
+        <check_name>FSM Work Order Resolution Notes</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    // wm_order.state is INTEGER: 3=Closed Complete, 4=Closed Incomplete
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('wm_order');
+    gaTotal.addQuery('state', 'IN', '3,4');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed work orders in last 12 months',
+            finding: 'No closed work orders found in the last 12 months. Resolution note coverage cannot be assessed.'
+        };
+    }
+
+    var gaMissing = new GlideAggregate('wm_order');
+    gaMissing.addQuery('state', 'IN', '3,4');
+    gaMissing.addQuery('closed_at', '>=', cutoff.getValue());
+    gaMissing.addQuery('close_notes', '');
+    gaMissing.addAggregate('COUNT');
+    gaMissing.query();
+    var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate('COUNT')) : 0;
+
+    var populated = total - missing;
+    var pct = Math.round((populated / total) * 100);
+    var actualValue = pct + '% of closed work orders have resolution notes (last 12 months, ' + populated + '/' + total + ')';
+
+    if (pct >= 80) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed work orders have resolution notes. Now Assist FSM has strong resolution context for AI knowledge suggestions and similar work order matching.'
+        };
+    } else if (pct >= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed work orders have resolution notes (target: 80%). Now Assist FSM AI knowledge suggestions will have reduced accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: missing + ' closed work orders missing resolution notes (' + pct + '% populated). Critical gap — Now Assist FSM cannot generate meaningful knowledge suggestions without resolution context.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>FIELD_SERVICE</module>
+        <number>CHK0000432</number>
+        <order>50</order>
+        <remediation_guidance>Make resolution notes mandatory at work order closure via UI policy. Train field agents to document resolution steps via the mobile app. Target: 80%+ of closed work orders with resolution notes in the trailing 12 months.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>c7f81dc7cfd587108935fb251d851cb6</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>FSM Work Order Resolution Notes</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_c7f81dc7cfd587108935fb251d851cb6</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

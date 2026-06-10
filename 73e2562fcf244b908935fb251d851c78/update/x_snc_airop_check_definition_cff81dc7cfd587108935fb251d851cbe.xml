@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Scheduling windows define constraints Now Assist FSM uses for AI-optimized dispatch. Without them AI cannot optimize for time and availability.]]></ai_justification>
+        <check_name>FSM Scheduling Window Configuration</check_name>
+        <check_script><![CDATA[(function() {
+    var t = new GlideRecord("wm_schedule_window");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table wm_schedule_window not found", finding: "FSM Scheduling Window table (wm_schedule_window) is not available. Verify the Field Service Management plugin is active." };
+    }
+    var ga = new GlideAggregate("wm_schedule_window");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active scheduling windows";
+    if (count >= 5) {
+        return { status: "ready", actualValue: actualValue, finding: count + " active scheduling windows. Now Assist FSM can optimize AI dispatch within defined time constraints and availability windows." };
+    } else if (count >= 1) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " active scheduling window(s) (target: 5+). Now Assist FSM scheduling optimization will have limited time constraint coverage." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "No active scheduling windows configured. Now Assist FSM cannot account for agent availability constraints in AI dispatch optimization." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>FIELD_SERVICE</module>
+        <number>CHK0000440</number>
+        <order>130</order>
+        <remediation_guidance>Configure scheduling windows and constraints in the FSM Dispatcher Workspace. Target: 5+ active scheduling windows covering your field agent availability patterns. Now Assist FSM uses scheduling windows for AI-optimized dispatch.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>cff81dc7cfd587108935fb251d851cbe</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>FSM Scheduling Window Configuration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_cff81dc7cfd587108935fb251d851cbe</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>
