@@ -190,7 +190,6 @@ AROPRunner.prototype = {
         gs.info('[AIROP] Checks executed: ' + checksExecuted + ' of ' + totalChecks);
         gs.info('[AIROP] ==================================');
 
-        gs.setProperty('x_snc_airop.latest_run_sys_id', runId);
         if (gs.getProperty('x_snc_airop.notify_on_complete', 'false') === 'true') {
             this._notify(runId, overall, enabledModules, scores);
         }
@@ -238,13 +237,13 @@ AROPRunner.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2026-05-05 17:59:41</sys_created_on>
         <sys_id>f40b9a23cf6c4b908935fb251d851cf8</sys_id>
-        <sys_mod_count>16</sys_mod_count>
+        <sys_mod_count>17</sys_mod_count>
         <sys_name>AROPRunner</sys_name>
         <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
         <sys_policy/>
         <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
         <sys_update_name>sys_script_include_f40b9a23cf6c4b908935fb251d851cf8</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-06-03 04:21:25</sys_updated_on>
+        <sys_updated_on>2026-06-10 21:13:09</sys_updated_on>
     </sys_script_include>
 </record_update>

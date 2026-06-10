@@ -129,6 +129,14 @@ AROPInstaller.prototype = {
             newUser.setValue('web_service_access_only', true);
             newUser.setWorkflow(false);
             userSysId = newUser.insert();
+            // Set password
+            var pwGr = new GlideRecord('sys_user');
+            if (pwGr.get(userSysId)) {
+                pwGr.setValue('user_password', gs.hash(gs.getProperty('x_snc_airop.svc_password', 'Airop@2026!')));
+                pwGr.setWorkflow(false);
+                pwGr.update();
+                log.push('svc.airop: password set');
+            }
             log.push('svc.airop: created user ' + userSysId);
         }
         if (!userSysId) { log.push('ERROR: could not create svc.airop'); return; }
@@ -205,13 +213,13 @@ AROPInstaller.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2026-06-05 07:32:17</sys_created_on>
         <sys_id>e0b4f3d5cf598b508935fb251d851c48</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_name>AROPInstaller</sys_name>
         <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
         <sys_policy/>
         <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
         <sys_update_name>sys_script_include_e0b4f3d5cf598b508935fb251d851c48</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-06-08 22:55:07</sys_updated_on>
+        <sys_updated_on>2026-06-10 21:15:42</sys_updated_on>
     </sys_script_include>
 </record_update>

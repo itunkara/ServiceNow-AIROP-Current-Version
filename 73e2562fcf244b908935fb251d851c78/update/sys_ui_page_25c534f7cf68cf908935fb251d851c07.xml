@@ -25,9 +25,7 @@
     'LSD':'x_snc_airop.module.LSD.enabled',
     'WSD':'x_snc_airop.module.WSD.enabled',
     'HAM':'x_snc_airop.module.HAM.enabled',
-    'SAM':'x_snc_airop.module.SAM.enabled',
-    'DEX':'x_snc_airop.module.DEX.enabled',
-    'SECOPS':'x_snc_airop.module.SECOPS.enabled'
+    'SAM':'x_snc_airop.module.SAM.enabled'
   };
   var ena = [];
   for (var mk in pMap) {
@@ -36,7 +34,7 @@
   jvar_modules = ena.length > 0 ? ena.join(', ') : 'No modules enabled';
 </g:evaluate>
 
-<g:evaluate var="jvar_last_run">
+<g:evaluate var='jvar_last_run'>
   var lastGr = new GlideRecord('x_snc_airop_assessment_run');
   lastGr.addQuery('status', 'complete');
   lastGr.orderByDesc('run_date');
@@ -45,6 +43,12 @@
   jvar_last_run = lastGr.next()
     ? lastGr.getValue('name') + ' (' + lastGr.getValue('run_date') + ')'
     : 'No completed runs yet';
+</g:evaluate>
+
+<g:evaluate var='jvar_auth'>
+  var svcUser = 'svc.airop';
+  var svcPass = gs.getProperty('x_snc_airop.svc_password', '');
+  jvar_auth = GlideStringUtil.base64Encode(svcUser + ':' + svcPass);
 </g:evaluate>
 
 <style>
@@ -73,50 +77,36 @@
     <p>Automated assessment of AI activation readiness across ServiceNow modules</p>
   </div>
   <div class="airop-body">
-
     <div class="airop-info">
       <p><strong>Modules to be scanned:</strong> ${jvar_modules}</p>
       <p><strong>Last completed run:</strong> ${jvar_last_run}</p>
     </div>
-
     <div class="airop-note">
-      <p><strong>Note:</strong> Only one assessment can run at a time.
-      Once started, you will not be able to trigger another scan until this one completes.
-      Depending on the number of modules enabled, the assessment may take several minutes to finish.
-      You will be redirected to the run record automatically - refresh it to see live status updates.</p>
+      <p><strong>Note:</strong> Only one assessment can run at a time. Once started, you will not be able to trigger another scan until this one completes. Depending on the number of modules enabled, the assessment may take several minutes to finish. You will be redirected to the run record automatically - refresh it to see live status updates.</p>
     </div>
-
     <hr class="airop-divider" />
-
+    <input type="hidden" id="airop_auth" value="${jvar_auth}" />
     <button onclick="runAssessment()" class="airop-btn">Run Assessment Now</button>
-
     <div id="airop_msg" style="margin-top:16px;font-size:13px;color:#032D42;"></div>
-
     <div class="airop-links">
       <a href="x_snc_airop_assessment_run_list.do">Assessment History</a>
       <a href="x_snc_airop_check_definition_list.do">Check Catalog</a>
       <a href="sys_properties_list.do?sysparm_query=nameLIKEx_snc_airop">Configuration</a>
     </div>
-
   </div>
 </div>
 
-
 <script type="text/javascript">
-function getCsrfToken() {
-    if (window.g_ck) return window.g_ck;
-    var match = document.cookie.match(/glide_user_route=([^;]+)/);
-    return match ? match[1] : "";
-}
-
 function runAssessment() {
     if (!confirm("Start AI Readiness Assessment?\n\nThis will scan the enabled modules.\n\nThe assessment may take several minutes.")) return;
     var btn = document.querySelector(".airop-btn");
     if (btn) { btn.disabled = true; btn.innerHTML = "Starting..."; }
     setMsg("info", "Submitting assessment request...");
+    var authEl = document.getElementById("airop_auth");
+    var auth = authEl ? authEl.value : "";
     fetch(window.location.protocol + "//" + window.location.host + "/api/x_snc_airop/assessment/trigger", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "X-UserToken": getCsrfToken() },
+        headers: { "Content-Type": "application/json", "Authorization": "Basic " + auth },
         credentials: "include"
     })
     .then(function(res) { return res.json(); })
@@ -125,7 +115,7 @@ function runAssessment() {
         if (result.status === "OK") {
             window.location.href = "x_snc_airop_assessment_run.do?sys_id=" + result.run_id;
         } else if (result.status === "RUNNING") {
-            setMsg("warning", "&#9888; An assessment is already in progress: <strong>" + result.run_name + "</strong>. <a href=\"x_snc_airop_assessment_run.do?sys_id=" + result.run_id + "\" style=\"color:inherit;font-weight:600;\">View running assessment &rarr;</a>");
+            setMsg("warning", "&#9888; An assessment is already in progress: <strong>" + result.run_name + "</strong>. <a href='x_snc_airop_assessment_run.do?sys_id=" + result.run_id + "' style='color:inherit;font-weight:600;'>View running assessment &#8594;</a>");
             if (btn) { btn.disabled = false; btn.innerHTML = "Run Assessment Now"; }
         } else {
             setMsg("error", "&#10005; " + (result.message || JSON.stringify(result)));
@@ -137,7 +127,6 @@ function runAssessment() {
         if (btn) { btn.disabled = false; btn.innerHTML = "Run Assessment Now"; }
     });
 }
-
 function setMsg(type, message) {
     var box = document.getElementById("airop_msg");
     if (!box) return;
@@ -235,13 +224,13 @@ function setMsg(type, message) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2026-05-06 05:24:29</sys_created_on>
         <sys_id>25c534f7cf68cf908935fb251d851c07</sys_id>
-        <sys_mod_count>33</sys_mod_count>
+        <sys_mod_count>34</sys_mod_count>
         <sys_name>run_assessment</sys_name>
         <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
         <sys_policy/>
         <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
         <sys_update_name>sys_ui_page_25c534f7cf68cf908935fb251d851c07</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-05-29 06:22:53</sys_updated_on>
+        <sys_updated_on>2026-06-10 21:13:34</sys_updated_on>
     </sys_ui_page>
 </record_update>
