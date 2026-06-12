@@ -63,7 +63,7 @@
         <update_guid_history>05507fc744c54bd87e2c8a6eb3028012:850401282,d410fb436fc54bd8fc88863f02c06b63:449520078</update_guid_history>
     </sys_update_version>
     <sys_metadata_delete action="INSERT_OR_UPDATE">
-        <sys_audit_delete display_value="ITSM CHeck Results">6a80b70bcfc54bd88935fb251d851c10</sys_audit_delete>
+        <sys_audit_delete display_value="">6a80b70bcfc54bd88935fb251d851c10</sys_audit_delete>
         <sys_class_name>sys_metadata_delete</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2026-05-29 07:27:48</sys_created_on>
