@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist for Strategic Portfolio Management enables AI-powered demand summarization, idea scoring, and portfolio insights. Without this plugin, portfolio and project teams cannot leverage generative AI to accelerate planning decisions and improve investment prioritization.]]></ai_justification>
+        <check_name>Now Assist for SPO Installed</check_name>
+        <check_script><![CDATA[(function(){
+var sa=new GlideRecord("sys_store_app");
+sa.addQuery("scope","sn_spend_gen_ai");
+sa.setLimit(1);sa.query();
+if(sa.next())return{status:"ready",actualValue:"v"+sa.getValue("version"),finding:"Now Assist for SPO is installed."};
+return{status:"value_blocker",actualValue:"Not installed",finding:"Now Assist for SPO (sn_spend_gen_ai) is not installed."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SPO</module>
+        <number>CHK0000880</number>
+        <order/>
+        <remediation_guidance>Install Now Assist for SPO from the ServiceNow Store to enable AI summarization and conversational intake.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>80c3834ccfe5c7d08935fb251d851c6c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_80c3834ccfe5c7d08935fb251d851c6c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

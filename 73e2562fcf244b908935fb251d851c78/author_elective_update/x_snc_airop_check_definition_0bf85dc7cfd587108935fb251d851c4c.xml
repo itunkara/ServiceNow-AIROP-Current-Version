@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Published VA topics define the conversational use cases Now Assist can assist with. More topics means broader AI self-service coverage.]]></ai_justification>
+        <check_name>Published VA Topic Count</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_cs_topic');
+    ga.addQuery('active', true);
+    ga.addQuery('published', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' published active VA topics';
+
+    if (count >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' published VA topics. Now Assist VA has broad topic coverage for meaningful AI-assisted self-service.'
+        };
+    } else if (count >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics (target: 50+). Now Assist VA self-service coverage will be limited — publish additional topics for key use cases.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics. Insufficient topic coverage for meaningful Now Assist VA self-service — a minimum foundation of topics is required before AI enhancement adds value.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>VIRTUAL_AGENT</module>
+        <number>CHK0000503</number>
+        <order>30</order>
+        <remediation_guidance>Publish VA topics for top self-service categories. Target: 50+ published topics before Now Assist VA enablement. Focus on high-volume request types first.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>0bf85dc7cfd587108935fb251d851c4c</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Published VA Topic Count</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_0bf85dc7cfd587108935fb251d851c4c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_0bf85dc7cfd587108935fb251d851c4c</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Published VA topics define the conversational use cases Now Assist can assist with. More topics means broader AI self-service coverage.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;Published VA Topic Count&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_cs_topic');
+    ga.addQuery('active', true);
+    ga.addQuery('published', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' published active VA topics';
+
+    if (count &gt;= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' published VA topics. Now Assist VA has broad topic coverage for meaningful AI-assisted self-service.'
+        };
+    } else if (count &gt;= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics (target: 50+). Now Assist VA self-service coverage will be limited — publish additional topics for key use cases.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics. Insufficient topic coverage for meaningful Now Assist VA self-service — a minimum foundation of topics is required before AI enhancement adds value.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;VIRTUAL_AGENT&lt;/module&gt;&lt;number&gt;CHK0000503&lt;/number&gt;&lt;order&gt;30&lt;/order&gt;&lt;remediation_guidance&gt;Publish VA topics for top self-service categories. Target: 50+ published topics before Now Assist VA enablement. Focus on high-volume request types first.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:20&lt;/sys_created_on&gt;&lt;sys_id&gt;0bf85dc7cfd587108935fb251d851c4c&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;Published VA Topic Count&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_0bf85dc7cfd587108935fb251d851c4c&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:01&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1850136344</payload_hash>
+        <record_name>Published VA Topic Count</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:53:17</sys_created_on>
+        <sys_id>bf1eea07cf598b108935fb251d851c6e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19821ce0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:53:17</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>3f1eea072e598b10718f2497fd79bb6d</update_guid>
+        <update_guid_history>3f1eea072e598b10718f2497fd79bb6d:1850136344</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Published VA Topic Count">4603c304cfe5c7d08935fb251d851cb4</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:34</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>1cf9aceea51d4243840bbebaab940ea9</sys_id>
+        <sys_metadata>0bf85dc7cfd587108935fb251d851c4c</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Published VA Topic Count</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_0bf85dc7cfd587108935fb251d851c4c</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_0bf85dc7cfd587108935fb251d851c4c">bf1eea07cf598b108935fb251d851c6e</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:34</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

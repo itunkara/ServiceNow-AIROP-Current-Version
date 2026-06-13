@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist for Health and Safety enables AI-powered case summarization, incident analysis, and resolution guidance for EHS workflows. Without this plugin, health and safety teams cannot leverage generative AI to accelerate incident resolution and compliance reporting.]]></ai_justification>
+        <check_name>Now Assist for Health &amp; Safety Installed</check_name>
+        <check_script><![CDATA[(function(){
+var sa=new GlideRecord("sys_store_app");
+sa.addQuery("scope","sn_hs_gen_ai");
+sa.setLimit(1);sa.query();
+if(sa.next())return{status:"ready",actualValue:"v"+sa.getValue("version"),finding:"Now Assist for Health & Safety is installed."};
+return{status:"value_blocker",actualValue:"Not installed",finding:"Now Assist for Health & Safety (sn_hs_gen_ai) is not installed."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HS</module>
+        <number>CHK0000858</number>
+        <order/>
+        <remediation_guidance>Install Now Assist for Health and Safety from the ServiceNow Store.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>c4c3834ccfe5c7d08935fb251d851c4c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_c4c3834ccfe5c7d08935fb251d851c4c</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

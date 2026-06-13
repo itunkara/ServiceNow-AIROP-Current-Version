@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Trained NLU models power Now Assist intent recognition. Untrained or low-accuracy models produce poor intent matching and degrade conversational AI quality.]]></ai_justification>
+        <check_name>NLU Model Training Status</check_name>
+        <check_script><![CDATA[(function() {
+    var t = new GlideRecord("sys_nlu_model");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table sys_nlu_model not found", finding: "NLU Model table (sys_nlu_model) is not available. Verify the Virtual Agent plugin is active." };
+    }
+    var gaTotal = new GlideAggregate("sys_nlu_model");
+    gaTotal.addQuery("active", true);
+    gaTotal.addAggregate("COUNT");
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0;
+    if (total === 0) {
+        return { status: "not_applicable", actualValue: "No active NLU models found", finding: "No active NLU models found. NLU training status cannot be assessed — configure NLU models for VA topic intent recognition." };
+    }
+    var gaTrained = new GlideAggregate("sys_nlu_model");
+    gaTrained.addQuery("active", true);
+    gaTrained.addQuery("state", "trained");
+    gaTrained.addAggregate("COUNT");
+    gaTrained.query();
+    var trained = gaTrained.next() ? parseInt(gaTrained.getAggregate("COUNT")) : 0;
+    var pct = Math.round((trained / total) * 100);
+    var actualValue = trained + " of " + total + " active NLU models trained (" + pct + "%)";
+    if (pct >= 80) {
+        return { status: "ready", actualValue: actualValue, finding: pct + "% of active NLU models are trained. Now Assist intent recognition has accurate model coverage." };
+    } else if (pct >= 50) {
+        return { status: "needs_attention", actualValue: actualValue, finding: (total - trained) + " of " + total + " NLU models are untrained (" + pct + "% trained, target: 80%+). Now Assist intent matching accuracy will be reduced for topics without trained models." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Only " + pct + "% of NLU models are trained. Now Assist intent recognition requires trained NLU models — untrained models produce poor AI matching accuracy." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>VIRTUAL_AGENT</module>
+        <number>CHK0000817</number>
+        <order>40</order>
+        <remediation_guidance>Train NLU models with representative utterances for each topic. Target: 80%+ of active models trained with accuracy above 85%. Retrain after adding new topics or utterances.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>88c3434ccfe5c7d08935fb251d851cb8</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_88c3434ccfe5c7d08935fb251d851cb8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

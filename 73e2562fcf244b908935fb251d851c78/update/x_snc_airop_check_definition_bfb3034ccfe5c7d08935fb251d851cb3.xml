@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[HR skills and competency data enables Now Assist to match HR case complexity to agent expertise. Without skills data, Now Assist cannot optimize agent assignment based on capability matching.]]></ai_justification>
+        <check_name>HR Skills and Competency Data</check_name>
+        <check_script><![CDATA[(function() {
+    var t = new GlideRecord("cmn_skill");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table cmn_skill not found", finding: "Skills table (cmn_skill) is not available. Verify the Skills plugin is active." };
+    }
+    var ga = new GlideAggregate("cmn_skill");
+    ga.addQuery("active", true);
+    ga.addAggregate("COUNT");
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+    var actualValue = count + " active skill definitions";
+    if (count >= 10) {
+        return { status: "ready", actualValue: actualValue, finding: count + " active skill definitions. Now Assist HRSD can perform competency-matched AI case assignment." };
+    } else if (count >= 3) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Only " + count + " active skill definitions (target: 10+). Now Assist HRSD skill-based AI assignment will have limited matching coverage." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Fewer than 3 active skill definitions. Now Assist HRSD AI case assignment defaults to simple routing without skills data — competency-matched assignment is unavailable." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HRSD</module>
+        <number>CHK0000718</number>
+        <order>130</order>
+        <remediation_guidance>Populate HR agent skills and competency profiles via sn_hr_core_skill_list.do. Assign skills to HR service desk agents. Target: 10+ active skill definitions. Now Assist HRSD uses skill matching for AI-optimized case assignment.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>bfb3034ccfe5c7d08935fb251d851cb3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_bfb3034ccfe5c7d08935fb251d851cb3</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

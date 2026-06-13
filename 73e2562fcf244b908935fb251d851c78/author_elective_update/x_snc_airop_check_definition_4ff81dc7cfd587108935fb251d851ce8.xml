@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[GRC policies and controls are the data foundation Now Assist GRC uses for AI-assisted compliance assessment and control testing recommendations.]]></ai_justification>
+        <check_name>Policy and Control Population</check_name>
+        <check_script><![CDATA[(function() {
+    var policyTable = new GlideRecord("sn_compliance_policy");
+    if (!policyTable.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table sn_compliance_policy not found", finding: "Compliance Policy table (sn_compliance_policy) is not available. Verify the Policy and Compliance plugin is active." };
+    }
+    var gaPolicy = new GlideAggregate("sn_compliance_policy");
+    gaPolicy.addQuery("active", true);
+    gaPolicy.addAggregate("COUNT");
+    gaPolicy.query();
+    var policies = gaPolicy.next() ? parseInt(gaPolicy.getAggregate("COUNT")) : 0;
+    var controls = 0;
+    var controlTable = new GlideRecord("sn_compliance_control");
+    if (controlTable.isValid()) {
+        var gaControl = new GlideAggregate("sn_compliance_control");
+        gaControl.addQuery("active", true);
+        gaControl.addAggregate("COUNT");
+        gaControl.query();
+        controls = gaControl.next() ? parseInt(gaControl.getAggregate("COUNT")) : 0;
+    }
+    var actualValue = policies + " active policies | " + controls + " active controls";
+    if (policies >= 10 && controls >= 50) {
+        return { status: "ready", actualValue: actualValue, finding: "Good GRC data foundation — Now Assist can perform AI-assisted compliance assessment across " + policies + " policies and " + controls + " controls." };
+    } else if (policies >= 5 || controls >= 20) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Partial GRC data (" + policies + " policies, " + controls + " controls). Now Assist GRC AI assessment will have limited coverage. Target: 10+ policies, 50+ controls." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Insufficient GRC data (" + policies + " policies, " + controls + " controls). Now Assist GRC AI assessment requires a comprehensive policy and control foundation." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>GRC</module>
+        <number>CHK0000456</number>
+        <order>20</order>
+        <remediation_guidance>Populate policies aligned to key frameworks (SOC2, ISO27001, NIST). Map controls to policies. Target: 10+ active policies, 50+ active controls.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>4ff81dc7cfd587108935fb251d851ce8</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Policy and Control Population</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_4ff81dc7cfd587108935fb251d851ce8</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4ff81dc7cfd587108935fb251d851ce8</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[GRC policies and controls are the data foundation Now Assist GRC uses for AI-assisted compliance assessment and control testing recommendations.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;Policy and Control Population&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function() {
+    var policyTable = new GlideRecord("sn_compliance_policy");
+    if (!policyTable.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table sn_compliance_policy not found", finding: "Compliance Policy table (sn_compliance_policy) is not available. Verify the Policy and Compliance plugin is active." };
+    }
+    var gaPolicy = new GlideAggregate("sn_compliance_policy");
+    gaPolicy.addQuery("active", true);
+    gaPolicy.addAggregate("COUNT");
+    gaPolicy.query();
+    var policies = gaPolicy.next() ? parseInt(gaPolicy.getAggregate("COUNT")) : 0;
+    var controls = 0;
+    var controlTable = new GlideRecord("sn_compliance_control");
+    if (controlTable.isValid()) {
+        var gaControl = new GlideAggregate("sn_compliance_control");
+        gaControl.addQuery("active", true);
+        gaControl.addAggregate("COUNT");
+        gaControl.query();
+        controls = gaControl.next() ? parseInt(gaControl.getAggregate("COUNT")) : 0;
+    }
+    var actualValue = policies + " active policies | " + controls + " active controls";
+    if (policies &gt;= 10 &amp;&amp; controls &gt;= 50) {
+        return { status: "ready", actualValue: actualValue, finding: "Good GRC data foundation — Now Assist can perform AI-assisted compliance assessment across " + policies + " policies and " + controls + " controls." };
+    } else if (policies &gt;= 5 || controls &gt;= 20) {
+        return { status: "needs_attention", actualValue: actualValue, finding: "Partial GRC data (" + policies + " policies, " + controls + " controls). Now Assist GRC AI assessment will have limited coverage. Target: 10+ policies, 50+ controls." };
+    } else {
+        return { status: "value_blocker", actualValue: actualValue, finding: "Insufficient GRC data (" + policies + " policies, " + controls + " controls). Now Assist GRC AI assessment requires a comprehensive policy and control foundation." };
+    }
+})()]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;GRC&lt;/module&gt;&lt;number&gt;CHK0000456&lt;/number&gt;&lt;order&gt;20&lt;/order&gt;&lt;remediation_guidance&gt;Populate policies aligned to key frameworks (SOC2, ISO27001, NIST). Map controls to policies. Target: 10+ active policies, 50+ active controls.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:20&lt;/sys_created_on&gt;&lt;sys_id&gt;4ff81dc7cfd587108935fb251d851ce8&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;Policy and Control Population&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_4ff81dc7cfd587108935fb251d851ce8&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:01&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>935777485</payload_hash>
+        <record_name>Policy and Control Population</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:56:04</sys_created_on>
+        <sys_id>94ceee8bcf598b108935fb251d851ce1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19aab860000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:56:04</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>14ceee8be9598b10c2a44fe3d44bd9e0</update_guid>
+        <update_guid_history>14ceee8be9598b10c2a44fe3d44bd9e0:935777485</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Policy and Control Population">7b03cf04cfe5c7d08935fb251d851c48</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:42</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>01057ab3519d498c81d68a9c5b144924</sys_id>
+        <sys_metadata>4ff81dc7cfd587108935fb251d851ce8</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Policy and Control Population</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4ff81dc7cfd587108935fb251d851ce8</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4ff81dc7cfd587108935fb251d851ce8">94ceee8bcf598b108935fb251d851ce1</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:42</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

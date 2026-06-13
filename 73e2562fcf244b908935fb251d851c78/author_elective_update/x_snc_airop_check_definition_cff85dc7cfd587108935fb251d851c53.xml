@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[VA knowledge integration enables Now Assist to surface relevant KB articles within conversations. Without KB integration, Now Assist cannot provide article-based self-service answers.]]></ai_justification>
+        <check_name>VA Knowledge Integration</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Check 1: Auto-resolution configuration (OOB VA-KB deflection mechanism on modern instances)
+    var gaAutoRes = new GlideAggregate('sys_cs_auto_resolution_configuration');
+    gaAutoRes.addQuery('active', true);
+    gaAutoRes.addAggregate('COUNT');
+    gaAutoRes.query();
+    var activeAutoRes = gaAutoRes.next() ? parseInt(gaAutoRes.getAggregate('COUNT')) : 0;
+
+    // Check 2: Published KB articles (content behind the deflection)
+    var gaKB = new GlideAggregate('kb_knowledge');
+    gaKB.addQuery('workflow_state', 'published');
+    gaKB.addAggregate('COUNT');
+    gaKB.query();
+    var articles = gaKB.next() ? parseInt(gaKB.getAggregate('COUNT')) : 0;
+
+    var actualValue = 'Auto-resolution configs active: ' + activeAutoRes + ' | Published KB articles: ' + articles;
+
+    if (activeAutoRes >= 1 && articles >= 100) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'VA auto-resolution is active with ' + articles + ' published KB articles. Now Assist VA can surface AI-recommended KB articles for self-service deflection.'
+        };
+    } else if (activeAutoRes >= 1 && articles >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'VA auto-resolution is active but only ' + articles + ' published KB articles exist (target: 100+). Now Assist VA KB deflection coverage will be limited.'
+        };
+    } else if (activeAutoRes === 0 && articles >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Sufficient KB content exists (' + articles + ' published articles) but VA auto-resolution is not active. Now Assist VA cannot surface KB articles for deflection without an active auto-resolution configuration.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'VA auto-resolution is ' + (activeAutoRes >= 1 ? 'active' : 'not active') + ' with only ' + articles + ' published KB articles. Now Assist VA cannot provide meaningful KB-based self-service deflection without both an active auto-resolution configuration and sufficient KB content.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>VIRTUAL_AGENT</module>
+        <number>CHK0000510</number>
+        <order>100</order>
+        <remediation_guidance>Configure and activate VA auto-resolution via sys_cs_auto_resolution_configuration. Ensure at least 100 published KB articles exist for deflection coverage. Now Assist VA surfaces KB articles as AI-recommended answers in conversations.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>cff85dc7cfd587108935fb251d851c53</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>VA Knowledge Integration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_cff85dc7cfd587108935fb251d851c53</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_cff85dc7cfd587108935fb251d851c53</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[VA knowledge integration enables Now Assist to surface relevant KB articles within conversations. Without KB integration, Now Assist cannot provide article-based self-service answers.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;VA Knowledge Integration&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    // Check 1: Auto-resolution configuration (OOB VA-KB deflection mechanism on modern instances)
+    var gaAutoRes = new GlideAggregate('sys_cs_auto_resolution_configuration');
+    gaAutoRes.addQuery('active', true);
+    gaAutoRes.addAggregate('COUNT');
+    gaAutoRes.query();
+    var activeAutoRes = gaAutoRes.next() ? parseInt(gaAutoRes.getAggregate('COUNT')) : 0;
+
+    // Check 2: Published KB articles (content behind the deflection)
+    var gaKB = new GlideAggregate('kb_knowledge');
+    gaKB.addQuery('workflow_state', 'published');
+    gaKB.addAggregate('COUNT');
+    gaKB.query();
+    var articles = gaKB.next() ? parseInt(gaKB.getAggregate('COUNT')) : 0;
+
+    var actualValue = 'Auto-resolution configs active: ' + activeAutoRes + ' | Published KB articles: ' + articles;
+
+    if (activeAutoRes &gt;= 1 &amp;&amp; articles &gt;= 100) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'VA auto-resolution is active with ' + articles + ' published KB articles. Now Assist VA can surface AI-recommended KB articles for self-service deflection.'
+        };
+    } else if (activeAutoRes &gt;= 1 &amp;&amp; articles &gt;= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'VA auto-resolution is active but only ' + articles + ' published KB articles exist (target: 100+). Now Assist VA KB deflection coverage will be limited.'
+        };
+    } else if (activeAutoRes === 0 &amp;&amp; articles &gt;= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Sufficient KB content exists (' + articles + ' published articles) but VA auto-resolution is not active. Now Assist VA cannot surface KB articles for deflection without an active auto-resolution configuration.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'VA auto-resolution is ' + (activeAutoRes &gt;= 1 ? 'active' : 'not active') + ' with only ' + articles + ' published KB articles. Now Assist VA cannot provide meaningful KB-based self-service deflection without both an active auto-resolution configuration and sufficient KB content.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;VIRTUAL_AGENT&lt;/module&gt;&lt;number&gt;CHK0000510&lt;/number&gt;&lt;order&gt;100&lt;/order&gt;&lt;remediation_guidance&gt;Configure and activate VA auto-resolution via sys_cs_auto_resolution_configuration. Ensure at least 100 published KB articles exist for deflection coverage. Now Assist VA surfaces KB articles as AI-recommended answers in conversations.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:20&lt;/sys_created_on&gt;&lt;sys_id&gt;cff85dc7cfd587108935fb251d851c53&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;VA Knowledge Integration&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_cff85dc7cfd587108935fb251d851c53&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:02&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-2050622395</payload_hash>
+        <record_name>VA Knowledge Integration</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:53:18</sys_created_on>
+        <sys_id>ff1e2e07cf598b108935fb251d851c0e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19825040000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:53:18</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>7f1e2e0773598b10366133b09acf060d</update_guid>
+        <update_guid_history>7f1e2e0773598b10366133b09acf060d:-2050622395</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="VA Knowledge Integration">ab138384cfe5c7d08935fb251d851cb4</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:57</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>9830eeeaeb724d30a11c1beb1e946e40</sys_id>
+        <sys_metadata>cff85dc7cfd587108935fb251d851c53</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>VA Knowledge Integration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_cff85dc7cfd587108935fb251d851c53</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_cff85dc7cfd587108935fb251d851c53">ff1e2e07cf598b108935fb251d851c0e</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:57</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

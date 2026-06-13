@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[IP range coverage determines which infrastructure discovery can find. Gaps in coverage create blind spots in the CMDB that Now Assist cannot reason about.]]></ai_justification>
+        <check_name>Discovery Coverage by IP Range</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('discovery_range');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var ranges = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = ranges + ' IP ranges defined for discovery';
+
+    if (ranges >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: ranges + ' IP ranges configured. Discovery has broad infrastructure coverage for Now Assist ITOM context building.'
+        };
+    } else if (ranges >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + ranges + ' IP range(s) defined (target: 3+). Discovery coverage gaps create CMDB blind spots that Now Assist ITOM cannot reason about during incident response.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No IP ranges defined for discovery. Now Assist ITOM has no infrastructure scope to discover — CMDB will lack the CI data required for AI impact analysis.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITOM</module>
+        <number>CHK0000669</number>
+        <order>20</order>
+        <remediation_guidance>Define IP ranges for all known infrastructure segments via discovery_range_list.do. Cross-reference against network topology documentation to identify gaps. IP range gaps create CMDB blind spots that Now Assist cannot reason about during incident response.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>e7b3cf0ccfe5c7d08935fb251d851cce</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_e7b3cf0ccfe5c7d08935fb251d851cce</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

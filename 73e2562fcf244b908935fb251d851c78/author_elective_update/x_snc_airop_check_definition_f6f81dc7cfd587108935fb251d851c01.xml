@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Service-to-CI associations are the data foundation for Now Assist ITOM impact analysis. Low association counts mean Now Assist cannot determine which CIs support which services.]]></ai_justification>
+        <check_name>Service-to-CI Relationship Coverage</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('svc_ci_assoc');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' service-to-CI associations defined';
+
+    if (count >= 100) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' service-to-CI associations. Now Assist ITOM can accurately determine which services are affected by CI-level incidents.'
+        };
+    } else if (count >= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' service-to-CI associations (target: 100+). Now Assist ITOM impact analysis will be limited to services with defined CI associations.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Fewer than 10 service-to-CI associations. Without these, Now Assist ITOM cannot determine which services are affected by CI events during incident response.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITOM</module>
+        <number>CHK0000367</number>
+        <order>140</order>
+        <remediation_guidance>Map business services to CIs via svc_ci_assoc_list.do or by running Service Mapping. Ensure all business-critical services have CI associations. Without service-to-CI associations, Now Assist ITOM cannot determine which services are affected during incident response.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>f6f81dc7cfd587108935fb251d851c01</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Service-to-CI Relationship Coverage</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_f6f81dc7cfd587108935fb251d851c01</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_f6f81dc7cfd587108935fb251d851c01</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Service-to-CI associations are the data foundation for Now Assist ITOM impact analysis. Low association counts mean Now Assist cannot determine which CIs support which services.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;Service-to-CI Relationship Coverage&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('svc_ci_assoc');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' service-to-CI associations defined';
+
+    if (count &gt;= 100) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' service-to-CI associations. Now Assist ITOM can accurately determine which services are affected by CI-level incidents.'
+        };
+    } else if (count &gt;= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' service-to-CI associations (target: 100+). Now Assist ITOM impact analysis will be limited to services with defined CI associations.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Fewer than 10 service-to-CI associations. Without these, Now Assist ITOM cannot determine which services are affected by CI events during incident response.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;ITOM&lt;/module&gt;&lt;number&gt;CHK0000367&lt;/number&gt;&lt;order&gt;140&lt;/order&gt;&lt;remediation_guidance&gt;Map business services to CIs via svc_ci_assoc_list.do or by running Service Mapping. Ensure all business-critical services have CI associations. Without service-to-CI associations, Now Assist ITOM cannot determine which services are affected during incident response.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:19&lt;/sys_created_on&gt;&lt;sys_id&gt;f6f81dc7cfd587108935fb251d851c01&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;Service-to-CI Relationship Coverage&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_f6f81dc7cfd587108935fb251d851c01&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:02&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>794105542</payload_hash>
+        <record_name>Service-to-CI Relationship Coverage</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:55:44</sys_created_on>
+        <sys_id>93aeee4bcf598b108935fb251d851cf5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19a5d020000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:55:44</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>13aeee4b2d598b109dca83186b1c53f4</update_guid>
+        <update_guid_history>13aeee4b2d598b109dca83186b1c53f4:794105542</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Service-to-CI Relationship Coverage">90234784cfe5c7d08935fb251d851cfa</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:59:00</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>007e51659ac240db850efe224cf97a51</sys_id>
+        <sys_metadata>f6f81dc7cfd587108935fb251d851c01</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Service-to-CI Relationship Coverage</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_f6f81dc7cfd587108935fb251d851c01</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_f6f81dc7cfd587108935fb251d851c01">93aeee4bcf598b108935fb251d851cf5</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:59:00</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

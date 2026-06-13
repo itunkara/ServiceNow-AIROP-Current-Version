@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Hardware asset volume determines the breadth of Now Assist HAM AI analysis. Without sufficient asset records, AI refresh recommendations and lifecycle insights are limited in scope and reliability.]]></ai_justification>
+        <check_name>Hardware Asset Volume</check_name>
+        <check_script><![CDATA[(function() { var ga = new GlideAggregate("alm_hardware"); ga.addAggregate("COUNT"); ga.query(); var total = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (total >= 500) { return { status: "ready", actualValue: total + " hardware asset records", finding: total + " hardware assets. Now Assist HAM has sufficient asset data for AI-powered lifecycle analysis and refresh recommendations." }; } else if (total >= 100) { return { status: "needs_attention", actualValue: total + " hardware asset records", finding: "Only " + total + " hardware assets (target: 500+). Now Assist HAM AI analysis will have limited coverage across the hardware estate." }; } else { return { status: "not_ready", actualValue: total + " hardware asset records", finding: "Only " + total + " hardware assets. Insufficient data for meaningful Now Assist HAM AI lifecycle recommendations." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HAM</module>
+        <number>CHK0000609</number>
+        <order>200</order>
+        <remediation_guidance>Ensure all hardware assets are tracked in ServiceNow. Import asset records from existing asset repositories or enable Discovery to automatically populate hardware asset records.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:21</sys_created_on>
+        <sys_id>dbf89dc7cfd587108935fb251d851c77</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Hardware Asset Volume</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_dbf89dc7cfd587108935fb251d851c77</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_dbf89dc7cfd587108935fb251d851c77</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Hardware asset volume determines the breadth of Now Assist HAM AI analysis. Without sufficient asset records, AI refresh recommendations and lifecycle insights are limited in scope and reliability.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;Hardware Asset Volume&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function() { var ga = new GlideAggregate("alm_hardware"); ga.addAggregate("COUNT"); ga.query(); var total = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (total &gt;= 500) { return { status: "ready", actualValue: total + " hardware asset records", finding: total + " hardware assets. Now Assist HAM has sufficient asset data for AI-powered lifecycle analysis and refresh recommendations." }; } else if (total &gt;= 100) { return { status: "needs_attention", actualValue: total + " hardware asset records", finding: "Only " + total + " hardware assets (target: 500+). Now Assist HAM AI analysis will have limited coverage across the hardware estate." }; } else { return { status: "not_ready", actualValue: total + " hardware asset records", finding: "Only " + total + " hardware assets. Insufficient data for meaningful Now Assist HAM AI lifecycle recommendations." }; } })]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;HAM&lt;/module&gt;&lt;number&gt;CHK0000609&lt;/number&gt;&lt;order&gt;200&lt;/order&gt;&lt;remediation_guidance&gt;Ensure all hardware assets are tracked in ServiceNow. Import asset records from existing asset repositories or enable Discovery to automatically populate hardware asset records.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:21&lt;/sys_created_on&gt;&lt;sys_id&gt;dbf89dc7cfd587108935fb251d851c77&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;Hardware Asset Volume&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_dbf89dc7cfd587108935fb251d851c77&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:02&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1491805427</payload_hash>
+        <record_name>Hardware Asset Volume</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:56:03</sys_created_on>
+        <sys_id>00ceee8bcf598b108935fb251d851c91</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19aa9310000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:56:03</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>8cceee8b00598b102f8d6587f8447b8f</update_guid>
+        <update_guid_history>8cceee8b00598b102f8d6587f8447b8f:-1491805427</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Hardware Asset Volume">7f130784cfe5c7d08935fb251d851cdf</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:59</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>459f9fedbc70426c91642323681cd0c9</sys_id>
+        <sys_metadata>dbf89dc7cfd587108935fb251d851c77</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Hardware Asset Volume</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_dbf89dc7cfd587108935fb251d851c77</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_dbf89dc7cfd587108935fb251d851c77">00ceee8bcf598b108935fb251d851c91</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:59</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

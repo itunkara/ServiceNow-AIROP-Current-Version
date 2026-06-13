@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Purchase order volume reflects active procurement activity that Now Assist can assist with through summarization, approval guidance, and anomaly detection. Higher PO volumes increase the ROI of AI-assisted procurement workflows.]]></ai_justification>
+        <check_name>Purchase Order Volume</check_name>
+        <check_script><![CDATA[(function(){
+var ga=new GlideAggregate("sn_shop_purchase_order");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=100)return{status:"ready",actualValue:c+" POs",finding:c+" purchase orders found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" POs",finding:c+" purchase orders found. Limited data."};
+return{status:"value_blocker",actualValue:"0 POs",finding:"No purchase orders found."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SPO</module>
+        <number>CHK0000883</number>
+        <order/>
+        <remediation_guidance>Ensure purchase orders are being created and managed in ServiceNow SPO.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>0cc3834ccfe5c7d08935fb251d851c6e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_0cc3834ccfe5c7d08935fb251d851c6e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

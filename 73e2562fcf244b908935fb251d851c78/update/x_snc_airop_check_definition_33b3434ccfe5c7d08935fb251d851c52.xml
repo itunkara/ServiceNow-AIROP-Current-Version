@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Project financial data enables Now Assist SPM to provide AI-driven budget variance analysis and cost optimization recommendations.]]></ai_justification>
+        <check_name>Project Financial Tracking</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('pm_project');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No active projects found',
+            finding: 'No active projects on this instance. Financial tracking cannot be assessed.'
+        };
+    }
+
+    var gaWithCost = new GlideAggregate('pm_project');
+    gaWithCost.addQuery('active', true);
+    gaWithCost.addQuery('planned_cost', '>', 0);
+    gaWithCost.addAggregate('COUNT');
+    gaWithCost.query();
+    var withCost = gaWithCost.next() ? parseInt(gaWithCost.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withCost / total) * 100);
+    var actualValue = pct + '% of active projects have planned cost (' + withCost + '/' + total + ')';
+
+    if (pct >= 70) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of active projects have planned cost data. Now Assist SPM can provide AI-driven financial optimization and budget variance analysis.'
+        };
+    } else if (pct >= 40) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of active projects have planned cost (target: 70%). Now Assist SPM budget variance analysis will have gaps for unfunded projects.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: (total - withCost) + ' active projects missing planned cost data (' + pct + '% populated). Now Assist SPM cannot perform meaningful AI budget variance or ROI analysis without financial data.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SPM</module>
+        <number>CHK0000785</number>
+        <order>60</order>
+        <remediation_guidance>Configure project budgets with a planned cost greater than zero. Link projects to financial plans and track actuals. Target: 70%+ of active projects with cost data. Now Assist SPM uses cost data for AI ROI analysis.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>33b3434ccfe5c7d08935fb251d851c52</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_33b3434ccfe5c7d08935fb251d851c52</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

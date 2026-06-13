@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[HR cases frequently contain sensitive personal data. Proper confidentiality classification prevents Now Assist from surfacing sensitive HR information in AI summaries or search results accessible to unauthorized users.]]></ai_justification>
+        <check_name>HR Case Confidentiality Classification</check_name>
+        <check_script><![CDATA[(function(){
+var gr=new GlideRecord("sn_hr_core_case");
+gr.addNotNullQuery("confidentiality");
+gr.query();
+var n=gr.getRowCount();
+var gr2=new GlideRecord("sn_hr_core_case");
+gr2.query();
+var total=gr2.getRowCount();
+var pct=total>0?Math.round((n/total)*100):0;
+return{status:pct>=50?"ready":"needs_attention",actualValue:pct+"% of HR cases have confidentiality classification ("+n+" of "+total+")",finding:pct<50?"Only "+pct+"% of HR cases have confidentiality classification. Now Assist respects case confidentiality in AI summaries -- unclassified cases may expose sensitive HR data in AI outputs.":""+pct+"% of HR cases are confidentiality-classified -- Now Assist can apply appropriate data restrictions in AI outputs."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HRSD</module>
+        <number>CHK0000724</number>
+        <order>190</order>
+        <remediation_guidance>Configure HR case confidentiality levels via the HRSD confidentiality configuration. Assign confidentiality to cases containing sensitive employee information. Now Assist respects case confidentiality when generating summaries and search results.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>b3b3034ccfe5c7d08935fb251d851cb9</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_b3b3034ccfe5c7d08935fb251d851cb9</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

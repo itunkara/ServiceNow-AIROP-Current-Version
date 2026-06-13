@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist applies a dedicated Major Incident summarization template when major_incident_state is set. Low population means most P1/P2 incidents get generic AI summaries instead of richer executive-ready format.]]></ai_justification>
+        <check_name>Major Incident Process Configuration</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    function getMIRate(priority) {
+        var totalGr = new GlideAggregate('incident');
+        totalGr.addQuery('priority', priority);
+        totalGr.addQuery('state', '!=', -5);
+        totalGr.addAggregate('COUNT');
+        totalGr.query();
+        var total = totalGr.next() ? parseInt(totalGr.getAggregate('COUNT')) : 0;
+        if (total === 0) return { total: 0, populated: 0, pct: 0 };
+
+        var popGr = new GlideAggregate('incident');
+        popGr.addQuery('priority', priority);
+        popGr.addQuery('state', '!=', -5);
+        popGr.addQuery('major_incident_state', '!=', '');
+        popGr.addAggregate('COUNT');
+        popGr.query();
+        var populated = popGr.next() ? parseInt(popGr.getAggregate('COUNT')) : 0;
+
+        return { total: total, populated: populated, pct: Math.round((populated / total) * 100) };
+    }
+
+    var p1 = getMIRate(1);
+    var p2 = getMIRate(2);
+
+    var actualValue = 'P1: ' + p1.populated + '/' + p1.total + ' (' + p1.pct + '%) | P2: ' + p2.populated + '/' + p2.total + ' (' + p2.pct + '%)';
+
+    var p1Status = p1.total === 0 ? 'not_applicable' : p1.pct >= 80 ? 'ready' : p1.pct >= 50 ? 'needs_attention' : 'not_ready';
+    var p2Status = p2.total === 0 ? 'not_applicable' : p2.pct >= 30 ? 'ready' : p2.pct >= 10 ? 'needs_attention' : 'not_ready';
+
+    var statusRank = { 'not_ready': 0, 'needs_attention': 1, 'ready': 2, 'not_applicable': 3 };
+    var overallStatus = statusRank[p1Status] <= statusRank[p2Status] ? p1Status : p2Status;
+
+    return {
+        status: overallStatus,
+        actualValue: actualValue,
+        finding: 'P1 Major Incident State: ' + p1.pct + '% populated (' + p1.populated + ' of ' + p1.total + '). P2: ' + p2.pct + '% (' + p2.populated + ' of ' + p2.total + '). Now Assist uses major_incident_state to apply MI-specific summarization templates.'
+    };
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000661</number>
+        <order>340</order>
+        <remediation_guidance>Ensure the Major Incident State field is set on all P1 incidents and on P2 incidents that are formally declared as major incidents. Configure automation or a mandatory UI policy on P1 closure to enforce this. Now Assist applies a dedicated MI summarization template only when major_incident_state is populated.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>e7b3cf0ccfe5c7d08935fb251d851cc7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_e7b3cf0ccfe5c7d08935fb251d851cc7</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

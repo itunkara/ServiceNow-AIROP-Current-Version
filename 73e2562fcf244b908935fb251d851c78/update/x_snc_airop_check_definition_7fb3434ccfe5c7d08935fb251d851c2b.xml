@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Idea management provides the innovation pipeline Now Assist SPM uses for AI-driven demand scoring and strategic alignment.]]></ai_justification>
+        <check_name>Idea Management Configuration</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    // im_idea_core is the OOB base table for ideas in SPM — extends task
+    // covers all idea configurations regardless of which SPM module is active
+    var ga = new GlideAggregate('im_idea_core');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active idea records';
+
+    if (count >= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active ideas — Now Assist SPM has sufficient pipeline data for AI demand scoring and prioritization.'
+        };
+    } else if (count >= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active ideas (target: 20+). Now Assist SPM AI demand scoring will have limited innovation pipeline coverage.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active ideas. Now Assist SPM uses ideas for AI-driven demand scoring — low idea volume limits innovation pipeline AI analysis.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SPM</module>
+        <number>CHK0000784</number>
+        <order>50</order>
+        <remediation_guidance>Configure idea management and encourage employees to submit ideas via the ideation portal. Target: 20+ active ideas. Now Assist SPM scores ideas using AI for demand prioritization.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>7fb3434ccfe5c7d08935fb251d851c2b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_7fb3434ccfe5c7d08935fb251d851c2b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

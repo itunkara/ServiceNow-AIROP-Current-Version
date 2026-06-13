@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Stockroom configuration enables Now Assist HAM to analyze inventory levels across locations and generate AI-powered procurement and redistribution recommendations. Without stockrooms, AI cannot determine where assets are physically located or identify stock imbalances.]]></ai_justification>
+        <check_name>Stockroom Configuration</check_name>
+        <check_script><![CDATA[(function() { var ga = new GlideAggregate("alm_stockroom"); ga.addQuery("active", true); ga.addAggregate("COUNT"); ga.query(); var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; if (count >= 3) { return { status: "ready", actualValue: count + " active stockrooms configured", finding: count + " active stockrooms. Now Assist HAM has structured inventory locations for AI-powered stock level analysis and procurement recommendations." }; } else if (count >= 1) { return { status: "needs_attention", actualValue: count + " active stockroom(s) configured", finding: "Only " + count + " active stockroom(s) (target: 3+). Now Assist HAM AI stock analysis may not cover all inventory locations." }; } else { return { status: "not_ready", actualValue: "No active stockrooms configured", finding: "No active stockrooms configured. Now Assist HAM cannot perform AI inventory level analysis or generate procurement recommendations without stockroom data." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HAM</module>
+        <number>CHK0000928</number>
+        <order>800</order>
+        <remediation_guidance>Configure stockrooms for each physical location where hardware assets are stored. Navigate to Hardware Asset Management &gt; Stockrooms to create and activate stockroom records.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:44</sys_created_on>
+        <sys_id>50c3c34ccfe5c7d08935fb251d851c06</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_50c3c34ccfe5c7d08935fb251d851c06</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:44</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

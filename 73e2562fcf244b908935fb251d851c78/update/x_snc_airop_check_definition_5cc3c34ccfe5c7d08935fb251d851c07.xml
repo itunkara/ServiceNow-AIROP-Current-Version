@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Asset lifecycle hygiene ensures Now Assist HAM AI analysis is based on current, accurate data. Stale retired and disposed records contaminate AI training data and skew lifecycle recommendations toward inaccurate conclusions.]]></ai_justification>
+        <check_name>Asset Lifecycle Hygiene</check_name>
+        <check_script><![CDATA[(function() {
+    var gaTotal = new GlideAggregate("alm_hardware");
+    gaTotal.addAggregate("COUNT");
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0;
+    if (total === 0) {
+        return { status: "not_ready", actualValue: "No hardware asset records found", finding: "No hardware asset records found." };
+    }
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-2);
+    var gaStale = new GlideAggregate("alm_hardware");
+    gaStale.addQuery("install_status", "IN", "7,9");
+    gaStale.addQuery("sys_updated_on", "<", cutoff.getValue());
+    gaStale.addAggregate("COUNT");
+    gaStale.query();
+    var stale = gaStale.next() ? parseInt(gaStale.getAggregate("COUNT")) : 0;
+    var pct = Math.round((stale / total) * 100);
+    var actualValue = stale + " retired/disposed assets not updated in 2+ years (" + pct + "% of total)";
+    if (pct <= 5) {
+        return { status: "ready", actualValue: actualValue, finding: "Low stale asset ratio (" + pct + "%). Asset lifecycle data is well maintained. Now Assist HAM AI analysis is based on current, accurate asset data." };
+    } else if (pct <= 15) {
+        return { status: "needs_attention", actualValue: actualValue, finding: pct + "% of assets are stale retired/disposed records. Now Assist HAM AI analysis accuracy will be reduced by outdated lifecycle data." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue, finding: pct + "% of assets are stale retired/disposed records. Now Assist HAM AI recommendations will be unreliable with significant stale asset data contaminating the dataset." };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HAM</module>
+        <number>CHK0000930</number>
+        <order>1000</order>
+        <remediation_guidance>Archive or delete hardware asset records that have been retired or disposed for more than 2 years. Regular asset lifecycle hygiene ensures Now Assist HAM AI analysis is based on current, accurate data.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:44</sys_created_on>
+        <sys_id>5cc3c34ccfe5c7d08935fb251d851c07</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_5cc3c34ccfe5c7d08935fb251d851c07</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:44</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

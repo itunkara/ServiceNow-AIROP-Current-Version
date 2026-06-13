@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist for Legal Service Delivery enables AI-powered matter summarization, document drafting assistance, and legal request triage. Without this plugin, legal teams cannot leverage generative AI to reduce manual effort on routine matters.]]></ai_justification>
+        <check_name>Now Assist for Legal Installed</check_name>
+        <check_script><![CDATA[(function(){
+var sa=new GlideRecord("sys_store_app");
+sa.addQuery("scope","sn_lg_gen_ai");
+sa.setLimit(1);sa.query();
+if(sa.next())return{status:"ready",actualValue:"v"+sa.getValue("version"),finding:"Now Assist for Legal is installed."};
+return{status:"value_blocker",actualValue:"Not installed",finding:"Now Assist for Legal (sn_lg_gen_ai) is not installed."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>LSD</module>
+        <number>CHK0000903</number>
+        <order/>
+        <remediation_guidance>Install Now Assist for Legal Service Delivery from the ServiceNow Store.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:44</sys_created_on>
+        <sys_id>c4c3834ccfe5c7d08935fb251d851cbe</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_c4c3834ccfe5c7d08935fb251d851cbe</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:44</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

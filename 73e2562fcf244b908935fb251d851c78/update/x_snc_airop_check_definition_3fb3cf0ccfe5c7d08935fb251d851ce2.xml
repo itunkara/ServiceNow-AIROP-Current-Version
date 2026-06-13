@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Business service maps provide the service context that Now Assist uses to answer &#34;what business service is affected by this CI?&#34; Without mapped services, Now Assist impact analysis stops at the CI level.]]></ai_justification>
+        <check_name>Business Services Mapped</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('cmdb_ci_service');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    var gaMapped = new GlideAggregate('cmdb_ci_service');
+    gaMapped.addQuery('active', true);
+    gaMapped.addQuery('has_map', true);
+    gaMapped.addAggregate('COUNT');
+    gaMapped.query();
+    var mapped = gaMapped.next() ? parseInt(gaMapped.getAggregate('COUNT')) : 0;
+
+    var actualValue = mapped + ' business services with complete maps (of ' + total + ' total active services)';
+
+    if (mapped >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: mapped + ' business services have service maps. Now Assist ITOM has service context for AI impact analysis during incident response.'
+        };
+    } else if (mapped >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + mapped + ' business service(s) have maps (target: 5+). Now Assist ITOM impact analysis will be limited to mapped services only.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No business services have service maps. Now Assist ITOM cannot perform AI impact analysis without service maps — it cannot determine which services are affected by infrastructure events.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITOM</module>
+        <number>CHK0000678</number>
+        <order>110</order>
+        <remediation_guidance>Enable and run Service Mapping for key business services via the Service Mapping workspace. Start with your top 10 most critical applications. Business service maps provide the service context Now Assist ITOM uses for impact analysis.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>3fb3cf0ccfe5c7d08935fb251d851ce2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_3fb3cf0ccfe5c7d08935fb251d851ce2</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

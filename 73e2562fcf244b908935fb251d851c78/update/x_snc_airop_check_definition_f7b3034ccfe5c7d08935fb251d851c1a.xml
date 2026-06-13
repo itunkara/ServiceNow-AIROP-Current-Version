@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Application-to-infrastructure mapping is the foundation of Now Assist impact analysis for business applications. Without it, AI cannot determine what infrastructure an application depends on.]]></ai_justification>
+        <check_name>Application-to-Infrastructure Mapping</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('cmdb_ci_appl');
+    gaTotal.addQuery('install_status', 1);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No active application CIs found',
+            finding: 'No active application CIs found. Application-to-infrastructure mapping cannot be assessed.' };
+    }
+
+    var gaMapped = new GlideAggregate('cmdb_rel_ci');
+    gaMapped.addQuery('parent.sys_class_name', 'cmdb_ci_appl');
+    gaMapped.addQuery('child.sys_class_name', 'IN', 'cmdb_ci_server,cmdb_ci_database');
+    gaMapped.addAggregate('COUNT');
+    gaMapped.query();
+    var mapped = gaMapped.next() ? parseInt(gaMapped.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((mapped / total) * 100);
+    var actualValue = pct + '% of application CIs mapped to infrastructure (' + mapped + ' of ' + total + ' app CIs)';
+
+    if (pct >= 50) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of application CIs are mapped to server or database infrastructure. Now Assist can perform AI impact analysis from application down to infrastructure level.' };
+    } else if (pct >= 10) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of application CIs are mapped to infrastructure (target: 50%+). Now Assist AI impact analysis will be incomplete for unmapped applications.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of application CIs are mapped to infrastructure. Now Assist cannot perform meaningful AI impact analysis without application-to-infrastructure relationships.' };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>CMDB</module>
+        <number>CHK0000699</number>
+        <order>140</order>
+        <remediation_guidance>Map application CIs to server and database CIs via Service Mapping or relationship import sets. Target: 50%+ of application CIs mapped to underlying infrastructure. Application-to-infrastructure mapping is the foundation of Now Assist impact analysis for business applications.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>f7b3034ccfe5c7d08935fb251d851c1a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_f7b3034ccfe5c7d08935fb251d851c1a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

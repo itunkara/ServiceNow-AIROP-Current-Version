@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Security incident categorization is the primary classification signal Now Assist SIR uses for similar incident matching and AI routing. Without consistent categorization, AI cannot group related incidents or recommend appropriate playbooks.]]></ai_justification>
+        <check_name>Security Incident Categorization Rate</check_name>
+        <check_script><![CDATA[(function() { var cutoff = new GlideDateTime(); cutoff.addYearsUTC(-1); var gaTotal = new GlideAggregate("sn_si_incident"); gaTotal.addQuery("state", "IN", "3,4"); gaTotal.addQuery("closed_at", ">=", cutoff.getValue()); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_applicable", actualValue: "No closed security incidents in last 12 months", finding: "No closed security incidents found. Categorization cannot be assessed." }; } var gaCat = new GlideAggregate("sn_si_incident"); gaCat.addQuery("state", "IN", "3,4"); gaCat.addQuery("closed_at", ">=", cutoff.getValue()); gaCat.addQuery("category", "!=", ""); gaCat.addAggregate("COUNT"); gaCat.query(); var categorized = gaCat.next() ? parseInt(gaCat.getAggregate("COUNT")) : 0; var pct = Math.round((categorized / total) * 100); var actualValue = pct + "% of closed security incidents categorized (" + categorized + "/" + total + ")"; if (pct >= 85) { return { status: "ready", actualValue: actualValue, finding: pct + "% of closed security incidents have a category. Now Assist SIR has strong classification signal for AI routing and similar incident matching." }; } else if (pct >= 60) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of closed security incidents are categorized (target: 85%). Now Assist SIR AI routing accuracy will be reduced." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of security incidents are categorized. Insufficient classification signal for Now Assist SIR AI routing." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SECOPS</module>
+        <number>CHK0000842</number>
+        <order>300</order>
+        <remediation_guidance>Enforce category selection on security incident closure. Add mandatory field policy or workflow validation to require category before closing. Target: 85%+ categorization rate.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>80c3834ccfe5c7d08935fb251d851c19</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_80c3834ccfe5c7d08935fb251d851c19</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Post-incident review data allows Now Assist to identify systemic failure patterns and generate recurrence prevention recommendations. Low PIR coverage means this AI capability has no historical data.]]></ai_justification>
+        <check_name>Post-Incident Review (PIR) Linkage Rate</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate('incident');
+    totalGr.addQuery('priority', 1);
+    totalGr.addQuery('state', 'IN', '6,7');
+    totalGr.addAggregate('COUNT');
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return { status: 'not_applicable', actualValue: 'No resolved/closed P1 incidents found',
+            finding: 'No resolved P1 incidents found. PIR linkage cannot be assessed.' };
+    }
+
+    var linkedGr = new GlideAggregate('incident');
+    linkedGr.addQuery('priority', 1);
+    linkedGr.addQuery('state', 'IN', '6,7');
+    linkedGr.addQuery('problem_id', '!=', '');
+    linkedGr.addAggregate('COUNT');
+    linkedGr.query();
+    var linked = linkedGr.next() ? parseInt(linkedGr.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((linked / total) * 100);
+    var actualValue = linked + ' of ' + total + ' resolved P1 incidents linked to a Problem record (' + pct + '%)';
+
+    if (pct >= 80) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: pct + '% of P1 incidents linked to a problem record. Now Assist can surface recurring P1 patterns and PIR-driven recommendations.' };
+    } else if (pct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents linked to a problem (target: 80%). PIR recommendations will have incomplete data.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'Only ' + pct + '% of P1 incidents are linked to a problem record. Now Assist cannot surface recurring major incident patterns or PIR insights.' };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000663</number>
+        <order>360</order>
+        <remediation_guidance>Link all resolved P1 incidents to a Problem record using the OOB Problem field (problem_id). Enforce via a mandatory field policy on P1 resolution or an automated workflow that creates a problem record for every P1. Do not use custom relationship tables — Now Assist reads the OOB problem_id reference field.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>e3b3cf0ccfe5c7d08935fb251d851cc9</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_e3b3cf0ccfe5c7d08935fb251d851cc9</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

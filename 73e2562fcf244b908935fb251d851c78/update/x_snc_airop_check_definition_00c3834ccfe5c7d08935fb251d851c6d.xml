@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Supplier product catalog volume reflects the breadth of procurement options available for AI-assisted sourcing recommendations. A well-populated supplier catalog enables Now Assist to suggest optimal products and vendors based on requirements.]]></ai_justification>
+        <check_name>Supplier Product Catalog Volume</check_name>
+        <check_script><![CDATA[(function(){
+var ga=new GlideAggregate("sn_shop_supplier_product");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=100)return{status:"ready",actualValue:c+" products",finding:c+" supplier products found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" products",finding:c+" supplier products found."};
+return{status:"value_blocker",actualValue:"0 products",finding:"No supplier products found."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SPO</module>
+        <number>CHK0000881</number>
+        <order/>
+        <remediation_guidance>Populate the supplier product catalog in SPO to enable AI supplier recommendations.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>00c3834ccfe5c7d08935fb251d851c6d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_00c3834ccfe5c7d08935fb251d851c6d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

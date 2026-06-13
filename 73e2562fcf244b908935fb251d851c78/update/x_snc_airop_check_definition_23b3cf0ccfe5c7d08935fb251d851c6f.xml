@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Device registration in DEX establishes the endpoint population that AI diagnostic capabilities analyze. Without sufficient registered devices, DEX AI has no data to pattern-match against for proactive issue detection and root cause analysis.]]></ai_justification>
+        <check_name>KB Categorization Completeness</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaPublished = new GlideAggregate('kb_knowledge');
+    gaPublished.addQuery('workflow_state', 'published');
+    gaPublished.addQuery('active', true);
+    gaPublished.addAggregate('COUNT');
+    gaPublished.query();
+    var published = gaPublished.next() ? parseInt(gaPublished.getAggregate('COUNT')) : 0;
+
+    if (published === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. Categorization completeness cannot be assessed.'
+        };
+    }
+
+    var gaCat = new GlideAggregate('kb_knowledge');
+    gaCat.addQuery('workflow_state', 'published');
+    gaCat.addQuery('active', true);
+    gaCat.addQuery('kb_category', '!=', '');
+    gaCat.addAggregate('COUNT');
+    gaCat.query();
+    var withCat = gaCat.next() ? parseInt(gaCat.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withCat / published) * 100);
+    var actualValue = pct + '% categorized (' + withCat + ' of ' + published + ' articles have category)';
+
+    if (pct >= 95) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of published KB articles have a category. Now Assist AI Search can accurately scope and filter results by category.'
+        };
+    } else if (pct >= 80) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of published KB articles are categorized (target: 95%+). Uncategorized articles reduce Now Assist AI Search filtering accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of published KB articles have a category. Insufficient categorization — Now Assist AI Search cannot accurately scope results without category data.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000631</number>
+        <order>40</order>
+        <remediation_guidance>Enforce category as mandatory on KB article creation via UI policy. Bulk-categorize existing articles via the list editor. Target: 95%+ of published articles with a category assigned.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>23b3cf0ccfe5c7d08935fb251d851c6f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_23b3cf0ccfe5c7d08935fb251d851c6f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

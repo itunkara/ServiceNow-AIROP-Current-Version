@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[CI relationships are the traversal path Now Assist uses to perform impact analysis. Low relationship coverage limits the depth of AI impact assessments.]]></ai_justification>
+        <check_name>CI Relationship Coverage</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaRels = new GlideAggregate('cmdb_rel_ci');
+    gaRels.addAggregate('COUNT');
+    gaRels.query();
+    var rels = gaRels.next() ? parseInt(gaRels.getAggregate('COUNT')) : 0;
+
+    var gaCIs = new GlideAggregate('cmdb_ci');
+    gaCIs.addQuery('install_status', 1);
+    gaCIs.addAggregate('COUNT');
+    gaCIs.query();
+    var cis = gaCIs.next() ? parseInt(gaCIs.getAggregate('COUNT')) : 0;
+
+    if (cis === 0) {
+        return { status: 'not_applicable', actualValue: 'No active CIs found',
+            finding: 'No active CIs found. CI relationship coverage cannot be assessed.' };
+    }
+
+    var ratio = Math.round(rels / cis);
+    var actualValue = rels + ' total CI relationships | ' + cis + ' active CIs | ~' + ratio + ' relationships per CI';
+
+    if (ratio >= 5) {
+        return { status: 'ready', actualValue: actualValue,
+            finding: '~' + ratio + ' relationships per CI. Now Assist has rich CI relationship data for AI impact traversal and dependency analysis.' };
+    } else if (ratio >= 1) {
+        return { status: 'needs_attention', actualValue: actualValue,
+            finding: 'Only ~' + ratio + ' relationship(s) per CI (target: 5+). Limited relationship coverage reduces the depth of Now Assist AI impact analysis.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue,
+            finding: 'No CI relationships found. Now Assist cannot perform impact analysis without CI relationships — isolated CIs provide zero traversal context for AI.' };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>CMDB</module>
+        <number>CHK0000696</number>
+        <order>110</order>
+        <remediation_guidance>Enable Service Mapping and run discovery patterns to auto-populate CI relationships. Manually define relationships for key business-critical CIs via cmdb_rel_ci_list.do. Target: 5+ relationships per CI on average. CI relationships are the traversal path Now Assist uses for impact analysis.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>7fb3034ccfe5c7d08935fb251d851c17</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_7fb3034ccfe5c7d08935fb251d851c17</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

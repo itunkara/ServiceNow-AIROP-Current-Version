@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Software Asset Workspace is the primary interface where Now Assist SAM AI insights are presented to analysts. Without it, AI-generated license recommendations and reclamation suggestions are produced but never surfaced where SAM analysts work.]]></ai_justification>
+        <check_name>SAM Workspace Activation</check_name>
+        <check_script><![CDATA[(function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_sam_workspace"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Software Asset Workspace is active", finding: "Software Asset Workspace is active. Now Assist SAM AI insights including license recommendations and reclamation suggestions are surfaced in context for SAM analysts." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_sam_ws"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Software Asset Workspace is active", finding: "Software Asset Workspace is active. Now Assist SAM AI insights are surfaced in context for SAM analysts." }; } return { status: "not_ready", actualValue: "Software Asset Workspace not found or inactive", finding: "Software Asset Workspace is not active. Now Assist SAM AI insights are not accessible in a contextually relevant interface for SAM analysts." }; })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SAM</module>
+        <number>CHK0000625</number>
+        <order>800</order>
+        <remediation_guidance>Activate the Software Asset Workspace via the ServiceNow Store or Plugin Manager. The workspace is required for Now Assist SAM AI insights to surface in context for software asset analysts.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:21</sys_created_on>
+        <sys_id>5bf89dc7cfd587108935fb251d851ca1</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>SAM Workspace Activation</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_5bf89dc7cfd587108935fb251d851ca1</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_5bf89dc7cfd587108935fb251d851ca1</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Software Asset Workspace is the primary interface where Now Assist SAM AI insights are presented to analysts. Without it, AI-generated license recommendations and reclamation suggestions are produced but never surfaced where SAM analysts work.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;SAM Workspace Activation&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function() { var gr = new GlideRecord("sys_store_app"); gr.addQuery("scope", "sn_sam_workspace"); gr.setLimit(1); gr.query(); if (gr.next()) { return { status: "ready", actualValue: "Software Asset Workspace is active", finding: "Software Asset Workspace is active. Now Assist SAM AI insights including license recommendations and reclamation suggestions are surfaced in context for SAM analysts." }; } var gr2 = new GlideRecord("sys_plugins"); gr2.addQuery("id", "sn_sam_ws"); gr2.addQuery("active", true); gr2.setLimit(1); gr2.query(); if (gr2.next()) { return { status: "ready", actualValue: "Software Asset Workspace is active", finding: "Software Asset Workspace is active. Now Assist SAM AI insights are surfaced in context for SAM analysts." }; } return { status: "not_ready", actualValue: "Software Asset Workspace not found or inactive", finding: "Software Asset Workspace is not active. Now Assist SAM AI insights are not accessible in a contextually relevant interface for SAM analysts." }; })]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;SAM&lt;/module&gt;&lt;number&gt;CHK0000625&lt;/number&gt;&lt;order&gt;800&lt;/order&gt;&lt;remediation_guidance&gt;Activate the Software Asset Workspace via the ServiceNow Store or Plugin Manager. The workspace is required for Now Assist SAM AI insights to surface in context for software asset analysts.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:21&lt;/sys_created_on&gt;&lt;sys_id&gt;5bf89dc7cfd587108935fb251d851ca1&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;SAM Workspace Activation&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_5bf89dc7cfd587108935fb251d851ca1&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:01&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1667581905</payload_hash>
+        <record_name>SAM Workspace Activation</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:54:59</sys_created_on>
+        <sys_id>288e260bcf598b108935fb251d851c89</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb199b0570000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:54:59</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>a48e260b59598b100c2d83e411ee8288</update_guid>
+        <update_guid_history>a48e260b59598b100c2d83e411ee8288:-1667581905</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="SAM Workspace Activation">14138344cfe5c7d08935fb251d851c6b</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:44</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>240dd133a1464dd4873e3ee99bba98e9</sys_id>
+        <sys_metadata>5bf89dc7cfd587108935fb251d851ca1</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SAM Workspace Activation</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_5bf89dc7cfd587108935fb251d851ca1</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_5bf89dc7cfd587108935fb251d851ca1">288e260bcf598b108935fb251d851c89</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:44</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

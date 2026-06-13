@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist for ITSM requires Xanadu or later. Running Now Assist on an unsupported release will produce errors, missing features, or degraded AI functionality that cannot be resolved without upgrading.]]></ai_justification>
+        <check_name>Platform Release Version</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Filter for platform upgrades only (glide- prefix excludes app installs)
+    var gr = new GlideRecord('sys_upgrade_history');
+    gr.addQuery('to_version', 'STARTSWITH', 'glide-');
+    gr.orderByDesc('sys_created_on');
+    gr.setLimit(1);
+    gr.query();
+
+    if (!gr.next()) {
+        return {
+            status: 'needs_attention',
+            actualValue: 'No platform upgrade history found',
+            finding: 'No platform upgrade history found. Cannot determine instance release currency for Now Assist compatibility.'
+        };
+    }
+
+    var version = gr.getValue('to_version') || '';
+    var vLower = version.toLowerCase();
+    var actualValue = 'Version: ' + version;
+
+    var isCurrentGen = vLower.indexOf('zurich') > -1 || vLower.indexOf('yokohama') > -1 ||
+                       vLower.indexOf('2025') > -1 || vLower.indexOf('2026') > -1;
+    var isPreviousGen = vLower.indexOf('xanadu') > -1 || vLower.indexOf('washington') > -1 ||
+                        vLower.indexOf('vancouver') > -1;
+
+    if (isCurrentGen) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Instance is on a current-generation release (' + version.split('__')[0] + '). Full Now Assist ITSM and AI Agent capabilities are available.'
+        };
+    } else if (isPreviousGen) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Instance is on a previous-generation release (' + version.split('__')[0] + '). Some Now Assist ITSM features may be unavailable. Plan upgrade to Zurich or later.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Instance may be on an older release (' + version.split('__')[0] + '). Now Assist ITSM requires Xanadu or newer — upgrade is required before AI capabilities can be fully enabled.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000651</number>
+        <order>240</order>
+        <remediation_guidance>Plan an upgrade to the latest Generally Available release (Zurich or newer). Now Assist ITSM capabilities expand with each release. Engage ServiceNow account team for upgrade planning.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>ebb3cf0ccfe5c7d08935fb251d851cbe</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_ebb3cf0ccfe5c7d08935fb251d851cbe</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

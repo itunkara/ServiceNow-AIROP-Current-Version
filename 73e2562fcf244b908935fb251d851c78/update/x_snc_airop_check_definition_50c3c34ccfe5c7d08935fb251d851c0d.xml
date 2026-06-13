@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Publisher data on license records enables Now Assist SAM to identify publisher-level spend patterns, consolidation opportunities, and renegotiation candidates. Without it, AI recommendations are limited to individual title analysis rather than strategic publisher-level insights.]]></ai_justification>
+        <check_name>SAM Publisher Distinct Count</check_name>
+        <check_script><![CDATA[(function() { var gaTotal = new GlideAggregate("alm_license"); gaTotal.addQuery("active", true); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No active license records found", finding: "No active license records. Publisher coverage cannot be assessed." }; } var gaPub = new GlideAggregate("alm_license"); gaPub.addQuery("active", true); gaPub.addQuery("manufacturer", "!=", ""); gaPub.addAggregate("COUNT"); gaPub.query(); var withPub = gaPub.next() ? parseInt(gaPub.getAggregate("COUNT")) : 0; var pct = Math.round((withPub / total) * 100); var actualValue = pct + "% of active licenses have a publisher (" + withPub + "/" + total + ")"; if (pct >= 85) { return { status: "ready", actualValue: actualValue, finding: pct + "% of active licenses have publisher data. Now Assist SAM has structured publisher information for AI-powered spend analysis and optimization." }; } else if (pct >= 60) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of active licenses have publisher data (target: 85%+). Now Assist SAM publisher-level AI analysis will be incomplete." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of licenses have publisher data. Now Assist SAM cannot perform meaningful publisher-level AI license analysis." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SAM</module>
+        <number>CHK0000936</number>
+        <order>600</order>
+        <remediation_guidance>Populate the manufacturer/publisher field on all active license records. This data is critical for Now Assist SAM to generate publisher-level AI spend analysis and optimization recommendations.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:44</sys_created_on>
+        <sys_id>50c3c34ccfe5c7d08935fb251d851c0d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_50c3c34ccfe5c7d08935fb251d851c0d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:44</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

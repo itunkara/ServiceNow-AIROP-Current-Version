@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[CSM case categories are the primary classification signal for Now Assist routing and similar case matching.]]></ai_justification>
+        <check_name>CSM Case Categorization Quality</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+
+    var gaTotal = new GlideAggregate('sn_customerservice_case');
+    gaTotal.addQuery('state', 'IN', '3,6');
+    gaTotal.addQuery('closed_at', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No closed CSM cases in last 12 months',
+            finding: 'No closed CSM cases found in the last 12 months. Case categorization quality cannot be assessed.'
+        };
+    }
+
+    var gaCat = new GlideAggregate('sn_customerservice_case');
+    gaCat.addQuery('state', 'IN', '3,6');
+    gaCat.addQuery('closed_at', '>=', cutoff.getValue());
+    gaCat.addQuery('category', '!=', '');
+    gaCat.addAggregate('COUNT');
+    gaCat.query();
+    var categorized = gaCat.next() ? parseInt(gaCat.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((categorized / total) * 100);
+    var actualValue = pct + '% of closed CSM cases categorized (last 12 months, ' + categorized + '/' + total + ')';
+
+    if (pct >= 85) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of closed CSM cases have a category. Now Assist CSM has strong classification signal for AI routing and similar case matching.'
+        };
+    } else if (pct >= 60) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of closed CSM cases are categorized (target: 85%). Now Assist CSM AI routing and similar case matching will have reduced accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of CSM cases are categorized. Insufficient classification signal — Now Assist CSM AI routing requires consistent category data.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>CSM</module>
+        <number>CHK0000734</number>
+        <order>90</order>
+        <remediation_guidance>Standardize CSM categories and enforce selection via UI policy at case creation. Target: 85%+ of closed cases categorized. Now Assist CSM uses category for AI routing and similar case recommendations.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>77b3034ccfe5c7d08935fb251d851cce</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_77b3034ccfe5c7d08935fb251d851cce</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

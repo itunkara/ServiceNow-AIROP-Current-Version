@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[ITOM Visibility/Health entitlement gates Now Assist ITOM AI features. Without the correct SKU, ITOM Now Assist capabilities will not activate.]]></ai_justification>
+        <check_name>ITOM Visibility / Health Entitlement</check_name>
+        <check_script><![CDATA[(function() {
+    var t = new GlideRecord("samp_sw_license_metric");
+    if (!t.isValid()) {
+        return { status: "value_blocker", actualValue: "Required table samp_sw_license_metric not found", finding: "License Metric table is not available. Verify the SAM plugin is active." };
+    }
+    var matched = {};
+    function collectMatches(keyword) {
+        var gr = new GlideRecord("samp_sw_license_metric");
+        gr.addQuery("name", "CONTAINS", keyword);
+        gr.query();
+        while (gr.next()) { matched[gr.getUniqueValue()] = true; }
+    }
+    collectMatches("itom");
+    collectMatches("ITOM");
+    var count = Object.keys(matched).length;
+    var actualValue = count + " ITOM license metric records found";
+    if (count > 0) {
+        return { status: "ready", actualValue: actualValue, finding: count + " ITOM license metric record(s) found. ITOM entitlement appears active — manual confirmation with account team recommended." };
+    } else {
+        return { status: "needs_attention", actualValue: actualValue, finding: "No ITOM license metric records found. Manual entitlement confirmation recommended — without the correct ITOM SKU, Now Assist ITOM capabilities will not activate regardless of plugin installation or data quality." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITOM</module>
+        <number>CHK0000681</number>
+        <order>150</order>
+        <remediation_guidance>Contact your ServiceNow account team to confirm ITOM Visibility or ITOM Health SKU entitlement. Without the correct SKU, ITOM Now Assist capabilities will not activate regardless of plugin installation or data quality.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>b7b3cf0ccfe5c7d08935fb251d851ce5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_b7b3cf0ccfe5c7d08935fb251d851ce5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Remedial actions give DEX AI Agents the ability to execute automated fixes, not just diagnose. Without configured remedial actions, AI can identify problems but cannot resolve them, reducing the automation value of DEX AI.]]></ai_justification>
+        <check_name>DEX Remedial Actions Configuration</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('dex_remedial_action_configuration');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active DEX remedial action configurations';
+
+    if (count >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active remedial action configurations. DEX AI Agents have automated resolution options available for common endpoint issues.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active remedial action configuration(s) (target: 5+). DEX AI Agent automated resolution is limited — configure additional remedial actions for common issue types.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active DEX remedial action configurations. DEX AI can diagnose issues but cannot execute automated resolutions without configured remedial actions — AI value is significantly limited.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>DEX</module>
+        <number>CHK0000839</number>
+        <order/>
+        <remediation_guidance>Configure remedial actions via dex_remedial_action_configuration_list.do for common device and application issues. Remedial actions are the execution layer for DEX AI Agent automated resolution — without them, AI can diagnose but cannot act.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>0cc3434ccfe5c7d08935fb251d851ce4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_0cc3434ccfe5c7d08935fb251d851ce4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

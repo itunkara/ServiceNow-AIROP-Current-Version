@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Check-in data provides Now Assist WSD with confirmed occupancy signals beyond reservation intent. Without check-in data, AI occupancy analysis is based on reservations rather than actual attendance, leading to inaccurate space utilization insights.]]></ai_justification>
+        <check_name>Check-in Configuration</check_name>
+        <check_script><![CDATA[(function() { var gaTotal = new GlideAggregate("sn_wsd_rsv_reservation"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_applicable", actualValue: "No reservations found", finding: "No reservations found. Check-in configuration cannot be assessed." }; } var gaCheckin = new GlideAggregate("sn_wsd_rsv_reservation"); gaCheckin.addQuery("check_in_state", "awaiting_check_in"); gaCheckin.addAggregate("COUNT"); gaCheckin.query(); var awaiting = gaCheckin.next() ? parseInt(gaCheckin.getAggregate("COUNT")) : 0; var pct = Math.round((awaiting / total) * 100); var actualValue = pct + "% of reservations use check-in (" + awaiting + "/" + total + ")"; if (pct >= 50) { return { status: "ready", actualValue: actualValue, finding: pct + "% of reservations have check-in enabled. Now Assist WSD has occupancy confirmation data for accurate AI space utilization analysis." }; } else if (pct >= 20) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of reservations use check-in (target: 50%+). Now Assist WSD AI occupancy data will be based on reservations rather than confirmed attendance." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of reservations use check-in. Now Assist WSD AI occupancy analysis will be inaccurate without check-in confirmation data." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>WSD</module>
+        <number>CHK0000604</number>
+        <order>700</order>
+        <remediation_guidance>Enable check-in requirements on reservable modules. Check-in data provides Now Assist WSD with confirmed occupancy signals for accurate AI space utilization analysis and ghost reservation detection.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:21</sys_created_on>
+        <sys_id>dff89dc7cfd587108935fb251d851c65</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Check-in Configuration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_dff89dc7cfd587108935fb251d851c65</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_dff89dc7cfd587108935fb251d851c65</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Check-in data provides Now Assist WSD with confirmed occupancy signals beyond reservation intent. Without check-in data, AI occupancy analysis is based on reservations rather than actual attendance, leading to inaccurate space utilization insights.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;Check-in Configuration&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function() { var gaTotal = new GlideAggregate("sn_wsd_rsv_reservation"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_applicable", actualValue: "No reservations found", finding: "No reservations found. Check-in configuration cannot be assessed." }; } var gaCheckin = new GlideAggregate("sn_wsd_rsv_reservation"); gaCheckin.addQuery("check_in_state", "awaiting_check_in"); gaCheckin.addAggregate("COUNT"); gaCheckin.query(); var awaiting = gaCheckin.next() ? parseInt(gaCheckin.getAggregate("COUNT")) : 0; var pct = Math.round((awaiting / total) * 100); var actualValue = pct + "% of reservations use check-in (" + awaiting + "/" + total + ")"; if (pct &gt;= 50) { return { status: "ready", actualValue: actualValue, finding: pct + "% of reservations have check-in enabled. Now Assist WSD has occupancy confirmation data for accurate AI space utilization analysis." }; } else if (pct &gt;= 20) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of reservations use check-in (target: 50%+). Now Assist WSD AI occupancy data will be based on reservations rather than confirmed attendance." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of reservations use check-in. Now Assist WSD AI occupancy analysis will be inaccurate without check-in confirmation data." }; } })]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;WSD&lt;/module&gt;&lt;number&gt;CHK0000604&lt;/number&gt;&lt;order&gt;700&lt;/order&gt;&lt;remediation_guidance&gt;Enable check-in requirements on reservable modules. Check-in data provides Now Assist WSD with confirmed occupancy signals for accurate AI space utilization analysis and ghost reservation detection.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:21&lt;/sys_created_on&gt;&lt;sys_id&gt;dff89dc7cfd587108935fb251d851c65&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;Check-in Configuration&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_dff89dc7cfd587108935fb251d851c65&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:02&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1477906154</payload_hash>
+        <record_name>Check-in Configuration</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:53:17</sys_created_on>
+        <sys_id>671eea07cf598b108935fb251d851c55</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19820ef0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:53:17</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>e31eea0729598b10c0f00a068bb14554</update_guid>
+        <update_guid_history>e31eea0729598b10c0f00a068bb14554:1477906154</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Check-in Configuration">88234784cfe5c7d08935fb251d851c98</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:59</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>1154db7d77c74bda843c8e999c5b0f04</sys_id>
+        <sys_metadata>dff89dc7cfd587108935fb251d851c65</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Check-in Configuration</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_dff89dc7cfd587108935fb251d851c65</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_dff89dc7cfd587108935fb251d851c65">671eea07cf598b108935fb251d851c55</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:59</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

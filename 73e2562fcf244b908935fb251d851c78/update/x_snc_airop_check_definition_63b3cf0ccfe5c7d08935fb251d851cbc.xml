@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[VA topics define the conversational use cases Now Assist can assist with. More published topics means broader AI-assisted self-service coverage and more opportunities to deflect incidents.]]></ai_justification>
+        <check_name>Active VA Topic Count</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_cs_topic');
+    ga.addQuery('active', true);
+    ga.addQuery('published', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' published active VA topics';
+
+    if (count >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' published VA topics. Now Assist has broad topic coverage for AI-enhanced ITSM self-service.'
+        };
+    } else if (count >= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics (target: 50+). Limited topic coverage restricts Now Assist AI-assisted self-service scope.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' published VA topics. Insufficient topic coverage for meaningful Now Assist ITSM self-service — publish topics for high-volume incident categories first.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000648</number>
+        <order>210</order>
+        <remediation_guidance>Review and publish additional VA topics via sys_cs_topic_list.do. Prioritize topics for high-volume incident categories and catalog items. Target: 50+ published topics. Now Assist enhances existing VA topics with AI — more published topics means broader AI-assisted self-service coverage.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>63b3cf0ccfe5c7d08935fb251d851cbc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_63b3cf0ccfe5c7d08935fb251d851cbc</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

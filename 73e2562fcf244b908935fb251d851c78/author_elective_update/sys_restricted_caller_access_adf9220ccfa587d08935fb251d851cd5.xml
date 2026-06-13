@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_restricted_caller_access">
+    <sys_restricted_caller_access action="DELETE">
+        <description/>
+        <operation>read</operation>
+        <rca_type>requested</rca_type>
+        <source/>
+        <source_scope display_value="">x_snc_airop</source_scope>
+        <source_table/>
+        <source_type>5</source_type>
+        <status>2</status>
+        <sys_class_name>sys_restricted_caller_access</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 15:09:02</sys_created_on>
+        <sys_id>adf9220ccfa587d08935fb251d851cd5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_airop</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>sys_restricted_caller_access_adf9220ccfa587d08935fb251d851cd5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 15:09:02</sys_updated_on>
+        <target/>
+        <target_scope display_value="">sn_doc</target_scope>
+        <target_table/>
+        <target_type>3</target_type>
+    </sys_restricted_caller_access>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>sys_restricted_caller_access_adf9220ccfa587d08935fb251d851cd5</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_restricted_caller_access"><sys_restricted_caller_access action="INSERT_OR_UPDATE"><description/><operation>read</operation><rca_type>requested</rca_type><source/><source_scope display_value="">x_snc_airop</source_scope><source_table/><source_type>5</source_type><status>2</status><sys_class_name>sys_restricted_caller_access</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-06-13 15:09:02</sys_created_on><sys_id>adf9220ccfa587d08935fb251d851cd5</sys_id><sys_mod_count>0</sys_mod_count><sys_name>x_snc_airop</sys_name><sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package><sys_policy/><sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope><sys_update_name>sys_restricted_caller_access_adf9220ccfa587d08935fb251d851cd5</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-06-13 15:09:02</sys_updated_on><target/><target_scope display_value="">sn_doc</target_scope><target_table/><target_type>3</target_type></sys_restricted_caller_access></record_update>]]></payload>
+        <payload_hash>-1382431937</payload_hash>
+        <record_name>x_snc_airop</record_name>
+        <reverted_from/>
+        <source>9687d303cf550f108935fb251d851c93</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 15:09:02</sys_created_on>
+        <sys_id>edf96680cfe587d08935fb251d851cea</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19ec1877e6c0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 15:09:02</sys_updated_on>
+        <type>Restricted Caller Access Privilege</type>
+        <update_guid>a5f9668037e587d09b4cd9ab29dcc0e9</update_guid>
+        <update_guid_history>a5f9668037e587d09b4cd9ab29dcc0e9:-1382431937</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 15:25:48</sys_created_on>
+        <sys_db_object display_value="" name="sys_restricted_caller_access">sys_restricted_caller_access</sys_db_object>
+        <sys_id>004741b50d8847309d16ed655b6d1100</sys_id>
+        <sys_metadata>adf9220ccfa587d08935fb251d851cd5</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_airop</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>sys_restricted_caller_access_adf9220ccfa587d08935fb251d851cd5</sys_update_name>
+        <sys_update_version display_value="sys_restricted_caller_access_adf9220ccfa587d08935fb251d851cd5">edf96680cfe587d08935fb251d851cea</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 15:25:48</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

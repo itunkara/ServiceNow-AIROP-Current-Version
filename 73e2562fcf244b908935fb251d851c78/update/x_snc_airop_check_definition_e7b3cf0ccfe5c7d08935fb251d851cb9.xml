@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Custom fields added to incident are not automatically understood by Now Assist. High custom field counts may indicate data that Now Assist cannot contextualize without additional prompt configuration.]]></ai_justification>
+        <check_name>Custom Fields on Incident Table</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_dictionary');
+    ga.addQuery('name', 'incident');
+    ga.addQuery('element', 'STARTSWITH', 'u_');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom u_ fields on incident table';
+
+    if (count < 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' custom fields on incident. Low customization — Now Assist AI prompts can reference incident data without significant custom field complexity.'
+        };
+    } else if (count < 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom fields on incident (target: <20). Review which are actively used and include relevant ones in Now Assist prompt configuration for AI context.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: count + ' custom fields on incident. High custom field density increases Now Assist prompt complexity and may require significant configuration to include relevant fields in AI context.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000645</number>
+        <order>180</order>
+        <remediation_guidance>Review custom u_ fields on incident to determine which are actively used vs legacy. Archive unused custom fields. For fields Now Assist needs to reference, add field descriptions and include them in Now Assist prompt configuration.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>e7b3cf0ccfe5c7d08935fb251d851cb9</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_e7b3cf0ccfe5c7d08935fb251d851cb9</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

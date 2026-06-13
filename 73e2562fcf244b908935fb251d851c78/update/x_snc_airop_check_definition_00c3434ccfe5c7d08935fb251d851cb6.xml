@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Virtual Agent plugin is the core prerequisite for all Now Assist conversational AI capabilities. Without it no VA or conversational AI features function.]]></ai_justification>
+        <check_name>Virtual Agent Plugin Status</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var vaResult = checkPlugin("com.glide.cs.chatbot", "com.glide.cs.chatbot");
+    var pluginActive = vaResult.found;
+    // Functional fallback: sys_cs_topic table existing = VA is installed
+    if (!pluginActive) {
+        var testGr = new GlideRecord("sys_cs_topic");
+        testGr.setLimit(1);
+        testGr.query();
+        pluginActive = testGr.isValid();
+    }
+    var prop = gs.getProperty("glide.cs.enabled", "false");
+    var actualValue = "Plugin active: " + pluginActive + " | glide.cs.enabled: " + prop;
+    if (pluginActive && prop === "true") {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Virtual Agent plugin is active and glide.cs.enabled=true. Now Assist conversational AI prerequisites are satisfied." };
+    } else if (pluginActive) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Virtual Agent plugin is active but glide.cs.enabled is not set to true. Now Assist conversational AI will not function until this property is enabled." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Virtual Agent plugin (com.glide.cs.chatbot) is not active. Now Assist conversational AI cannot function without the base VA plugin." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>VIRTUAL_AGENT</module>
+        <number>CHK0000814</number>
+        <order>10</order>
+        <remediation_guidance>Activate Virtual Agent plugin (com.glide.cs.chatbot) via sys_plugins_list.do. Set glide.cs.enabled=true in sys_properties. Both are required for Now Assist conversational AI.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>00c3434ccfe5c7d08935fb251d851cb6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_00c3434ccfe5c7d08935fb251d851cb6</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

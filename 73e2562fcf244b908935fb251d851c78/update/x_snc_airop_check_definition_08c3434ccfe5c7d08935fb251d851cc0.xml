@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Live agent escalation configuration ensures Now Assist VA can hand off to human agents when AI cannot resolve. Without escalation paths, users are stranded in failed VA conversations.]]></ai_justification>
+        <check_name>VA Live Agent Escalation Configuration</check_name>
+        <check_script><![CDATA[(function() {
+    try {
+        if (!gs.tableExists("awa_queue")) {
+            return { status: "needs_validation", actualValue: "Table not found", finding: "awa_queue table not present -- manual verification required. Confirm Advanced Work Assignment is installed and active." };
+        }
+        var ga = new GlideAggregate("awa_queue");
+        ga.addQuery("active", true);
+        ga.addAggregate("COUNT");
+        ga.query();
+        var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;
+        var actualValue = count + " active agent escalation queues";
+        if (count >= 1) {
+            return { status: "ready", actualValue: actualValue, finding: count + " active escalation queue(s) configured. Now Assist VA can hand off to human agents when AI cannot resolve the conversation." };
+        } else {
+            return { status: "value_blocker", actualValue: actualValue, finding: "No active agent escalation queues configured in AWA. Now Assist VA users are stranded when AI cannot resolve their request -- live agent escalation paths are required for a complete self-service experience." };
+        }
+    } catch(e) {
+        return { status: "needs_validation", actualValue: "Check failed", finding: "Script execution error: " + e.message };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>VIRTUAL_AGENT</module>
+        <number>CHK0000826</number>
+        <order>130</order>
+        <remediation_guidance>Configure agent escalation queues and routing via sys_cs_queue. Test escalation paths from each VA channel. Now Assist VA must have human escalation paths for conversations AI cannot resolve.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>08c3434ccfe5c7d08935fb251d851cc0</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_08c3434ccfe5c7d08935fb251d851cc0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

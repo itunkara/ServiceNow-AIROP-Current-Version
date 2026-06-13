@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Control test results (sn_audit_control_test) provide the historical compliance evidence Now Assist GRC uses for AI-assisted audit preparation and gap analysis. Sufficient test volume and completion rate are prerequisites for meaningful AI audit insights.]]></ai_justification>
+        <check_name>Control Test Results</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    if (!gs.tableExists('sn_audit_control_test')) {
+        return { status: 'not_applicable', actualValue: 'sn_audit_control_test not found', finding: 'Audit Management is not installed. Control test result check is not applicable.' };
+    }
+    var cutoff = new GlideDateTime();
+    cutoff.addYearsUTC(-1);
+    var gaTotal = new GlideAggregate('sn_audit_control_test');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+    if (total === 0) {
+        return { status: 'not_ready', actualValue: 'No control tests in last 12 months', finding: 'No control tests found in the last 12 months. Now Assist GRC AI audit preparation requires recent control test history.' };
+    }
+    var gaPass = new GlideAggregate('sn_audit_control_test');
+    gaPass.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaPass.addQuery('state', 'complete');
+    gaPass.addAggregate('COUNT');
+    gaPass.query();
+    var passed = gaPass.next() ? parseInt(gaPass.getAggregate('COUNT')) : 0;
+    var pct = Math.round((passed / total) * 100);
+    var actualValue = total + ' control tests (last 12 months) | ' + pct + '% complete';
+    if (total >= 50 && pct >= 70) {
+        return { status: 'ready', actualValue: actualValue, finding: total + ' control tests with ' + pct + '% completion. Now Assist GRC has sufficient test history for AI-powered audit preparation.' };
+    } else if (total >= 20 || pct >= 50) {
+        return { status: 'needs_attention', actualValue: actualValue, finding: total + ' control tests with ' + pct + '% completion (targets: 50+, 70%+). Now Assist GRC audit preparation will have reduced coverage.' };
+    } else {
+        return { status: 'not_ready', actualValue: actualValue, finding: 'Insufficient control test coverage (' + total + ' tests, ' + pct + '% complete). Now Assist GRC AI audit preparation requires comprehensive recent test history.' };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>GRC</module>
+        <number>CHK0000772</number>
+        <order>50</order>
+        <remediation_guidance>Perform control testing via Audit Management. Target: 50+ control tests in the trailing 12 months with 70%+ completion rate. Now Assist GRC uses recent test history for AI audit preparation.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>77b3434ccfe5c7d08935fb251d851c21</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_77b3434ccfe5c7d08935fb251d851c21</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

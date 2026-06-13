@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Alert-to-incident conversion provides Now Assist TSOM with historical linkage to learn remediation patterns.]]></ai_justification>
+        <check_name>Alert-to-Incident Conversion Rate</check_name>
+        <check_script><![CDATA[(function(){var gr=new GlideRecord("em_alert");gr.addNotNullQuery("incident");gr.query();var linked=gr.getRowCount();var gr2=new GlideRecord("em_alert");gr2.query();var total=gr2.getRowCount();var pct=total>0?Math.round((linked/total)*100):0;return{status:pct>=10?"ready":"needs_attention",actualValue:pct+"% of alerts generated incidents ("+linked+"/"+total+")",finding:pct<10?"Only "+pct+"% alert-to-incident conversion. Now Assist TSOM has no historical alert-incident linkage for AI remediation learning.":pct+"% alert-to-incident conversion -- Now Assist TSOM has historical data for AI pattern learning."};})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>AIOPS</module>
+        <number>CHK0000763</number>
+        <order>80</order>
+        <remediation_guidance>Configure alert management rules to automatically create incidents for actionable alerts.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>7bb3434ccfe5c7d08935fb251d851c00</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_7bb3434ccfe5c7d08935fb251d851c00</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

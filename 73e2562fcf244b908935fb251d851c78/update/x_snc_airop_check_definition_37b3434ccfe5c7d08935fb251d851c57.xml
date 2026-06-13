@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Agile team and story data enables Now Assist SPM to provide AI velocity prediction and capacity planning for agile portfolios.]]></ai_justification>
+        <check_name>SPM Agile Team Configuration</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    // rm_story = user stories (OOB SPM agile table)
+    // rm_scrum_task = tasks within stories — not the right grain for this check
+    var gaStories = new GlideAggregate('rm_story');
+    gaStories.addQuery('active', true);
+    gaStories.addAggregate('COUNT');
+    gaStories.query();
+    var stories = gaStories.next() ? parseInt(gaStories.getAggregate('COUNT')) : 0;
+
+    var gaSprints = new GlideAggregate('rm_sprint');
+    gaSprints.addQuery('active', true);
+    gaSprints.addAggregate('COUNT');
+    gaSprints.query();
+    var sprints = gaSprints.next() ? parseInt(gaSprints.getAggregate('COUNT')) : 0;
+
+    var actualValue = stories + ' active stories | ' + sprints + ' active sprints';
+
+    if (stories >= 50 && sprints >= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: stories + ' active stories and ' + sprints + ' active sprints. Now Assist SPM has sufficient agile data for AI velocity prediction and capacity planning.'
+        };
+    } else if (stories >= 20 || sprints >= 2) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Partial agile data (' + stories + ' stories, ' + sprints + ' sprints). Targets: 50+ stories, 5+ sprints. Now Assist SPM velocity prediction will have reduced accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Insufficient agile data (' + stories + ' stories, ' + sprints + ' sprints). Now Assist SPM uses velocity data for AI capacity planning — insufficient data for meaningful recommendations.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SPM</module>
+        <number>CHK0000791</number>
+        <order>120</order>
+        <remediation_guidance>Configure agile teams and populate sprint and story data. Target: 50+ active user stories and 5+ active sprints. Now Assist SPM uses velocity and sprint data for AI capacity planning recommendations.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>37b3434ccfe5c7d08935fb251d851c57</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_37b3434ccfe5c7d08935fb251d851c57</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

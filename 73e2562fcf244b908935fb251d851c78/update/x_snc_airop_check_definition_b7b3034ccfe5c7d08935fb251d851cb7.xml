@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Employee sentiment on HR cases provides the wellbeing signal Now Assist HRSD uses for proactive AI escalation and empathetic response generation. Missing sentiment data limits AI empathy capabilities.]]></ai_justification>
+        <check_name>HR Case Sentiment Data</check_name>
+        <check_script><![CDATA[(function(){
+var gr=new GlideRecord("sn_hr_core_case");
+gr.addNotNullQuery("sentiment");
+gr.query();
+var n=gr.getRowCount();
+return{status:n>=100?"ready":"needs_attention",actualValue:n+" HR cases with sentiment data",finding:n<100?"Only "+n+" HR cases have sentiment data. Now Assist HRSD uses sentiment for AI-driven empathetic responses and proactive escalation -- insufficient data limits this capability.":""+n+" HR cases with sentiment data -- Now Assist HRSD can leverage sentiment for empathetic AI responses."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HRSD</module>
+        <number>CHK0000722</number>
+        <order>170</order>
+        <remediation_guidance>Enable sentiment scoring on HR cases via the HRSD sentiment configuration. Train HR agents to capture feedback. Now Assist HRSD uses sentiment signals for AI-driven empathetic responses and proactive escalation.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>b7b3034ccfe5c7d08935fb251d851cb7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_b7b3034ccfe5c7d08935fb251d851cb7</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

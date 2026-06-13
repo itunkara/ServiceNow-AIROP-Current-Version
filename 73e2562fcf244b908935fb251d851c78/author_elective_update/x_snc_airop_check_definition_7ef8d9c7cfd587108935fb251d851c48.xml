@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Application health data enables DEX AI to diagnose app-specific issues such as Zoom quality and Office 365 performance. Without application monitoring, DEX AI diagnosis is limited to OS-level signals only.]]></ai_justification>
+        <check_name>KB Articles with Raw URLs in Body</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. URL content check cannot be assessed.'
+        };
+    }
+
+    var gaURL = new GlideAggregate('kb_knowledge');
+    gaURL.addQuery('workflow_state', 'published');
+    gaURL.addQuery('active', true);
+    gaURL.addQuery('text', 'CONTAINS', 'https://');
+    gaURL.addAggregate('COUNT');
+    gaURL.query();
+    var withUrl = gaURL.next() ? parseInt(gaURL.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withUrl / total) * 100);
+    var actualValue = withUrl + ' of ' + total + ' published articles contain raw URLs (' + pct + '%)';
+
+    if (pct <= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of articles contain raw URLs. Now Assist AI Search has predominantly self-contained content that can be summarized without link dependencies.'
+        };
+    } else if (pct <= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: pct + '% of published articles contain raw URLs (target: ≤20%). Now Assist cannot follow hyperlinks — URL-dependent content will produce incomplete AI summaries.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: pct + '% of published articles rely on raw URLs. Now Assist AI Search cannot follow links — the majority of KB content will produce incomplete AI summaries and poor self-service answers.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000322</number>
+        <order>80</order>
+        <remediation_guidance>Replace URL-dependent content with inline text — summarize what the link contains directly in the article body. Now Assist cannot follow hyperlinks. Target: ≤20% of published articles containing raw URLs.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>7ef8d9c7cfd587108935fb251d851c48</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>KB Articles with Raw URLs in Body</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_7ef8d9c7cfd587108935fb251d851c48</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_7ef8d9c7cfd587108935fb251d851c48</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Application health data enables DEX AI to diagnose app-specific issues such as Zoom quality and Office 365 performance. Without application monitoring, DEX AI diagnosis is limited to OS-level signals only.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;KB Articles with Raw URLs in Body&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. URL content check cannot be assessed.'
+        };
+    }
+
+    var gaURL = new GlideAggregate('kb_knowledge');
+    gaURL.addQuery('workflow_state', 'published');
+    gaURL.addQuery('active', true);
+    gaURL.addQuery('text', 'CONTAINS', 'https://');
+    gaURL.addAggregate('COUNT');
+    gaURL.query();
+    var withUrl = gaURL.next() ? parseInt(gaURL.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withUrl / total) * 100);
+    var actualValue = withUrl + ' of ' + total + ' published articles contain raw URLs (' + pct + '%)';
+
+    if (pct &lt;= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of articles contain raw URLs. Now Assist AI Search has predominantly self-contained content that can be summarized without link dependencies.'
+        };
+    } else if (pct &lt;= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: pct + '% of published articles contain raw URLs (target: ≤20%). Now Assist cannot follow hyperlinks — URL-dependent content will produce incomplete AI summaries.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: pct + '% of published articles rely on raw URLs. Now Assist AI Search cannot follow links — the majority of KB content will produce incomplete AI summaries and poor self-service answers.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;ITSM&lt;/module&gt;&lt;number&gt;CHK0000322&lt;/number&gt;&lt;order&gt;80&lt;/order&gt;&lt;remediation_guidance&gt;Replace URL-dependent content with inline text — summarize what the link contains directly in the article body. Now Assist cannot follow hyperlinks. Target: ≤20% of published articles containing raw URLs.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:19&lt;/sys_created_on&gt;&lt;sys_id&gt;7ef8d9c7cfd587108935fb251d851c48&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;KB Articles with Raw URLs in Body&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_7ef8d9c7cfd587108935fb251d851c48&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:01&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1147031569</payload_hash>
+        <record_name>KB Articles with Raw URLs in Body</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:55:22</sys_created_on>
+        <sys_id>069ee24bcf598b108935fb251d851c84</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19a06cf0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:55:22</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>829ee24be2598b10c36668c5d1f72f83</update_guid>
+        <update_guid_history>829ee24be2598b10c36668c5d1f72f83:-1147031569</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="KB Articles with Raw URLs in Body">cd130744cfe5c7d08935fb251d851c94</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:47</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>129647509ae54ed09f302070ed942510</sys_id>
+        <sys_metadata>7ef8d9c7cfd587108935fb251d851c48</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>KB Articles with Raw URLs in Body</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_7ef8d9c7cfd587108935fb251d851c48</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_7ef8d9c7cfd587108935fb251d851c48">069ee24bcf598b108935fb251d851c84</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:47</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

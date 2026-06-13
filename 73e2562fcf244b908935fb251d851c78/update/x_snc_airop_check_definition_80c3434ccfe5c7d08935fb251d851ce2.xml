@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Device metrics provide the granular CPU, memory, disk, and network signals that DEX AI uses for root cause analysis. Without sufficient metric coverage, AI diagnosis will misattribute or miss the actual cause of endpoint issues.]]></ai_justification>
+        <check_name>Device Metrics Coverage</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-30);
+
+    var ga = new GlideAggregate('dex_ci_device_metrics');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' device metric records collected in last 30 days';
+
+    if (count >= 1000) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' device metric records in the last 30 days. DEX AI has rich device health signal for root cause analysis and anomaly detection.'
+        };
+    } else if (count >= 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' device metric records in the last 30 days (target: 1,000+). Limited metric coverage will reduce DEX AI root cause analysis accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' device metric records in the last 30 days. Insufficient device metrics for DEX AI to perform meaningful root cause analysis or anomaly detection.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>DEX</module>
+        <number>CHK0000836</number>
+        <order/>
+        <remediation_guidance>Ensure device metric collection is configured and ACC agents are reporting device health data. Device metrics (CPU, memory, disk, network) are the raw signals DEX AI uses for root cause analysis and anomaly detection.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>80c3434ccfe5c7d08935fb251d851ce2</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_80c3434ccfe5c7d08935fb251d851ce2</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

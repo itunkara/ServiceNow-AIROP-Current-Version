@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[High discovery error rates indicate infrastructure that is being attempted but failing to discover. These CIs remain stale or absent from the CMDB, creating gaps in Now Assist context.]]></ai_justification>
+        <check_name>Discovery Error Rate</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('discovery_status');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No discovery runs in last 90 days',
+            finding: 'No discovery runs found in the last 90 days. Discovery error rate cannot be assessed — configure and run discovery first.'
+        };
+    }
+
+    var gaErrors = new GlideAggregate('discovery_status');
+    gaErrors.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaErrors.addQuery('state', 'IN', 'Error,Failed');
+    gaErrors.addAggregate('COUNT');
+    gaErrors.query();
+    var errors = gaErrors.next() ? parseInt(gaErrors.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((errors / total) * 100);
+    var actualValue = pct + '% of discovery runs errored in last 90 days (' + errors + ' of ' + total + ')';
+
+    if (pct <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Discovery error rate is ' + pct + '% (last 90 days). Low error rate means Now Assist ITOM has reliable, current CI data to work with.'
+        };
+    } else if (pct <= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Discovery error rate is ' + pct + '% (last 90 days, target: ≤5%). Recurring errors leave CI gaps that reduce Now Assist ITOM context accuracy.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Discovery error rate is ' + pct + '% (last 90 days). High error rate means large portions of infrastructure are not being discovered — Now Assist ITOM AI analysis will have significant blind spots.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITOM</module>
+        <number>CHK0000671</number>
+        <order>40</order>
+        <remediation_guidance>Investigate discovery errors via discovery_log_list.do. Common causes: missing credentials, network connectivity issues, MID Server misconfiguration. Resolve credential gaps first — uncredentialed CIs remain stale or absent, creating Now Assist ITOM context gaps.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>e3b3cf0ccfe5c7d08935fb251d851cd0</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_e3b3cf0ccfe5c7d08935fb251d851cd0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

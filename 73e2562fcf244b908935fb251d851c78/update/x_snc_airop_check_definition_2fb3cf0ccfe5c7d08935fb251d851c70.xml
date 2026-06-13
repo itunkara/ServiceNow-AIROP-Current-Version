@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[DEX scores are the computed health signals that AI diagnostic skills use to identify device issues and prioritize interventions. Without score data, DEX AI cannot rank device health or trigger proactive workflows.]]></ai_justification>
+        <check_name>KB Article Empty Text Fields</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. Empty text field check cannot be assessed.'
+        };
+    }
+
+    var gaEmpty = new GlideAggregate('kb_knowledge');
+    gaEmpty.addQuery('workflow_state', 'published');
+    gaEmpty.addQuery('active', true);
+    gaEmpty.addQuery('text', '');
+    gaEmpty.addAggregate('COUNT');
+    gaEmpty.query();
+    var empty = gaEmpty.next() ? parseInt(gaEmpty.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((empty / total) * 100);
+    var actualValue = empty + ' of ' + total + ' published articles have empty text body (' + pct + '%)';
+
+    if (empty === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'All published KB articles have body content. Now Assist AI Search has substantive content to index and surface as self-service answers.'
+        };
+    } else if (pct <= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: empty + ' published KB articles have empty body text (' + pct + '%). Empty articles degrade Now Assist AI Search quality — populate or retire these articles.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: empty + ' published KB articles (' + pct + '%) have no body content. Now Assist AI Search will return empty or useless results for these articles.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000633</number>
+        <order>60</order>
+        <remediation_guidance>Populate body content on empty published KB articles or retire them. Add a UI policy preventing publication of articles with empty text fields. Target: 0 published articles with empty body content.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>2fb3cf0ccfe5c7d08935fb251d851c70</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_2fb3cf0ccfe5c7d08935fb251d851c70</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

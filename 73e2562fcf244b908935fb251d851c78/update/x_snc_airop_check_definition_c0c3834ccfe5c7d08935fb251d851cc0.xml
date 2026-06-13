@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Legal knowledge base articles are the primary source for Now Assist search and AI-generated responses to legal questions. Without sufficient knowledge content, AI search results and self-service recommendations will be incomplete or inaccurate.]]></ai_justification>
+        <check_name>Legal Knowledge Base Articles</check_name>
+        <check_script><![CDATA[(function(){
+var ga=new GlideAggregate("kb_knowledge");
+ga.addQuery("workflow_state","published");
+ga.addQuery("short_description","CONTAINS","legal");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=10)return{status:"ready",actualValue:c+" articles",finding:c+" legal KB articles found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" articles",finding:c+" legal KB articles found."};
+return{status:"value_blocker",actualValue:"0 articles",finding:"No legal KB articles found."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>LSD</module>
+        <number>CHK0000905</number>
+        <order/>
+        <remediation_guidance>Create KB articles covering legal policies, procedures, and FAQs to enable AI deflection.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:44</sys_created_on>
+        <sys_id>c0c3834ccfe5c7d08935fb251d851cc0</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_c0c3834ccfe5c7d08935fb251d851cc0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:44</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

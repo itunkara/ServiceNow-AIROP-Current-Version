@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Topic fulfillment rate measures whether VA topics successfully complete their designed outcome. Low fulfillment degrades Now Assist self-service effectiveness.]]></ai_justification>
+        <check_name>VA Topic Fulfillment Rate</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('sys_cs_conversation');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addQuery('state', 'IN', 'complete,agent_requested,abandoned');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No completed VA conversations in last 90 days',
+            finding: 'No completed VA conversations found in the last 90 days. Topic fulfillment rate cannot be assessed.'
+        };
+    }
+
+    var gaCompleted = new GlideAggregate('sys_cs_conversation');
+    gaCompleted.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaCompleted.addQuery('state', 'complete');
+    gaCompleted.addAggregate('COUNT');
+    gaCompleted.query();
+    var completed = gaCompleted.next() ? parseInt(gaCompleted.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((completed / total) * 100);
+    var actualValue = pct + '% VA conversations fulfilled without agent transfer (last 90 days, ' + completed + '/' + total + ')';
+
+    if (pct >= 60) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of VA conversations completed without agent transfer (last 90 days). Now Assist VA has a strong self-service foundation to enhance.'
+        };
+    } else if (pct >= 30) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of VA conversations are fulfilled without agent transfer (last 90 days, target: 60%+). Now Assist AI self-service impact is limited when topic fulfillment is low.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of VA conversations are fulfilled (last 90 days). Very low fulfillment rate indicates broken topic flows or catalog integrations — fix these before enabling Now Assist VA.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>VIRTUAL_AGENT</module>
+        <number>CHK0000822</number>
+        <order>90</order>
+        <remediation_guidance>Review topic fulfillment rates in VA analytics. Fix broken catalog integrations and workflow connections. Now Assist AI is only as effective as the topics it enhances. Target: 60%+ fulfillment rate.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>00c3434ccfe5c7d08935fb251d851cbd</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_00c3434ccfe5c7d08935fb251d851cbd</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Business rules on incident and task tables can intercept or modify Now Assist API calls, causing unexpected behavior. Customer-created rules must be reviewed before enablement to prevent conflicts.]]></ai_justification>
+        <check_name>Business Rules on Incident / Task</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script');
+    ga.addQuery('collection', 'IN', 'incident,task');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom active Business Rules on incident/task';
+
+    if (count < 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low Business Rule customization on incident/task (' + count + ' custom BRs). Now Assist and AI Agent operations are unlikely to encounter conflicts.'
+        };
+    } else if (count < 100) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom Business Rules on incident/task. Moderate customization — test Now Assist and AI Agents in sub-production to identify conflicts before go-live.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: count + ' custom Business Rules on incident/task. High customization density creates significant risk of Now Assist and AI Agent conflicts — review and reduce before enablement.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000642</number>
+        <order>150</order>
+        <remediation_guidance>Review customer-created Business Rules on incident and task. Test each in sub-production with Now Assist enabled. Disable or modify rules that intercept Now Assist API calls. Target: &lt;50 custom active BRs on incident/task.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>abb3cf0ccfe5c7d08935fb251d851c78</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_abb3cf0ccfe5c7d08935fb251d851c78</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Risk issues with detailed descriptions provide the content that Now Assist uses to generate summaries and recommendations. Well-documented risk issues enable AI to produce more accurate assessments and improve the quality of automated issue generation.]]></ai_justification>
+        <check_name>Risk Issues with Descriptions Volume</check_name>
+        <check_script><![CDATA[(function(){
+var ga=new GlideAggregate("sn_vdr_risk_asmt_issue");
+ga.addQuery("description","!=","");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+var ga2=new GlideAggregate("sn_vdr_risk_asmt_issue");
+ga2.addAggregate("COUNT");ga2.query();
+var total=ga2.next()?parseInt(ga2.getAggregate("COUNT")):0;
+if(c>=20)return{status:"ready",actualValue:c+"/"+total+" with descriptions",finding:c+" risk issues have descriptions."};
+if(c>0)return{status:"needs_attention",actualValue:c+"/"+total+" with descriptions",finding:c+" of "+total+" issues have descriptions."};
+return{status:"value_blocker",actualValue:"0 with descriptions",finding:"No risk issues with descriptions found."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>TPRM</module>
+        <number>CHK0000893</number>
+        <order/>
+        <remediation_guidance>Ensure risk issues are created with detailed descriptions.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>04c3834ccfe5c7d08935fb251d851ca9</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_04c3834ccfe5c7d08935fb251d851ca9</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

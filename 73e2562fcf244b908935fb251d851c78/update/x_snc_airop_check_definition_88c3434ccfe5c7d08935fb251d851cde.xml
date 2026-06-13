@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[DEX scores are the computed health signals that AI diagnostic skills use to identify device issues and prioritize interventions. Without score data, DEX AI cannot rank device health or trigger proactive workflows.]]></ai_justification>
+        <check_name>DEX Score Data Availability</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-30);
+
+    var ga = new GlideAggregate('dex_score_device_adh_score_all_agents_daily');
+    ga.addQuery('sys_created_on', '>=', cutoff.getValue());
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' DEX device score records generated in last 30 days';
+
+    if (count >= 30) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' DEX score records generated in the last 30 days. Score data is current — DEX AI skills have the analytical foundation needed for device diagnosis.'
+        };
+    } else if (count >= 7) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' DEX score records in the last 30 days (target: 30+). Score generation may be intermittent — DEX AI diagnostic accuracy will be reduced without consistent score history.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' DEX score records in the last 30 days. DEX scores are not being generated consistently — AI skills cannot perform meaningful device health analysis without score data.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>DEX</module>
+        <number>CHK0000832</number>
+        <order/>
+        <remediation_guidance>Ensure DEX score generation jobs are running. DEX scores are calculated from telemetry data and used as the primary input for AI diagnostic skills. Check score generator configuration via dex_score_generator_definition and ensure scheduled jobs are active.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>88c3434ccfe5c7d08935fb251d851cde</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_88c3434ccfe5c7d08935fb251d851cde</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

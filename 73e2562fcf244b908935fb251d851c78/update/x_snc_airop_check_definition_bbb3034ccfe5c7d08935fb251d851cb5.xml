@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[HR Performance Analytics indicators provide the trend data Now Assist uses for predictive HR insights and workforce analytics. Without PA data, Now Assist HRSD cannot provide trend-based AI recommendations.]]></ai_justification>
+        <check_name>HR Analytics and Reporting</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var matched = {};
+
+    function collectMatches(keyword) {
+        var gr = new GlideRecord('pa_indicators');
+        gr.addQuery('active', true);
+        gr.addQuery('name', 'CONTAINS', keyword);
+        gr.query();
+        while (gr.next()) {
+            matched[gr.getUniqueValue()] = true;
+        }
+    }
+
+    collectMatches('HR');
+    collectMatches('human resources');
+    collectMatches('Human Resources');
+
+    var count = Object.keys(matched).length;
+    var actualValue = count + ' active HR Performance Analytics indicators';
+
+    if (count >= 3) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active HR PA indicators. Now Assist HRSD can provide trend-based AI insights for HR service delivery.'
+        };
+    } else if (count >= 1) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active HR PA indicator(s) (target: 3+). Now Assist HRSD trend-based insights will be limited — point-in-time analysis only for uncovered metrics.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'No active HR PA indicators found. Now Assist HRSD uses PA trend data for predictive HR insights — without it AI defaults to point-in-time analysis only.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HRSD</module>
+        <number>CHK0000720</number>
+        <order>150</order>
+        <remediation_guidance>Create Performance Analytics indicators for key HR metrics (case volume by category, resolution time, employee satisfaction) via pa_indicators_list.do. Target: 3+ active HR indicators. PA data enables Now Assist HRSD trend-based AI insights.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>bbb3034ccfe5c7d08935fb251d851cb5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_bbb3034ccfe5c7d08935fb251d851cb5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[AI Agents orchestrate all automation through Flow Designer subflows. Instances with no active flows cannot leverage Agentic AI for process automation regardless of other configurations.]]></ai_justification>
+        <check_name>Flow Designer Active Flows</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_hub_flow');
+    ga.addQuery('active', true);
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' active Flow Designer flows';
+
+    if (count >= 10) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: count + ' active Flow Designer flows. AI Agents have a strong orchestration foundation — Flow Designer is the exclusive execution layer for AI Agent automation.'
+        };
+    } else if (count >= 3) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active Flow Designer flows (target: 10+). Limited flow coverage restricts AI Agent operational scope — migrate legacy Workflow Engine processes to Flow Designer.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + count + ' active Flow Designer flows. AI Agents exclusively orchestrate through Flow Designer — without flows, AI Agent automation cannot execute.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>PLATFORM</module>
+        <number>CHK0000795</number>
+        <order>30</order>
+        <remediation_guidance>Create Flow Designer flows for key ITSM and ITOM processes via sys_hub_flow_list.do. Migrate legacy Workflow Engine processes to Flow Designer subflows. Target: 10+ active flows. AI Agents exclusively use Flow Designer for orchestration.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>0cc3434ccfe5c7d08935fb251d851c5a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_0cc3434ccfe5c7d08935fb251d851c5a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

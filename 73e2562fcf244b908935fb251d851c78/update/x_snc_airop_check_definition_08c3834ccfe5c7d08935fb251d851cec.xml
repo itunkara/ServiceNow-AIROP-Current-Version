@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Space capacity is a primary matching criterion Now Assist WSD uses for AI space recommendations. Without capacity data, AI cannot determine whether a space is appropriate for the number of attendees requested.]]></ai_justification>
+        <check_name>Space Capacity Data Population</check_name>
+        <check_script><![CDATA[(function() { var gaTotal = new GlideAggregate("sn_wsd_core_space"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_ready", actualValue: "No space records found", finding: "No space records found. Capacity data cannot be assessed." }; } var gaCap = new GlideAggregate("sn_wsd_core_space"); gaCap.addQuery("capacity", ">", "0"); gaCap.addAggregate("COUNT"); gaCap.query(); var withCap = gaCap.next() ? parseInt(gaCap.getAggregate("COUNT")) : 0; var pct = Math.round((withCap / total) * 100); var actualValue = pct + "% of spaces have capacity data (" + withCap + "/" + total + ")"; if (pct >= 90) { return { status: "ready", actualValue: actualValue, finding: pct + "% of spaces have capacity configured. Now Assist WSD can accurately match group sizes to appropriate spaces in AI recommendations." }; } else if (pct >= 70) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of spaces have capacity data (target: 90%+). Now Assist WSD AI space matching accuracy will be reduced." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of spaces have capacity data. Now Assist WSD cannot accurately match group sizes to spaces without capacity information." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>WSD</module>
+        <number>CHK0000913</number>
+        <order>300</order>
+        <remediation_guidance>Populate the capacity field on all space records in Workplace Core. Capacity data is required for Now Assist WSD to accurately recommend spaces that fit the size of the booking group.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:44</sys_created_on>
+        <sys_id>08c3834ccfe5c7d08935fb251d851cec</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_08c3834ccfe5c7d08935fb251d851cec</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:44</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

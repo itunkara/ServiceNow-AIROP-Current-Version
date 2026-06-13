@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Custom Business Rules on the hardware asset table can intercept or conflict with Now Assist HAM AI actions. High customization density increases the risk of AI recommendations failing or producing unexpected results.]]></ai_justification>
+        <check_name>HAM Customization Risk</check_name>
+        <check_script><![CDATA[(function() { var ga = new GlideAggregate("sys_script"); ga.addQuery("collection", "alm_hardware"); ga.addQuery("active", true); ga.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); ga.addAggregate("COUNT"); ga.query(); var brs = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0; var actualValue = brs + " custom Business Rules on alm_hardware"; if (brs <= 5) { return { status: "ready", actualValue: actualValue, finding: "Low HAM customization risk (" + brs + " custom BRs). Now Assist HAM AI recommendations are unlikely to encounter conflicts with existing customizations." }; } else if (brs <= 10) { return { status: "needs_attention", actualValue: actualValue, finding: "Moderate HAM customization risk (" + brs + " custom BRs). Test Now Assist HAM in sub-production before enabling in production." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "High HAM customization risk (" + brs + " custom BRs). Extensive customization increases the risk of conflicts with Now Assist HAM AI actions." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HAM</module>
+        <number>CHK0000929</number>
+        <order>900</order>
+        <remediation_guidance>Review custom Business Rules on the alm_hardware table. Test Now Assist HAM in a sub-production environment to identify and resolve conflicts before enabling in production.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:44</sys_created_on>
+        <sys_id>dcc3c34ccfe5c7d08935fb251d851c06</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_dcc3c34ccfe5c7d08935fb251d851c06</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:44</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[VA conversation volume and containment rate measure self-service effectiveness. Now Assist AI improves with more conversation data.]]></ai_justification>
+        <check_name>VA Conversation Volume and Containment</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('sys_cs_conversation');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No VA conversations in last 90 days',
+            finding: 'No VA conversations found in the last 90 days. Conversation volume and containment cannot be assessed — drive VA adoption before enabling Now Assist.'
+        };
+    }
+
+    var gaContained = new GlideAggregate('sys_cs_conversation');
+    gaContained.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaContained.addQuery('state', 'complete');
+    gaContained.addQuery('agent_transfer_at', '');
+    gaContained.addAggregate('COUNT');
+    gaContained.query();
+    var contained = gaContained.next() ? parseInt(gaContained.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((contained / total) * 100);
+    var actualValue = total + ' conversations (last 90 days) | ' + pct + '% contained without agent transfer';
+
+    if (total >= 1000 && pct >= 40) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: total + ' conversations with ' + pct + '% containment rate (last 90 days). Now Assist VA has a solid self-service foundation to build on.'
+        };
+    } else if (total >= 200 || pct >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: total + ' conversations with ' + pct + '% containment (last 90 days). Targets: 1,000+ conversations, 40%+ containment. Drive VA adoption and improve topic fulfillment before Now Assist enablement.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Low VA usage (' + total + ' conversations, ' + pct + '% containment in last 90 days). Now Assist VA AI improvements require an established VA user base and conversation history to be effective.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>VIRTUAL_AGENT</module>
+        <number>CHK0000819</number>
+        <order>60</order>
+        <remediation_guidance>Drive VA adoption through promotion and channel expansion. Track metrics via VA Analytics dashboard. Target: 1,000+ conversations and 60%+ containment rate for optimal Now Assist VA impact.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>84c3434ccfe5c7d08935fb251d851cba</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_84c3434ccfe5c7d08935fb251d851cba</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

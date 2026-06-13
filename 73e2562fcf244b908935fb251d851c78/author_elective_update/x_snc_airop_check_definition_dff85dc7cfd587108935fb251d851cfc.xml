@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[OT site records provide the physical and logical context for AI-assisted incident triage and asset management. Without site configuration, Now Assist cannot accurately scope recommendations to specific OT environments or facilities.]]></ai_justification>
+        <check_name>OT Site Records Configured</check_name>
+        <check_script><![CDATA[(function(){
+var ga=new GlideAggregate("cmdb_ci_site");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c>=5)return{status:"ready",actualValue:c+" sites",finding:c+" site records found."};
+if(c>0)return{status:"needs_attention",actualValue:c+" sites",finding:c+" site record(s) found."};
+return{status:"needs_attention",actualValue:"0 sites",finding:"No site records found. Site context improves AI impact analysis."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>OTSM</module>
+        <number>CHK0000552</number>
+        <order/>
+        <remediation_guidance>Populate site records in the CMDB and associate them with OT assets.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>dff85dc7cfd587108935fb251d851cfc</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>OT Site Records Configured</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_dff85dc7cfd587108935fb251d851cfc</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_dff85dc7cfd587108935fb251d851cfc</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[OT site records provide the physical and logical context for AI-assisted incident triage and asset management. Without site configuration, Now Assist cannot accurately scope recommendations to specific OT environments or facilities.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;OT Site Records Configured&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(){
+var ga=new GlideAggregate("cmdb_ci_site");
+ga.addAggregate("COUNT");ga.query();
+var c=ga.next()?parseInt(ga.getAggregate("COUNT")):0;
+if(c&gt;=5)return{status:"ready",actualValue:c+" sites",finding:c+" site records found."};
+if(c&gt;0)return{status:"needs_attention",actualValue:c+" sites",finding:c+" site record(s) found."};
+return{status:"needs_attention",actualValue:"0 sites",finding:"No site records found. Site context improves AI impact analysis."};
+})()]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;OTSM&lt;/module&gt;&lt;number&gt;CHK0000552&lt;/number&gt;&lt;order/&gt;&lt;remediation_guidance&gt;Populate site records in the CMDB and associate them with OT assets.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:20&lt;/sys_created_on&gt;&lt;sys_id&gt;dff85dc7cfd587108935fb251d851cfc&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;OT Site Records Configured&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_dff85dc7cfd587108935fb251d851cfc&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:02&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1397173024</payload_hash>
+        <record_name>OT Site Records Configured</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:55:19</sys_created_on>
+        <sys_id>219e624bcf598b108935fb251d851c21</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb199feb10000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:55:19</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>ad9e624b36598b10859b3abfb026421f</update_guid>
+        <update_guid_history>ad9e624b36598b10859b3abfb026421f:1397173024</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="OT Site Records Configured">4c234784cfe5c7d08935fb251d851c10</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:59</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>38d5acc8945640f0991e083506819a10</sys_id>
+        <sys_metadata>dff85dc7cfd587108935fb251d851cfc</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>OT Site Records Configured</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_dff85dc7cfd587108935fb251d851cfc</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_dff85dc7cfd587108935fb251d851cfc">219e624bcf598b108935fb251d851c21</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:59</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

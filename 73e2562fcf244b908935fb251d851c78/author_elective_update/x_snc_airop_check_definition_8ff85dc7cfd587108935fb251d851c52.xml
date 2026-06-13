@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Topic fulfillment rate measures whether VA topics successfully complete their designed outcome. Low fulfillment degrades Now Assist self-service effectiveness.]]></ai_justification>
+        <check_name>VA Topic Fulfillment Rate</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('sys_cs_conversation');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addQuery('state', 'IN', 'complete,agent_requested,abandoned');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No completed VA conversations in last 90 days',
+            finding: 'No completed VA conversations found in the last 90 days. Topic fulfillment rate cannot be assessed.'
+        };
+    }
+
+    var gaCompleted = new GlideAggregate('sys_cs_conversation');
+    gaCompleted.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaCompleted.addQuery('state', 'complete');
+    gaCompleted.addAggregate('COUNT');
+    gaCompleted.query();
+    var completed = gaCompleted.next() ? parseInt(gaCompleted.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((completed / total) * 100);
+    var actualValue = pct + '% VA conversations fulfilled without agent transfer (last 90 days, ' + completed + '/' + total + ')';
+
+    if (pct >= 60) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of VA conversations completed without agent transfer (last 90 days). Now Assist VA has a strong self-service foundation to enhance.'
+        };
+    } else if (pct >= 30) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of VA conversations are fulfilled without agent transfer (last 90 days, target: 60%+). Now Assist AI self-service impact is limited when topic fulfillment is low.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of VA conversations are fulfilled (last 90 days). Very low fulfillment rate indicates broken topic flows or catalog integrations — fix these before enabling Now Assist VA.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>VIRTUAL_AGENT</module>
+        <number>CHK0000509</number>
+        <order>90</order>
+        <remediation_guidance>Review topic fulfillment rates in VA analytics. Fix broken catalog integrations and workflow connections. Now Assist AI is only as effective as the topics it enhances. Target: 60%+ fulfillment rate.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>8ff85dc7cfd587108935fb251d851c52</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>VA Topic Fulfillment Rate</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_8ff85dc7cfd587108935fb251d851c52</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_8ff85dc7cfd587108935fb251d851c52</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Topic fulfillment rate measures whether VA topics successfully complete their designed outcome. Low fulfillment degrades Now Assist self-service effectiveness.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;VA Topic Fulfillment Rate&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-90);
+
+    var gaTotal = new GlideAggregate('sys_cs_conversation');
+    gaTotal.addQuery('sys_created_on', '&gt;=', cutoff.getValue());
+    gaTotal.addQuery('state', 'IN', 'complete,agent_requested,abandoned');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No completed VA conversations in last 90 days',
+            finding: 'No completed VA conversations found in the last 90 days. Topic fulfillment rate cannot be assessed.'
+        };
+    }
+
+    var gaCompleted = new GlideAggregate('sys_cs_conversation');
+    gaCompleted.addQuery('sys_created_on', '&gt;=', cutoff.getValue());
+    gaCompleted.addQuery('state', 'complete');
+    gaCompleted.addAggregate('COUNT');
+    gaCompleted.query();
+    var completed = gaCompleted.next() ? parseInt(gaCompleted.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((completed / total) * 100);
+    var actualValue = pct + '% VA conversations fulfilled without agent transfer (last 90 days, ' + completed + '/' + total + ')';
+
+    if (pct &gt;= 60) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of VA conversations completed without agent transfer (last 90 days). Now Assist VA has a strong self-service foundation to enhance.'
+        };
+    } else if (pct &gt;= 30) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of VA conversations are fulfilled without agent transfer (last 90 days, target: 60%+). Now Assist AI self-service impact is limited when topic fulfillment is low.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of VA conversations are fulfilled (last 90 days). Very low fulfillment rate indicates broken topic flows or catalog integrations — fix these before enabling Now Assist VA.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;VIRTUAL_AGENT&lt;/module&gt;&lt;number&gt;CHK0000509&lt;/number&gt;&lt;order&gt;90&lt;/order&gt;&lt;remediation_guidance&gt;Review topic fulfillment rates in VA analytics. Fix broken catalog integrations and workflow connections. Now Assist AI is only as effective as the topics it enhances. Target: 60%+ fulfillment rate.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:20&lt;/sys_created_on&gt;&lt;sys_id&gt;8ff85dc7cfd587108935fb251d851c52&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;VA Topic Fulfillment Rate&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_8ff85dc7cfd587108935fb251d851c52&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:02&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>369435124</payload_hash>
+        <record_name>VA Topic Fulfillment Rate</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:53:18</sys_created_on>
+        <sys_id>b71eea07cf598b108935fb251d851cf5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19824350000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:53:18</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>371eea07f9598b103ed45dcb6e709bf4</update_guid>
+        <update_guid_history>371eea07f9598b103ed45dcb6e709bf4:369435124</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="VA Topic Fulfillment Rate">f513c744cfe5c7d08935fb251d851ca8</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:50</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>99014577956643e29ef73c7e13a3baa1</sys_id>
+        <sys_metadata>8ff85dc7cfd587108935fb251d851c52</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>VA Topic Fulfillment Rate</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_8ff85dc7cfd587108935fb251d851c52</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_8ff85dc7cfd587108935fb251d851c52">b71eea07cf598b108935fb251d851cf5</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:50</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

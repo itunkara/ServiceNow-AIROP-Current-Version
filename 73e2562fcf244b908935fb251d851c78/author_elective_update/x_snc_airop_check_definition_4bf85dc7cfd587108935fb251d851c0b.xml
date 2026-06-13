@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Custom business rules on project and demand tables can conflict with Now Assist SPM AI workflow automation.]]></ai_justification>
+        <check_name>SPM Customization Risk</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script');
+    ga.addQuery('collection', 'IN', 'pm_project,dmn_demand,resource_plan,pm_milestone');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom Business Rules on SPM tables';
+
+    if (count <= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low SPM customization risk (' + count + ' custom BRs). Now Assist SPM AI workflow automation is unlikely to encounter conflicts.'
+        };
+    } else if (count <= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom BRs on SPM tables. Moderate customization risk — test Now Assist SPM in sub-production before enabling in production.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High SPM customization risk: ' + count + ' custom BRs on core SPM tables. Now Assist SPM AI workflow automation may conflict with existing customizations.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SPM</module>
+        <number>CHK0000477</number>
+        <order>110</order>
+        <remediation_guidance>Review custom Business Rules on pm_project, dmn_demand, resource_plan, and pm_milestone. Test Now Assist SPM with customizations enabled in a sub-production instance. Consider deactivating or consolidating redundant BRs.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>4bf85dc7cfd587108935fb251d851c0b</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>SPM Customization Risk</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_4bf85dc7cfd587108935fb251d851c0b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_4bf85dc7cfd587108935fb251d851c0b</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Custom business rules on project and demand tables can conflict with Now Assist SPM AI workflow automation.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;SPM Customization Risk&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var ga = new GlideAggregate('sys_script');
+    ga.addQuery('collection', 'IN', 'pm_project,dmn_demand,resource_plan,pm_milestone');
+    ga.addQuery('active', true);
+    ga.addQuery('sys_created_by', 'NOT IN', 'glide.maint,system,admin,fred.luddy');
+    ga.addAggregate('COUNT');
+    ga.query();
+    var count = ga.next() ? parseInt(ga.getAggregate('COUNT')) : 0;
+
+    var actualValue = count + ' custom Business Rules on SPM tables';
+
+    if (count &lt;= 5) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Low SPM customization risk (' + count + ' custom BRs). Now Assist SPM AI workflow automation is unlikely to encounter conflicts.'
+        };
+    } else if (count &lt;= 10) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: count + ' custom BRs on SPM tables. Moderate customization risk — test Now Assist SPM in sub-production before enabling in production.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'High SPM customization risk: ' + count + ' custom BRs on core SPM tables. Now Assist SPM AI workflow automation may conflict with existing customizations.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;SPM&lt;/module&gt;&lt;number&gt;CHK0000477&lt;/number&gt;&lt;order&gt;110&lt;/order&gt;&lt;remediation_guidance&gt;Review custom Business Rules on pm_project, dmn_demand, resource_plan, and pm_milestone. Test Now Assist SPM with customizations enabled in a sub-production instance. Consider deactivating or consolidating redundant BRs.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:20&lt;/sys_created_on&gt;&lt;sys_id&gt;4bf85dc7cfd587108935fb251d851c0b&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;SPM Customization Risk&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_4bf85dc7cfd587108935fb251d851c0b&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:01&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-82980230</payload_hash>
+        <record_name>SPM Customization Risk</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:54:58</sys_created_on>
+        <sys_id>108ee20bcf598b108935fb251d851c6b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb199aa8b0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:54:58</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>9c8ee20b48598b1016ccdff4780eff69</update_guid>
+        <update_guid_history>9c8ee20b48598b1016ccdff4780eff69:-82980230</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="SPM Customization Risk">37038f04cfe5c7d08935fb251d851c2c</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:42</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>0e4f51e9f9c84c078357e5162af5b061</sys_id>
+        <sys_metadata>4bf85dc7cfd587108935fb251d851c0b</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SPM Customization Risk</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_4bf85dc7cfd587108935fb251d851c0b</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_4bf85dc7cfd587108935fb251d851c0b">108ee20bcf598b108935fb251d851c6b</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:42</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

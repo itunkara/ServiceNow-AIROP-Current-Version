@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[DEX and Now Assist must both be active for AI-powered device diagnosis and agentic endpoint workflows. Without both plugins, DEX AI capabilities including conversational diagnosis and automated remediation are completely unavailable.]]></ai_justification>
+        <check_name>KB Article Retirement Rate</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaRetired = new GlideAggregate('kb_knowledge');
+    gaRetired.addQuery('workflow_state', 'retired');
+    gaRetired.addAggregate('COUNT');
+    gaRetired.query();
+    var retired = gaRetired.next() ? parseInt(gaRetired.getAggregate('COUNT')) : 0;
+
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    var pct = total > 0 ? Math.round((retired / total) * 100) : 0;
+    var actualValue = pct + '% retired (' + retired + ' of ' + total + ' articles)';
+
+    // Informational check — active retirement indicates good KB hygiene
+    return {
+        status: 'ready',
+        actualValue: actualValue,
+        finding: 'KB retirement rate: ' + pct + '% (' + retired + ' retired of ' + total + ' total). Active article retirement is a positive signal — it indicates KB governance is in place to keep Now Assist AI Search content current and accurate.'
+    };
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000630</number>
+        <order>30</order>
+        <remediation_guidance>Informational check — no remediation required. Monitor retirement rate as a governance health signal. High retirement rates indicate active KB hygiene which is positive for Now Assist AI Search quality.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>a3b3cf0ccfe5c7d08935fb251d851c6e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_a3b3cf0ccfe5c7d08935fb251d851c6e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

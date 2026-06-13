@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Custom Business Rules on SAM tables can intercept or conflict with Now Assist SAM AI actions and recommendations. High customization density increases the risk of AI recommendations failing or producing unexpected results.]]></ai_justification>
+        <check_name>SAM Customization Risk</check_name>
+        <check_script><![CDATA[(function() { var gaBR = new GlideAggregate("sys_script"); gaBR.addQuery("collection", "cmdb_sam_sw_install"); gaBR.addQuery("active", true); gaBR.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); gaBR.addAggregate("COUNT"); gaBR.query(); var brs1 = gaBR.next() ? parseInt(gaBR.getAggregate("COUNT")) : 0; var gaBR2 = new GlideAggregate("sys_script"); gaBR2.addQuery("collection", "alm_license"); gaBR2.addQuery("active", true); gaBR2.addQuery("sys_created_by", "NOT IN", "glide.maint,system,admin,fred.luddy"); gaBR2.addAggregate("COUNT"); gaBR2.query(); var brs2 = gaBR2.next() ? parseInt(gaBR2.getAggregate("COUNT")) : 0; var risk = brs1 + brs2; var actualValue = brs1 + " custom BRs on cmdb_sam_sw_install + " + brs2 + " on alm_license (risk score: " + risk + ")"; if (risk <= 5) { return { status: "ready", actualValue: actualValue, finding: "Low SAM customization risk (score: " + risk + "). Now Assist SAM AI recommendations are unlikely to encounter conflicts with existing customizations." }; } else if (risk <= 10) { return { status: "needs_attention", actualValue: actualValue, finding: "Moderate SAM customization risk (score: " + risk + "). Test Now Assist SAM in sub-production before enabling in production." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "High SAM customization risk (score: " + risk + "). Extensive customization increases the risk of conflicts with Now Assist SAM AI recommendations." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SAM</module>
+        <number>CHK0000939</number>
+        <order>900</order>
+        <remediation_guidance>Review custom Business Rules on cmdb_sam_sw_install and alm_license tables. Test Now Assist SAM in a sub-production environment to identify and resolve conflicts before enabling in production.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:44</sys_created_on>
+        <sys_id>d8c3c34ccfe5c7d08935fb251d851c0f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_d8c3c34ccfe5c7d08935fb251d851c0f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:44</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

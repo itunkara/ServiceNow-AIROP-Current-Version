@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[MID Servers are required for AI Agent-triggered discovery, external integrations, and on-premise system connectivity. Missing MID Servers create gaps in AI Agent action coverage for hybrid infrastructure.]]></ai_justification>
+        <check_name>MID Server Availability</check_name>
+        <check_script><![CDATA[(function(){
+var gr=new GlideRecord("ecc_agent");
+gr.addQuery("status","Up");
+gr.query();
+var up=gr.getRowCount();
+var gr2=new GlideRecord("ecc_agent");
+gr2.query();
+var total=gr2.getRowCount();
+return{status:up>=1?"ready":"needs_attention",actualValue:total+" MID Servers | "+up+" Up",finding:up<1?"No MID Servers are Up. AI Agent-triggered discovery probes and on-premise integrations will fail without available MID Servers.":""+up+" MID Servers are Up and available for AI Agent execution."};
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>PLATFORM</module>
+        <number>CHK0000800</number>
+        <order>80</order>
+        <remediation_guidance>Deploy MID Servers for each network zone requiring AI Agent access. Validate MID Servers via ecc_agent_list.do. Upgrade MID Servers to match the instance version. AI Agents fail silently when required MID Servers are unavailable.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>48c3434ccfe5c7d08935fb251d851c6b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_48c3434ccfe5c7d08935fb251d851c6b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

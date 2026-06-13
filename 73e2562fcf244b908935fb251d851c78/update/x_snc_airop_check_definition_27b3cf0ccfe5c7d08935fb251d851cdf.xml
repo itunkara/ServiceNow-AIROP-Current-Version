@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Alert noise ratio measures how many alerts are meaningful vs automatically closed. High noise degrades Now Assist event correlation training signal.]]></ai_justification>
+        <check_name>Alert Auto-Close Rate</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var cutoff = new GlideDateTime();
+    cutoff.addDaysUTC(-30);
+
+    var gaTotal = new GlideAggregate('em_alert');
+    gaTotal.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No alerts in last 30 days',
+            finding: 'No alerts found in the last 30 days. Auto-close rate cannot be assessed — Event Management may not be in use.'
+        };
+    }
+
+    var gaClosed = new GlideAggregate('em_alert');
+    gaClosed.addQuery('sys_created_on', '>=', cutoff.getValue());
+    gaClosed.addQuery('state', 'Closed');
+    gaClosed.addAggregate('COUNT');
+    gaClosed.query();
+    var closed = gaClosed.next() ? parseInt(gaClosed.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((closed / total) * 100);
+    var actualValue = total + ' alerts in last 30 days | ' + closed + ' closed (' + pct + '%)';
+
+    if (pct >= 50) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: pct + '% of recent alerts are closed. Healthy auto-close rate indicates clean CLEAR event processing — Now Assist ITOM event correlation training signal is not polluted by stale alerts.'
+        };
+    } else if (pct >= 20) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of recent alerts are closed (target: 50%+). Low auto-close rate indicates noisy alerts that degrade Now Assist ITOM event correlation training signal.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of recent alerts are closed. Very low auto-close rate means Now Assist ITOM is learning from a noisy, unresolved alert corpus — AI correlation accuracy will be significantly degraded.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITOM</module>
+        <number>CHK0000674</number>
+        <order>70</order>
+        <remediation_guidance>Configure CLEAR event processing to auto-close alerts when triggering conditions resolve. Enable idle timeout auto-close for transient alerts. High manual closure rates indicate noisy alerts that degrade Now Assist ITOM event correlation training signal.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:42</sys_created_on>
+        <sys_id>27b3cf0ccfe5c7d08935fb251d851cdf</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_27b3cf0ccfe5c7d08935fb251d851cdf</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:42</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

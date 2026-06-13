@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[User assignment data enables Now Assist HAM to target AI refresh recommendations and reclamation candidates to the correct users and managers. Without assignment data, AI cannot determine who is using aging or underutilized assets.]]></ai_justification>
+        <check_name>Hardware Asset Assignment Rate</check_name>
+        <check_script><![CDATA[(function() { var gaTotal = new GlideAggregate("alm_hardware"); gaTotal.addQuery("install_status", "1"); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_applicable", actualValue: "No in-use hardware assets found", finding: "No hardware assets in use state. Assignment rate cannot be assessed." }; } var gaAssigned = new GlideAggregate("alm_hardware"); gaAssigned.addQuery("install_status", "1"); gaAssigned.addQuery("assigned_to", "!=", ""); gaAssigned.addAggregate("COUNT"); gaAssigned.query(); var assigned = gaAssigned.next() ? parseInt(gaAssigned.getAggregate("COUNT")) : 0; var pct = Math.round((assigned / total) * 100); var actualValue = pct + "% of in-use assets are assigned to a user (" + assigned + "/" + total + ")"; if (pct >= 90) { return { status: "ready", actualValue: actualValue, finding: pct + "% of in-use hardware assets have a user assignment. Now Assist HAM can accurately target refresh recommendations and reclamation candidates." }; } else if (pct >= 70) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of in-use assets have a user assignment (target: 90%+). Now Assist HAM AI reclamation and refresh targeting will be less accurate." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of in-use assets have a user assignment. Now Assist HAM cannot accurately target AI refresh recommendations without user assignment data." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>HAM</module>
+        <number>CHK0000924</number>
+        <order>400</order>
+        <remediation_guidance>Assign all in-use hardware assets to their primary users. Navigate to Hardware Asset Management and bulk update assignment data. User assignment is critical for Now Assist HAM AI reclamation and refresh targeting.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:44</sys_created_on>
+        <sys_id>90c3834ccfe5c7d08935fb251d851cf6</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_90c3834ccfe5c7d08935fb251d851cf6</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:44</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

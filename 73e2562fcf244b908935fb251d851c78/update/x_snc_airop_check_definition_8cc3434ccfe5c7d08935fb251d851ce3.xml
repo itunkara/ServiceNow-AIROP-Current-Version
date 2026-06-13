@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Metric rules define the thresholds that trigger DEX AI proactive investigation workflows. Without configured rules, DEX AI only reacts to manually created incidents, eliminating the proactive value proposition of DEX AI.]]></ai_justification>
+        <check_name>DEX Metric Rules Configuration</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {    var ga = new GlideAggregate("dex_metric_rules");    ga.addAggregate("COUNT");    ga.query();    var count = ga.next() ? parseInt(ga.getAggregate("COUNT")) : 0;    var actualValue = count + " DEX metric rules configured";    if (count >= 10) {        return { status: "ready", actualValue: actualValue,            finding: count + " metric rules configured. DEX AI has sufficient thresholds to trigger proactive investigation workflows." };    } else if (count >= 3) {        return { status: "needs_attention", actualValue: actualValue,            finding: "Only " + count + " metric rules configured (target: 10+). Limited rule coverage for DEX AI proactive investigation." };    } else {        return { status: "not_ready", actualValue: actualValue,            finding: "Fewer than 3 DEX metric rules found. DEX AI cannot proactively trigger investigation workflows without metric rules." };    }})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>DEX</module>
+        <number>CHK0000838</number>
+        <order/>
+        <remediation_guidance>Configure metric threshold rules via dex_metric_rules_list.do for key device and application metrics. Metric rules define the conditions that trigger DEX AI investigation workflows — without them, AI diagnosis is only reactive rather than proactive.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>8cc3434ccfe5c7d08935fb251d851ce3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_8cc3434ccfe5c7d08935fb251d851ce3</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

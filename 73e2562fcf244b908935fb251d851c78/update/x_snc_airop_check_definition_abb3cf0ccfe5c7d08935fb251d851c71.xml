@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Device metrics provide the granular CPU, memory, disk, and network signals that DEX AI uses for root cause analysis. Without sufficient metric coverage, AI diagnosis will misattribute or miss the actual cause of endpoint issues.]]></ai_justification>
+        <check_name>KB Article Label Coverage</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    var gaLabeled = new GlideAggregate('label_entry');
+    gaLabeled.addQuery('table', 'kb_knowledge');
+    gaLabeled.addAggregate('COUNT');
+    gaLabeled.query();
+    var labelCount = gaLabeled.next() ? parseInt(gaLabeled.getAggregate('COUNT')) : 0;
+
+    var actualValue = labelCount + ' label entries across ' + total + ' published articles';
+
+    if (labelCount > 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: labelCount + ' KB article label entries found. Now Assist AI Search can filter results by label to scope results by audience and service context.'
+        };
+    } else {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: 'No KB article labels found. Labels allow Now Assist AI Search to filter results by audience and service context — without them AI Search returns unfiltered results to all users.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000634</number>
+        <order>70</order>
+        <remediation_guidance>Assign labels to published KB articles. Create a label taxonomy aligned to your product/service catalog. Labels allow Now Assist AI Search to filter results by audience and service context.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>abb3cf0ccfe5c7d08935fb251d851c71</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_abb3cf0ccfe5c7d08935fb251d851c71</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

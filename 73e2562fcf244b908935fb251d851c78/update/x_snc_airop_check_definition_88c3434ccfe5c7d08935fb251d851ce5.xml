@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Now Assist for Security Operations is the foundational plugin that enables all AI capabilities for SIR including incident summarization, similar incident matching, and playbook recommendations. Without it no AI features are available regardless of data quality.]]></ai_justification>
+        <check_name>Now Assist for Security Operations Plugin Status</check_name>
+        <check_script><![CDATA[(function() {
+    var gr = new GlideRecord("sys_store_app");
+    gr.addQuery("scope", "sn_si_gen_ai");
+    gr.setLimit(1);
+    gr.query();
+    if (gr.next()) {
+        return { status: "ready", actualValue: "Now Assist for Security Operations (sn_si_gen_ai) is active", finding: "Now Assist for Security Operations is active. AI-assisted security incident summarization, similar incident matching, and playbook recommendations are available." };
+    }
+    var gr2 = new GlideRecord("sys_plugins");
+    gr2.addQuery("id", "sn_si_gen_ai");
+    gr2.addQuery("active", true);
+    gr2.setLimit(1);
+    gr2.query();
+    if (gr2.next()) {
+        return { status: "ready", actualValue: "Now Assist for Security Operations (sn_si_gen_ai) is active", finding: "Now Assist for Security Operations is active. AI-assisted security incident summarization, similar incident matching, and playbook recommendations are available." };
+    }
+    return { status: "not_ready", actualValue: "Now Assist for Security Operations (sn_si_gen_ai) not found or inactive", finding: "Now Assist for Security Operations is not active. All Now Assist SIR AI capabilities are unavailable without this plugin." };
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SECOPS</module>
+        <number>CHK0000840</number>
+        <order>100</order>
+        <remediation_guidance>Activate Now Assist for Security Operations via the ServiceNow Store. Confirm entitlement with your ServiceNow account team before activation.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>88c3434ccfe5c7d08935fb251d851ce5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_88c3434ccfe5c7d08935fb251d851ce5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

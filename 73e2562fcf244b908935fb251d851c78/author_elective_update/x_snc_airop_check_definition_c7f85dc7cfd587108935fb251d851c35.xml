@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Scheduled jobs power AIROP assessment automation, CMDB health scoring, and PI model training. Failed or disabled jobs silently degrade the data quality Now Assist depends on.]]></ai_justification>
+        <check_name>Scheduled Job Health</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaActive = new GlideAggregate('sysauto_script');
+    gaActive.addQuery('active', true);
+    gaActive.addAggregate('COUNT');
+    gaActive.query();
+    var active = gaActive.next() ? parseInt(gaActive.getAggregate('COUNT')) : 0;
+
+    var gaErrored = new GlideAggregate('sys_trigger');
+    gaErrored.addQuery('state', 'error');
+    gaErrored.addAggregate('COUNT');
+    gaErrored.query();
+    var errored = gaErrored.next() ? parseInt(gaErrored.getAggregate('COUNT')) : 0;
+
+    var actualValue = active + ' active scheduled jobs | ' + errored + ' in error state';
+
+    if (errored === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'All scheduled jobs are healthy. Background data quality processes (CMDB Health, PI Training, Discovery) are running successfully — Now Assist AI has current data to work with.'
+        };
+    } else if (errored <= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: errored + ' scheduled job(s) are in error state. Failed jobs may silently degrade CMDB health scores, PI model training, and other data quality processes that Now Assist depends on.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: errored + ' scheduled jobs are in error state. High error rate indicates systemic scheduled job failures — background data quality processes that Now Assist depends on are likely degraded.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>PLATFORM</module>
+        <number>CHK0000493</number>
+        <order>140</order>
+        <remediation_guidance>Review scheduled job health via sysauto_script_list.do. Investigate any jobs with Error or Skipped status. Ensure critical jobs (CMDB Health, PI Training, Discovery) are scheduled and running successfully.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:20</sys_created_on>
+        <sys_id>c7f85dc7cfd587108935fb251d851c35</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Scheduled Job Health</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_c7f85dc7cfd587108935fb251d851c35</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_c7f85dc7cfd587108935fb251d851c35</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Scheduled jobs power AIROP assessment automation, CMDB health scoring, and PI model training. Failed or disabled jobs silently degrade the data quality Now Assist depends on.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;Scheduled Job Health&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var gaActive = new GlideAggregate('sysauto_script');
+    gaActive.addQuery('active', true);
+    gaActive.addAggregate('COUNT');
+    gaActive.query();
+    var active = gaActive.next() ? parseInt(gaActive.getAggregate('COUNT')) : 0;
+
+    var gaErrored = new GlideAggregate('sys_trigger');
+    gaErrored.addQuery('state', 'error');
+    gaErrored.addAggregate('COUNT');
+    gaErrored.query();
+    var errored = gaErrored.next() ? parseInt(gaErrored.getAggregate('COUNT')) : 0;
+
+    var actualValue = active + ' active scheduled jobs | ' + errored + ' in error state';
+
+    if (errored === 0) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'All scheduled jobs are healthy. Background data quality processes (CMDB Health, PI Training, Discovery) are running successfully — Now Assist AI has current data to work with.'
+        };
+    } else if (errored &lt;= 5) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: errored + ' scheduled job(s) are in error state. Failed jobs may silently degrade CMDB health scores, PI model training, and other data quality processes that Now Assist depends on.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: errored + ' scheduled jobs are in error state. High error rate indicates systemic scheduled job failures — background data quality processes that Now Assist depends on are likely degraded.'
+        };
+    }
+})]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;PLATFORM&lt;/module&gt;&lt;number&gt;CHK0000493&lt;/number&gt;&lt;order&gt;140&lt;/order&gt;&lt;remediation_guidance&gt;Review scheduled job health via sysauto_script_list.do. Investigate any jobs with Error or Skipped status. Ensure critical jobs (CMDB Health, PI Training, Discovery) are scheduled and running successfully.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:20&lt;/sys_created_on&gt;&lt;sys_id&gt;c7f85dc7cfd587108935fb251d851c35&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;Scheduled Job Health&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_c7f85dc7cfd587108935fb251d851c35&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:02&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1051056530</payload_hash>
+        <record_name>Scheduled Job Health</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:55:02</sys_created_on>
+        <sys_id>518ea60bcf598b108935fb251d851cc3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb199ba080000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:55:02</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>518ea60b46598b10941ccb3aa321eaa9</update_guid>
+        <update_guid_history>518ea60b46598b10941ccb3aa321eaa9:1051056530</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Scheduled Job Health">8f130384cfe5c7d08935fb251d851c63</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:55</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>584f968751e546c2870c3305c5cb2e01</sys_id>
+        <sys_metadata>c7f85dc7cfd587108935fb251d851c35</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Scheduled Job Health</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_c7f85dc7cfd587108935fb251d851c35</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_c7f85dc7cfd587108935fb251d851c35">518ea60bcf598b108935fb251d851cc3</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:55</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

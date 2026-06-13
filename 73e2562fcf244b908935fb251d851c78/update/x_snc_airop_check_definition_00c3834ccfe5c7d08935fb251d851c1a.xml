@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Close notes contain the resolution context that Now Assist SIR uses to generate AI incident summaries and build similar incident recommendations. Without close notes, AI summaries are incomplete and similar incident matching loses its most valuable signal.]]></ai_justification>
+        <check_name>Security Incident Close Notes Population</check_name>
+        <check_script><![CDATA[(function() { var cutoff = new GlideDateTime(); cutoff.addYearsUTC(-1); var gaTotal = new GlideAggregate("sn_si_incident"); gaTotal.addQuery("state", "IN", "3,4"); gaTotal.addQuery("closed_at", ">=", cutoff.getValue()); gaTotal.addAggregate("COUNT"); gaTotal.query(); var total = gaTotal.next() ? parseInt(gaTotal.getAggregate("COUNT")) : 0; if (total === 0) { return { status: "not_applicable", actualValue: "No closed security incidents in last 12 months", finding: "No closed security incidents found. Close notes coverage cannot be assessed." }; } var gaMissing = new GlideAggregate("sn_si_incident"); gaMissing.addQuery("state", "IN", "3,4"); gaMissing.addQuery("closed_at", ">=", cutoff.getValue()); gaMissing.addQuery("close_notes", ""); gaMissing.addAggregate("COUNT"); gaMissing.query(); var missing = gaMissing.next() ? parseInt(gaMissing.getAggregate("COUNT")) : 0; var populated = total - missing; var pct = Math.round((populated / total) * 100); var actualValue = pct + "% of closed security incidents have close notes (" + populated + "/" + total + ")"; if (pct >= 85) { return { status: "ready", actualValue: actualValue, finding: pct + "% of closed security incidents have close notes. Now Assist SIR summarization has strong resolution context for AI-generated summaries." }; } else if (pct >= 60) { return { status: "needs_attention", actualValue: actualValue, finding: "Only " + pct + "% of closed security incidents have close notes (target: 85%). Now Assist SIR summarization quality will be reduced." }; } else { return { status: "not_ready", actualValue: actualValue, finding: "Only " + pct + "% of security incidents have close notes. Now Assist SIR cannot generate meaningful incident summaries without resolution context." }; } })]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>SECOPS</module>
+        <number>CHK0000843</number>
+        <order>400</order>
+        <remediation_guidance>Enforce close notes on security incident resolution. Add mandatory field policy requiring close_notes before incident closure. Close notes are the primary input for Now Assist SIR AI summarization.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:43</sys_created_on>
+        <sys_id>00c3834ccfe5c7d08935fb251d851c1a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_00c3834ccfe5c7d08935fb251d851c1a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:43</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

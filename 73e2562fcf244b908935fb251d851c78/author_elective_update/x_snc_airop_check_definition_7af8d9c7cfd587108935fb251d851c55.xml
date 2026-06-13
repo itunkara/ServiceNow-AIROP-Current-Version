@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Virtual Agent is the primary delivery channel for Now Assist conversational AI. Without glide.cs.enabled&#61;true, VA topics and Now Assist prompts cannot be surfaced to end users.]]></ai_justification>
+        <check_name>Virtual Agent Active Status</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var vaResult = checkPlugin("com.glide.cs.chatbot", "com.glide.cs.chatbot");
+    // Functional fallback: sys_cs_topic table existence
+    var pluginActive = vaResult.found;
+    if (!pluginActive) {
+        var testGr = new GlideRecord("sys_cs_topic");
+        testGr.setLimit(1);
+        testGr.query();
+        pluginActive = testGr.isValid();
+    }
+    var prop = gs.getProperty("glide.cs.enabled", "false");
+    var actualValue = "Plugin active: " + pluginActive + " | glide.cs.enabled: " + prop;
+    if (pluginActive && prop === "true") {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Virtual Agent is active and glide.cs.enabled=true. Now Assist conversational AI prerequisites satisfied." };
+    } else if (pluginActive) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Virtual Agent is active but glide.cs.enabled is not set to true. Set glide.cs.enabled=true in sys_properties." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Virtual Agent (com.glide.cs.chatbot) is not active. Now Assist conversational AI requires Virtual Agent." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000334</number>
+        <order>200</order>
+        <remediation_guidance>Set glide.cs.enabled=true in sys_properties. Confirm the Virtual Agent plugin is active. Both must be true before Now Assist conversational AI topics can be surfaced to end users.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>7af8d9c7cfd587108935fb251d851c55</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Virtual Agent Active Status</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_7af8d9c7cfd587108935fb251d851c55</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:01</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_7af8d9c7cfd587108935fb251d851c55</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Virtual Agent is the primary delivery channel for Now Assist conversational AI. Without glide.cs.enabled&amp;#61;true, VA topics and Now Assist prompts cannot be surfaced to end users.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;Virtual Agent Active Status&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    var checkPlugin = (function checkPlugin(storeScope, pluginSource) {    var result = { found: false, version: "", table: "" };    try {        var saGR = new GlideRecord("sys_store_app");        saGR.addQuery("scope", storeScope);        saGR.setLimit(1);        saGR.query();        if (saGR.next()) {            result.found = true;            result.version = saGR.getValue("version") || "";            result.table = "sys_store_app";            return result;        }    } catch(e1) {}    if (pluginSource) {        try {            var spGR = new GlideRecord("sys_plugins");            spGR.addQuery("source", pluginSource);            spGR.addQuery("active", true);            spGR.setLimit(1);            spGR.query();            if (spGR.next()) {                result.found = true;                result.version = spGR.getValue("version") || "";                result.table = "sys_plugins";                return result;            }        } catch(e2) {}    }    return result;});
+    var vaResult = checkPlugin("com.glide.cs.chatbot", "com.glide.cs.chatbot");
+    // Functional fallback: sys_cs_topic table existence
+    var pluginActive = vaResult.found;
+    if (!pluginActive) {
+        var testGr = new GlideRecord("sys_cs_topic");
+        testGr.setLimit(1);
+        testGr.query();
+        pluginActive = testGr.isValid();
+    }
+    var prop = gs.getProperty("glide.cs.enabled", "false");
+    var actualValue = "Plugin active: " + pluginActive + " | glide.cs.enabled: " + prop;
+    if (pluginActive &amp;&amp; prop === "true") {
+        return { status: "ready", actualValue: actualValue,
+            finding: "Virtual Agent is active and glide.cs.enabled=true. Now Assist conversational AI prerequisites satisfied." };
+    } else if (pluginActive) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Virtual Agent is active but glide.cs.enabled is not set to true. Set glide.cs.enabled=true in sys_properties." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Virtual Agent (com.glide.cs.chatbot) is not active. Now Assist conversational AI requires Virtual Agent." };
+    }
+})()]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;ITSM&lt;/module&gt;&lt;number&gt;CHK0000334&lt;/number&gt;&lt;order&gt;200&lt;/order&gt;&lt;remediation_guidance&gt;Set glide.cs.enabled=true in sys_properties. Confirm the Virtual Agent plugin is active. Both must be true before Now Assist conversational AI topics can be surfaced to end users.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:19&lt;/sys_created_on&gt;&lt;sys_id&gt;7af8d9c7cfd587108935fb251d851c55&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;Virtual Agent Active Status&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_7af8d9c7cfd587108935fb251d851c55&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:01&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-518713302</payload_hash>
+        <record_name>Virtual Agent Active Status</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:55:21</sys_created_on>
+        <sys_id>8a9ee24bcf598b108935fb251d851c62</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19a06160000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:55:21</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>0a9ee24b6a598b10e6217a668ad1fa61</update_guid>
+        <update_guid_history>0a9ee24b6a598b10e6217a668ad1fa61:-518713302</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Virtual Agent Active Status">fc130744cfe5c7d08935fb251d851c63</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:58:46</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>29e79ebb6ab14a04a86baa001f3c5089</sys_id>
+        <sys_metadata>7af8d9c7cfd587108935fb251d851c55</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Virtual Agent Active Status</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_7af8d9c7cfd587108935fb251d851c55</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_7af8d9c7cfd587108935fb251d851c55">8a9ee24bcf598b108935fb251d851c62</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:58:46</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="DELETE">
+        <ai_justification><![CDATA[Now Assist problem summarization aggregates incident patterns to identify root cause trends. With 0 structured incident-problem relationships, the AI has no linkage data to reason from.]]></ai_justification>
+        <check_name>Incident-to-Problem Linkage Rate</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    // Count total closed/resolved problems
+    // OOB problem closed states: 3 = Closed/Resolved, 4 = Closed
+    // Some instances use additional values -- we use 3,4 as the broadest OOB closed set
+    var totalGr = new GlideAggregate("problem");
+    totalGr.addQuery("state", "IN", "3,4");
+    totalGr.addAggregate("COUNT");
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable",
+            actualValue: "No closed problem records found (state IN 3,4)",
+            finding: "No closed problem records found. Incident-to-Problem linkage cannot be assessed." };
+    }
+
+    // Count distinct problems that have at least one incident linked
+    // via incident.problem_id -- the OOB linkage mechanism
+    var linkedProblems = 0;
+    try {
+        var linkedGr = new GlideAggregate("incident");
+        linkedGr.addQuery("problem_id", "!=", "");
+        linkedGr.addAggregate("COUNT", "problem_id");
+        linkedGr.groupBy("problem_id");
+        linkedGr.query();
+        while (linkedGr.next()) { linkedProblems++; }
+    } catch(e) { linkedProblems = 0; }
+
+    var pct = Math.round((linkedProblems / total) * 100);
+    var actualValue = linkedProblems + " of " + total + " problems have linked incidents via incident.problem_id (" + pct + "% linkage coverage)";
+
+    if (pct >= 50) {
+        return { status: "ready", actualValue: actualValue,
+            finding: pct + "% of problems have linked incidents. Now Assist problem summarization has adequate incident context for root cause pattern analysis." };
+    } else if (pct >= 20) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Only " + pct + "% of problems are linked to incidents (target: 50%+). Now Assist problem analysis will lack context for unlinked records. Ensure the Problem field on Incident records is populated when incidents are escalated." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Only " + pct + "% of problems have linked incidents. Now Assist cannot surface root cause patterns without incident context on problem records. Link incidents to problems via incident.problem_id." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000345</number>
+        <order>310</order>
+        <remediation_guidance>Ensure the Problem field on Incident records is populated when incidents are escalated to problems. Use the OOB "Create Problem" UI action or enforce via assignment workflow. The link is stored on the incident.problem_id field — do not rely on custom relationship tables.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 06:41:19</sys_created_on>
+        <sys_id>faf8d9c7cfd587108935fb251d851c6d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>Incident-to-Problem Linkage Rate</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_faf8d9c7cfd587108935fb251d851c6d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 06:54:02</sys_updated_on>
+    </x_snc_airop_check_definition>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</application>
+        <file_path/>
+        <instance_id>48bb485aebdefa90cbdefceacad0cd82</instance_id>
+        <instance_name>demoalectriallwf137518</instance_name>
+        <name>x_snc_airop_check_definition_faf8d9c7cfd587108935fb251d851c6d</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_airop_check_definition"&gt;&lt;x_snc_airop_check_definition action="INSERT_OR_UPDATE"&gt;&lt;ai_justification&gt;&lt;![CDATA[Now Assist problem summarization aggregates incident patterns to identify root cause trends. With 0 structured incident-problem relationships, the AI has no linkage data to reason from.]]&gt;&lt;/ai_justification&gt;&lt;check_name&gt;Incident-to-Problem Linkage Rate&lt;/check_name&gt;&lt;check_script&gt;&lt;![CDATA[(function(checkDef, dateFilter) {
+    // Count total closed/resolved problems
+    // OOB problem closed states: 3 = Closed/Resolved, 4 = Closed
+    // Some instances use additional values -- we use 3,4 as the broadest OOB closed set
+    var totalGr = new GlideAggregate("problem");
+    totalGr.addQuery("state", "IN", "3,4");
+    totalGr.addAggregate("COUNT");
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable",
+            actualValue: "No closed problem records found (state IN 3,4)",
+            finding: "No closed problem records found. Incident-to-Problem linkage cannot be assessed." };
+    }
+
+    // Count distinct problems that have at least one incident linked
+    // via incident.problem_id -- the OOB linkage mechanism
+    var linkedProblems = 0;
+    try {
+        var linkedGr = new GlideAggregate("incident");
+        linkedGr.addQuery("problem_id", "!=", "");
+        linkedGr.addAggregate("COUNT", "problem_id");
+        linkedGr.groupBy("problem_id");
+        linkedGr.query();
+        while (linkedGr.next()) { linkedProblems++; }
+    } catch(e) { linkedProblems = 0; }
+
+    var pct = Math.round((linkedProblems / total) * 100);
+    var actualValue = linkedProblems + " of " + total + " problems have linked incidents via incident.problem_id (" + pct + "% linkage coverage)";
+
+    if (pct &gt;= 50) {
+        return { status: "ready", actualValue: actualValue,
+            finding: pct + "% of problems have linked incidents. Now Assist problem summarization has adequate incident context for root cause pattern analysis." };
+    } else if (pct &gt;= 20) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Only " + pct + "% of problems are linked to incidents (target: 50%+). Now Assist problem analysis will lack context for unlinked records. Ensure the Problem field on Incident records is populated when incidents are escalated." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "Only " + pct + "% of problems have linked incidents. Now Assist cannot surface root cause patterns without incident context on problem records. Link incidents to problems via incident.problem_id." };
+    }
+})()]]&gt;&lt;/check_script&gt;&lt;is_active&gt;true&lt;/is_active&gt;&lt;is_clone_sensitive&gt;false&lt;/is_clone_sensitive&gt;&lt;is_manual&gt;false&lt;/is_manual&gt;&lt;module&gt;ITSM&lt;/module&gt;&lt;number&gt;CHK0000345&lt;/number&gt;&lt;order&gt;310&lt;/order&gt;&lt;remediation_guidance&gt;Ensure the Problem field on Incident records is populated when incidents are escalated to problems. Use the OOB "Create Problem" UI action or enforce via assignment workflow. The link is stored on the incident.problem_id field — do not rely on custom relationship tables.&lt;/remediation_guidance&gt;&lt;sys_class_name&gt;x_snc_airop_check_definition&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-06-10 06:41:19&lt;/sys_created_on&gt;&lt;sys_id&gt;faf8d9c7cfd587108935fb251d851c6d&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;Incident-to-Problem Linkage Rate&lt;/sys_name&gt;&lt;sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="ServiceNow AI Readiness Optimization Platform"&gt;73e2562fcf244b908935fb251d851c78&lt;/sys_scope&gt;&lt;sys_update_name&gt;x_snc_airop_check_definition_faf8d9c7cfd587108935fb251d851c6d&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-06-10 06:54:02&lt;/sys_updated_on&gt;&lt;/x_snc_airop_check_definition&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>-1392349979</payload_hash>
+        <record_name>Incident-to-Problem Linkage Rate</record_name>
+        <reverted_from/>
+        <source>1e8ee859cf1183508935fb251d851c20</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-10 12:55:42</sys_created_on>
+        <sys_id>03aeae4bcf598b108935fb251d851c3d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>19eb19a56920000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-10 12:55:42</sys_updated_on>
+        <type>Check Definition</type>
+        <update_guid>8faeae4bbb598b1015ef65345fdbbc3b</update_guid>
+        <update_guid_history>8faeae4bbb598b1015ef65345fdbbc3b:-1392349979</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Incident-to-Problem Linkage Rate">e023c784cfe5c7d08935fb251d851c16</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 16:59:01</sys_created_on>
+        <sys_db_object display_value="" name="x_snc_airop_check_definition">x_snc_airop_check_definition</sys_db_object>
+        <sys_id>2863812e714445d68a75631a58fa92e9</sys_id>
+        <sys_metadata>faf8d9c7cfd587108935fb251d851c6d</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Incident-to-Problem Linkage Rate</sys_name>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_scope_delete display_value="">3d15655892484816825b3e4059b36991</sys_scope_delete>
+        <sys_update_name>x_snc_airop_check_definition_faf8d9c7cfd587108935fb251d851c6d</sys_update_name>
+        <sys_update_version display_value="x_snc_airop_check_definition_faf8d9c7cfd587108935fb251d851c6d">03aeae4bcf598b108935fb251d851c3d</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 16:59:01</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

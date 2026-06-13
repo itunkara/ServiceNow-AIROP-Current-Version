@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[cause_notes, fix_notes, and workaround are the structured fields Now Assist reads for problem summaries and KB article generation. High missing rates are critical gaps for AI summarization.]]></ai_justification>
+        <check_name>RCA Field Population Rate</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var totalGr = new GlideAggregate("problem");
+    totalGr.addQuery("state", "IN", "3,4");
+    totalGr.addAggregate("COUNT");
+    totalGr.query();
+    var total = totalGr.next() ? parseInt(totalGr.getAggregate("COUNT")) : 0;
+
+    if (total === 0) {
+        return { status: "not_applicable",
+            actualValue: "No closed/resolved problem records found (state IN 3,4)",
+            finding: "No qualifying closed problem records found. RCA field population cannot be assessed." };
+    }
+
+    // Use addNullQuery -- correct API for IS EMPTY on GlideAggregate.
+    // addQuery(field, "") treats empty string as literal value and returns 0
+    // for rich text (HTML) fields like cause_notes and fix_notes.
+    var missingCause = 0;
+    try {
+        var rcaGA1 = new GlideAggregate("problem");
+        rcaGA1.addQuery("state", "IN", "3,4");
+        rcaGA1.addNullQuery("cause_notes");
+        rcaGA1.addAggregate("COUNT");
+        rcaGA1.query();
+        missingCause = rcaGA1.next() ? parseInt(rcaGA1.getAggregate("COUNT")) || 0 : 0;
+    } catch(e1) {}
+
+    var missingFix = 0;
+    try {
+        var rcaGA2 = new GlideAggregate("problem");
+        rcaGA2.addQuery("state", "IN", "3,4");
+        rcaGA2.addNullQuery("fix_notes");
+        rcaGA2.addAggregate("COUNT");
+        rcaGA2.query();
+        missingFix = rcaGA2.next() ? parseInt(rcaGA2.getAggregate("COUNT")) || 0 : 0;
+    } catch(e2) {}
+
+    var missingWorkaround = 0;
+    try {
+        var rcaGA3 = new GlideAggregate("problem");
+        rcaGA3.addQuery("state", "IN", "3,4");
+        rcaGA3.addNullQuery("work_around");
+        rcaGA3.addAggregate("COUNT");
+        rcaGA3.query();
+        missingWorkaround = rcaGA3.next() ? parseInt(rcaGA3.getAggregate("COUNT")) || 0 : 0;
+    } catch(e3) {}
+
+    var causePct    = Math.round(((total - missingCause)    / total) * 100);
+    var fixPct      = Math.round(((total - missingFix)      / total) * 100);
+    var workarndPct = Math.round(((total - missingWorkaround) / total) * 100);
+    // Score only on cause_notes and fix_notes -- workaround is informational
+    var worstPct = Math.min(causePct, fixPct);
+
+    var actualValue = total + " closed/resolved problems | " +
+        "Cause Notes: " + causePct + "% populated | " +
+        "Fix Notes: " + fixPct + "% populated | " +
+        "Workaround: " + workarndPct + "% (informational only)";
+
+    if (worstPct >= 80) {
+        return { status: "ready", actualValue: actualValue,
+            finding: "RCA fields well populated. Cause Notes: " + causePct + "%, Fix Notes: " + fixPct + "%. Strong signal for Now Assist problem summarization and KB article generation." };
+    } else if (worstPct >= 50) {
+        return { status: "needs_attention", actualValue: actualValue,
+            finding: "Partial RCA population (Cause: " + causePct + "%, Fix: " + fixPct + "%, target: 80%+). Now Assist will rely on unstructured work notes for gaps -- enforce RCA field population at problem close." };
+    } else {
+        return { status: "not_ready", actualValue: actualValue,
+            finding: "RCA critically underpopulated (Cause: " + causePct + "%, Fix: " + fixPct + "%). Now Assist problem summarization lacks structured resolution context -- most AI summaries will use unstructured work notes only." };
+    }
+})()]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000659</number>
+        <order>320</order>
+        <remediation_guidance>Make Cause Notes and Fix Notes mandatory on problem closure (exclude Cancelled and Duplicate close codes). Configure a closure information mandatory UI policy. Workaround is informational only — it is only required when a workaround was actively used.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>ebb3cf0ccfe5c7d08935fb251d851cc5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_ebb3cf0ccfe5c7d08935fb251d851cc5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>

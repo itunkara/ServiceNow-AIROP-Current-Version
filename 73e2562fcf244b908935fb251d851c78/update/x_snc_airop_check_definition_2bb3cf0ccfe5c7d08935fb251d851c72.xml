@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_airop_check_definition">
+    <x_snc_airop_check_definition action="INSERT_OR_UPDATE">
+        <ai_justification><![CDATA[Application health data enables DEX AI to diagnose app-specific issues such as Zoom quality and Office 365 performance. Without application monitoring, DEX AI diagnosis is limited to OS-level signals only.]]></ai_justification>
+        <check_name>KB Articles with Raw URLs in Body</check_name>
+        <check_script><![CDATA[(function(checkDef, dateFilter) {
+    var gaTotal = new GlideAggregate('kb_knowledge');
+    gaTotal.addQuery('workflow_state', 'published');
+    gaTotal.addQuery('active', true);
+    gaTotal.addAggregate('COUNT');
+    gaTotal.query();
+    var total = gaTotal.next() ? parseInt(gaTotal.getAggregate('COUNT')) : 0;
+
+    if (total === 0) {
+        return {
+            status: 'not_applicable',
+            actualValue: 'No published KB articles found',
+            finding: 'No published KB articles found. URL content check cannot be assessed.'
+        };
+    }
+
+    var gaURL = new GlideAggregate('kb_knowledge');
+    gaURL.addQuery('workflow_state', 'published');
+    gaURL.addQuery('active', true);
+    gaURL.addQuery('text', 'CONTAINS', 'https://');
+    gaURL.addAggregate('COUNT');
+    gaURL.query();
+    var withUrl = gaURL.next() ? parseInt(gaURL.getAggregate('COUNT')) : 0;
+
+    var pct = Math.round((withUrl / total) * 100);
+    var actualValue = withUrl + ' of ' + total + ' published articles contain raw URLs (' + pct + '%)';
+
+    if (pct <= 20) {
+        return {
+            status: 'ready',
+            actualValue: actualValue,
+            finding: 'Only ' + pct + '% of articles contain raw URLs. Now Assist AI Search has predominantly self-contained content that can be summarized without link dependencies.'
+        };
+    } else if (pct <= 50) {
+        return {
+            status: 'needs_attention',
+            actualValue: actualValue,
+            finding: pct + '% of published articles contain raw URLs (target: ≤20%). Now Assist cannot follow hyperlinks — URL-dependent content will produce incomplete AI summaries.'
+        };
+    } else {
+        return {
+            status: 'not_ready',
+            actualValue: actualValue,
+            finding: pct + '% of published articles rely on raw URLs. Now Assist AI Search cannot follow links — the majority of KB content will produce incomplete AI summaries and poor self-service answers.'
+        };
+    }
+})]]></check_script>
+        <is_active>true</is_active>
+        <is_clone_sensitive>false</is_clone_sensitive>
+        <is_manual>false</is_manual>
+        <module>ITSM</module>
+        <number>CHK0000635</number>
+        <order>80</order>
+        <remediation_guidance>Replace URL-dependent content with inline text — summarize what the link contains directly in the article body. Now Assist cannot follow hyperlinks. Target: ≤20% of published articles containing raw URLs.</remediation_guidance>
+        <sys_class_name>x_snc_airop_check_definition</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-06-13 17:01:41</sys_created_on>
+        <sys_id>2bb3cf0ccfe5c7d08935fb251d851c72</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="ServiceNow AI Readiness Optimization Platform" source="x_snc_airop">73e2562fcf244b908935fb251d851c78</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="ServiceNow AI Readiness Optimization Platform">73e2562fcf244b908935fb251d851c78</sys_scope>
+        <sys_update_name>x_snc_airop_check_definition_2bb3cf0ccfe5c7d08935fb251d851c72</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-06-13 17:01:41</sys_updated_on>
+    </x_snc_airop_check_definition>
+</record_update>
